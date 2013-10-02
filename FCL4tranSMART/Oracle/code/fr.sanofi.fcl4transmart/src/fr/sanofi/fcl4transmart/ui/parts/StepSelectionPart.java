@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2012 Sanofi-Aventis Recherche et Développement.
+ * Copyright (c) 2012 Sanofi-Aventis Recherche et Dï¿½veloppement.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Public License v3.0
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/gpl.html
  * 
  * Contributors:
- *    Sanofi-Aventis Recherche et Développement - initial API and implementation
+ *    Sanofi-Aventis Recherche et Dï¿½veloppement - initial API and implementation
  ******************************************************************************/
 package fr.sanofi.fcl4transmart.ui.parts;
 
@@ -32,7 +32,10 @@ import fr.sanofi.fcl4transmart.model.interfaces.DataTypeItf;
 import fr.sanofi.fcl4transmart.model.interfaces.StepItf;
 import org.eclipse.jface.viewers.TableViewer;
 
-
+/**
+ *This class handles the step selection part
+ */
+@SuppressWarnings("restriction")
 public class StepSelectionPart {
 	private TableViewer viewer;
 	private StepSelectionController stepSelectionController;
@@ -87,7 +90,7 @@ public class StepSelectionPart {
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
-				// TODO Auto-generated method stub
+				// nothing to do
 				
 			}
 		});
@@ -97,15 +100,22 @@ public class StepSelectionPart {
 		 viewer.setInput(steps);
 		 parent.layout(true, true);
 	}
+	/**
+	 *Updates the step list if an event indicates that the selected data types changed
+	 */
 	@Inject
 	void eventReceived(@Optional @UIEventTopic("dataTypeChanged/*") DataTypeItf selectedDataType) {
 		if (selectedDataType != null) {
 			  this.stepSelectionController.selectionChanged(selectedDataType);
 			  this.viewer.getTable().select(0);
-			  eventBroker.send("stepChanged/syncEvent",viewer.getElementAt(viewer.getTable().getSelectionIndex()));
-		
+			  if(viewer.getTable().getSelectionIndex()!=-1){
+				  eventBroker.send("stepChanged/syncEvent",viewer.getElementAt(viewer.getTable().getSelectionIndex()));
+			  }
 		  }
 	} 
+	/**
+	 *Updates the step list if an event indicates that a new study was created
+	 */
 	@Inject
 	void eventReceived(@Optional @UIEventTopic("newStudy/*") String string) {
 		if(string!=null){
@@ -114,7 +124,9 @@ public class StepSelectionPart {
 			}
 		}
 	} 
-	//stepDone
+	/**
+	 *Updates the step list if an event indicates that a step is finished
+	 */
 	@Inject
 	void stepEventReceived(@Optional @UIEventTopic("stepDone/*") String string) {
 		if(string!=null){

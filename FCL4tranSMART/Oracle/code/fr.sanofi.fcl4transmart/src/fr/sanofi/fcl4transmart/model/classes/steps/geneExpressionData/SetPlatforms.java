@@ -15,7 +15,9 @@ import fr.sanofi.fcl4transmart.model.classes.workUI.geneExpression.SetPlatformsU
 import fr.sanofi.fcl4transmart.model.interfaces.DataTypeItf;
 import fr.sanofi.fcl4transmart.model.interfaces.StepItf;
 import fr.sanofi.fcl4transmart.model.interfaces.WorkItf;
-
+/**
+ *This class represents the step to set the platform attribute for the sample to subject mapping file
+ */	
 public class SetPlatforms implements StepItf{
 	private WorkItf workUI;
 	private DataTypeItf dataType;
@@ -30,11 +32,6 @@ public class SetPlatforms implements StepItf{
 	public String toString(){
 		return "Set platforms";
 	}
-	@Override
-	public boolean isRealized() {
-		// TODO Auto-generated method stub
-		return false;
-	}
 	public String getDescription(){
 		return "This step allows defining platforms for samples.\n"+
 				"The button 'Apply' allows setting all selected fields to the value in the field names 'Value'. All fields can be selected or deselected at the same time with buttons.\n"+
@@ -42,7 +39,7 @@ public class SetPlatforms implements StepItf{
 	}
 	public boolean isAvailable(){
 		try{
-			if(((GeneExpressionData)this.dataType).getRawFile()==null){
+			if(((GeneExpressionData)this.dataType).getRawFiles()==null || ((GeneExpressionData)this.dataType).getRawFiles().size()==0){
 				return false;
 			}
 			if(((GeneExpressionData)this.dataType).getStsmf()==null){

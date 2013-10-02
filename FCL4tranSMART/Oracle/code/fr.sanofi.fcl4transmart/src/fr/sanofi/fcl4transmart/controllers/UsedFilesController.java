@@ -12,12 +12,17 @@ package fr.sanofi.fcl4transmart.controllers;
 
 import fr.sanofi.fcl4transmart.model.interfaces.DataTypeItf;
 import fr.sanofi.fcl4transmart.ui.parts.UsedFilesPart;
-
+/**
+ *This class controls the files list
+ */	
 public class UsedFilesController {
 	private UsedFilesPart usedFilesPart;
 	public UsedFilesController(UsedFilesPart usedFilesPart){
 		this.usedFilesPart=usedFilesPart;
 	}
+	/**
+	 *Changes the files list to fit to the selected data type
+	 */	
 	public void selectionChanged(DataTypeItf selectedDataType){
 		  this.usedFilesPart.setList(selectedDataType.getFiles());
 	}

@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2012 Sanofi-Aventis Recherche et Développement.
+ * Copyright (c) 2012 Sanofi-Aventis Recherche et Dï¿½veloppement.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Public License v3.0
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/gpl.html
  * 
  * Contributors:
- *    Sanofi-Aventis Recherche et Développement - initial API and implementation
+ *    Sanofi-Aventis Recherche et Dï¿½veloppement - initial API and implementation
  ******************************************************************************/
 package fr.sanofi.fcl4transmart.model.classes.workUI.clinicalData;
 
@@ -33,13 +33,17 @@ import fr.sanofi.fcl4transmart.controllers.listeners.clinicalData.SelectOtherIde
 import fr.sanofi.fcl4transmart.model.classes.dataType.ClinicalData;
 import fr.sanofi.fcl4transmart.model.interfaces.DataTypeItf;
 import fr.sanofi.fcl4transmart.model.interfaces.WorkItf;
-
+/**
+ * This class allows creating the composite representing the interface for setting site identifiers and visit names
+ * Since version 1.2: this class also allows setting observation names
+ */
 public class SetOtherIdsUI implements WorkItf{
 	private DataTypeItf dataType;
 	private Vector<String> siteIds;
 	private Vector<String> visitNames;
 	private Vector<Combo> siteFields;
 	private Vector<Combo> visitFields;
+	private Vector<String> obsNames;
 	public SetOtherIdsUI(DataTypeItf dataType){
 		this.dataType=dataType;
 	}
@@ -86,6 +90,7 @@ public class SetOtherIdsUI implements WorkItf{
 			gridData.grabExcessHorizontalSpace = true;
 			fieldsPart.setLayoutData(gridData);
 			
+			//site
 			Label siteLabel=new Label(fieldsPart, SWT.NONE);
 			siteLabel.setText("Site identifiers: ");
 			gridData = new GridData();
@@ -112,6 +117,7 @@ public class SetOtherIdsUI implements WorkItf{
 			gridData.widthHint=100;
 			siteField.setLayoutData(gridData);
 			
+			//visit
 			Label visitLabel=new Label(fieldsPart, SWT.NONE);
 			visitLabel.setText("Visit names: ");
 			gridData = new GridData();
@@ -138,6 +144,7 @@ public class SetOtherIdsUI implements WorkItf{
 			gridData.grabExcessHorizontalSpace = true;
 			visitField.setLayoutData(gridData);
 			
+			//fill combos for a file
 			this.siteFields.elementAt(i).add("");
 	    	this.visitFields.elementAt(i).add("");
 			for(String s: FileHandler.getHeaders(files.elementAt(i))){
@@ -154,9 +161,13 @@ public class SetOtherIdsUI implements WorkItf{
 		scrolledComposite.setSize(scrolledComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		return composite;
 	}
+	/**
+	 * Initiates the vectors containing identifiers from an eventually existing column mapping file
+	 */
 	private void initiate(){
 		this.siteIds=new Vector<String>();
 		this.visitNames=new Vector<String>();
+		this.obsNames=new Vector<String>();
 		File cmf=((ClinicalData)this.dataType).getCMF();
 		if(cmf!=null){
 			for(File file: ((ClinicalData)this.dataType).getRawFiles()){
@@ -174,6 +185,13 @@ public class SetOtherIdsUI implements WorkItf{
 				else{
 					this.visitNames.add("");
 				}
+				columnNumber=FileHandler.getNumberForLabel(cmf,  "VISIT_NAME_2", file);
+				if(columnNumber!=-1){
+					this.obsNames.add(FileHandler.getColumnByNumber(file, columnNumber));
+				}
+				else{
+					this.obsNames.add("");
+				}
 			}
 		}
 		else{
@@ -189,11 +207,35 @@ public class SetOtherIdsUI implements WorkItf{
 	public Vector<String> getVisitNames(){
 		return this.visitNames;
 	}
+	public Vector<String> getObsNames(){
+		return this.obsNames;
+	}
 	public void displayMessage(String message){
 	    int style = SWT.ICON_INFORMATION | SWT.OK;
 	    MessageBox messageBox = new MessageBox(new Shell(), style);
 	    messageBox.setMessage(message);
 	    messageBox.open();
 	}
-
+	@Override
+	public boolean canCopy() {
+		return false;
+	}
+	@Override
+	public boolean canPaste() {
+		return false;
+	}
+	@Override
+	public Vector<Vector<String>> copy() {
+		return null;
+	}
+	@Override
+	public void paste(Vector<Vector<String>> data) {
+		// nothing to do
+		
+	}
+	@Override
+	public void mapFromClipboard(Vector<Vector<String>> data) {
+		// nothing to do
+		
+	}
 }

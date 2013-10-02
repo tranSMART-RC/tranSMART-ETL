@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2012 Sanofi-Aventis Recherche et Développement.
+ * Copyright (c) 2012 Sanofi-Aventis Recherche et Dï¿½veloppement.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Public License v3.0
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/gpl.html
  * 
  * Contributors:
- *    Sanofi-Aventis Recherche et Développement - initial API and implementation
+ *    Sanofi-Aventis Recherche et Dï¿½veloppement - initial API and implementation
  ******************************************************************************/
 package fr.sanofi.fcl4transmart.ui.parts;
 
@@ -37,13 +37,15 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.e4.core.di.annotations.Optional;
-import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.osgi.service.prefs.Preferences;
-import fr.sanofi.fcl4transmart.controllers.PreferencesHandler;
 import fr.sanofi.fcl4transmart.controllers.StudySelectionController;
+import fr.sanofi.fcl4transmart.handlers.PreferencesHandler;
 import fr.sanofi.fcl4transmart.model.interfaces.StudyItf;
-
+/**
+ *This class handles the study selection part
+ */
+@SuppressWarnings("restriction")
 public class StudySelectionPart {
 	private StudySelectionController studySelectionController;
 	private ListViewer viewer;
@@ -77,13 +79,13 @@ public class StudySelectionPart {
 			}
 
 			public void dispose() {
-				// TODO Auto-generated method stub
+				// nothing to do
 				
 			}
 
 			public void inputChanged(Viewer viewer, Object oldInput,
 					Object newInput) {
-				// TODO Auto-generated method stub
+				// nothing to do
 				
 			}
 		});	
@@ -98,7 +100,7 @@ public class StudySelectionPart {
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
-				// TODO Auto-generated method stub
+				// nothing to do
 				
 			}
 		});
@@ -116,6 +118,9 @@ public class StudySelectionPart {
 	    messageBox.setMessage(message);
 	    messageBox.open();
 	}
+	/**
+	 *Returns a string representing a workspace path, get from preferences if possible, or from a directory dialog if not. 
+	 */
 	public String askWorkspace(){
 		String path=PreferencesHandler.getWorkspace();
 		if(path.compareTo("")==0){
@@ -126,8 +131,16 @@ public class StudySelectionPart {
 		PreferencesHandler.setWorkspace(path);
 		return path;
 	}
+	/**
+	 *Returns a string representing a workspace path, get from a directory dialog
+	 */
 	public String askNewWorkspace(){
-		String old=StudySelectionController.getWorkspace().getAbsolutePath();
+		String old;
+		if(StudySelectionController.getWorkspace()!=null){
+			old=StudySelectionController.getWorkspace().getAbsolutePath();
+		}else{
+			old="";
+		}
 		DirectoryDialog dialog=new DirectoryDialog(new Shell());
 		dialog.setText("Choose a workspace directory");
 		dialog.setFilterPath(old);
@@ -135,15 +148,28 @@ public class StudySelectionPart {
 		PreferencesHandler.setWorkspace(path);
 		return path;
 	}
+	/**
+	 *Updates the study list if an event indicates that a study name changed
+	 */
 	@Inject
 	void eventReceived(@Optional @UIEventTopic("nameChanged/*") StudyItf study) {
 		if (study != null) {
 			  this.viewer.refresh();
 		  }
 	} 
+	/**
+	 *Send an event indicating that a study name changed
+	 */
 	public static void sendNameChanged(StudyItf study){
 		eventBroker.send("nameChanged/syncEvent",study);
 	}
+	/**
+	 *Handles event receiving for:
+	 *-a new study
+	 *-a new workspace
+	 *-a study to remove from workspace
+	 *-a study to remove from database
+	 */
 	@Inject
 	void eventReceived(@Optional @UIEventTopic("newStudy/*") String string) {
 		if(string!=null){
@@ -161,13 +187,28 @@ public class StudySelectionPart {
 			}
 		}
 	} 
+	@Inject
+	void addStudy(@Optional @UIEventTopic("addStudyFromTransmart/*") String string) {
+		if(string!=null){
+		  this.studySelectionController.addStudy(string);
+		}
+	} 
+	/**
+	 *Select the last study in the list. Used if a new study has been added 
+	 */
 	public void selectLast(){
 		this.viewer.getList().select(this.viewer.getList().getItemCount()-1);
 		this.updateStudies();
 	}
+	/**
+	 *Send an event indicating that the selected study changed 
+	 */
 	public void updateStudies(){
 		eventBroker.send("studyChanged/syncEvent",viewer.getElementAt(viewer.getList().getSelectionIndex()));
 	}
+	/**
+	 *Returns a string representing a study to remove from workspace, asked from a dialog 
+	 */
 	public String askRemoveFolder(){
 		this.studyId=null;
 		this.shell=new Shell(SWT.TITLE|SWT.SYSTEM_MODAL| SWT.CLOSE | SWT.MAX);
@@ -195,7 +236,6 @@ public class StudySelectionPart {
 		ok.addListener(SWT.Selection, new Listener(){
 			@Override
 			public void handleEvent(Event event) {
-				// TODO Auto-generated method stub
 				studyId=studyField.getText();
 				shell.close();
 			}
@@ -220,6 +260,9 @@ public class StudySelectionPart {
 	    }
 		return studyId;
 	}
+	/**
+	 *Returns a boolean indicating if the user confirm an action, indicated in a string passed as parameter 
+	 */
 	public boolean confirm(String message){
 		return MessageDialog.openConfirm(new Shell(), "Confirm", message);
 	}
@@ -229,6 +272,9 @@ public class StudySelectionPart {
 	    messageBox.setMessage(message);
 	    messageBox.open();
 	}
+	/**
+	 *Returns a string representing a study to delete from database, asked from a dialog 
+	 */
 	public String askRemoveDb(Vector<String> ids){
 		this.studyId=null;
 		this.shell=new Shell(SWT.TITLE|SWT.SYSTEM_MODAL| SWT.CLOSE | SWT.MAX);
@@ -256,7 +302,6 @@ public class StudySelectionPart {
 		ok.addListener(SWT.Selection, new Listener(){
 			@Override
 			public void handleEvent(Event event) {
-				// TODO Auto-generated method stub
 				studyId=studyField.getText();
 				shell.close();
 			}
@@ -281,6 +326,9 @@ public class StudySelectionPart {
 	    }
 		return studyId;
 	}
+	/**
+	 *Display the application license, and returns a boolean indicating if this license has been accepted or not 
+	 */
 	public boolean askLicence(){
 		Preferences preferences = ConfigurationScope.INSTANCE.getNode("fr.sanofi.fcl4transmart");
 		generalPref= preferences.node(".general");
@@ -309,7 +357,7 @@ public class StudySelectionPart {
 		text.setEditable(false);
 		text.setLayoutData(new GridData(GridData.FILL_BOTH));
 		text.setText("Framework of Curation and Loading for tranSMART - Version 1.1\n"+  
-					"Copyright (C) 2012 Sanofi-Aventis Recherche et Développement\n\n"+
+					"Copyright (C) 2012 Sanofi-Aventis Recherche et Dï¿½veloppement\n\n"+
 					"This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.\n\n"+
 					"This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.\n\n"+
 					"You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.\n\n"+

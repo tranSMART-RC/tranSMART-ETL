@@ -1,16 +1,18 @@
 /*******************************************************************************
- * Copyright (c) 2012 Sanofi-Aventis Recherche et Développement.
+ * Copyright (c) 2012 Sanofi-Aventis Recherche et Dï¿½veloppement.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Public License v3.0
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/gpl.html
  * 
  * Contributors:
- *    Sanofi-Aventis Recherche et Développement - initial API and implementation
+ *    Sanofi-Aventis Recherche et Dï¿½veloppement - initial API and implementation
  ******************************************************************************/
 package fr.sanofi.fcl4transmart.model.classes.workUI.geneExpression;
 
+import java.io.File;
 import java.util.HashMap;
+import java.util.Vector;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.layout.GridData;
@@ -21,18 +23,21 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import fr.sanofi.fcl4transmart.controllers.FileHandler;
-import fr.sanofi.fcl4transmart.controllers.GeneQCController;
-import fr.sanofi.fcl4transmart.controllers.PreferencesHandler;
 import fr.sanofi.fcl4transmart.controllers.RetrieveData;
+import fr.sanofi.fcl4transmart.controllers.listeners.geneExpression.GeneQCController;
+import fr.sanofi.fcl4transmart.handlers.PreferencesHandler;
 import fr.sanofi.fcl4transmart.model.classes.dataType.GeneExpressionData;
 import fr.sanofi.fcl4transmart.model.interfaces.DataTypeItf;
 import fr.sanofi.fcl4transmart.model.interfaces.WorkItf;
 import fr.sanofi.fcl4transmart.ui.parts.WorkPart;
-
+/**
+ *This class allows the creation of the composite for gene expression data quality control
+ */
 public class QualityControlUI implements WorkItf{
 	private DataTypeItf dataType;
 	private Composite body; 
@@ -44,6 +49,14 @@ public class QualityControlUI implements WorkItf{
 	private HashMap<String, Double> dbValues;
 	private GeneQCController controller;
 	private String probeId;
+	private Vector<String> c1;
+	private Vector<String> c2;
+	private Vector<String> c3;
+	private Vector<String> c4;
+	private boolean testDeapp;
+	private Shell shellComplete;
+	private boolean isSearchingComplete;
+	private boolean completeWorked;
 	public QualityControlUI(DataTypeItf dataType){
 		this.dataType=dataType;
 	}
@@ -64,6 +77,7 @@ public class QualityControlUI implements WorkItf{
 		new Thread(){
 			public void run() {
 				number=String.valueOf(RetrieveData.getGeneProbeNumber(dataType.getStudy().toString()));
+				testDeapp=RetrieveData.testDeappConnection();
 				isSearching=false;
 			}
         }.start();
@@ -100,6 +114,52 @@ public class QualityControlUI implements WorkItf{
 		gridData.horizontalAlignment = SWT.FILL;
 		gridData.grabExcessHorizontalSpace = true;
 		this.scrolledComposite.setLayoutData(gridData);
+		
+		//button to launch complete comparison
+		Button complete=new Button(scrolledComposite, SWT.PUSH);
+		complete.setText("Launch a comparison");
+		complete.addListener(SWT.Selection, new Listener(){
+			@Override
+			public void handleEvent(Event event) {
+				if(testDeapp){
+					shellComplete=new Shell();
+					shellComplete.setSize(50, 100);
+					GridLayout gridLayout=new GridLayout();
+					gridLayout.numColumns=1;
+					shellComplete.setLayout(gridLayout);
+					ProgressBar pb = new ProgressBar(shellComplete, SWT.HORIZONTAL | SWT.INDETERMINATE);
+					pb.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+					Label searching=new Label(shellComplete, SWT.NONE);
+					searching.setText("Searching...");
+					shellComplete.open();
+					isSearchingComplete=false;
+					new Thread(){
+						public void run() {
+							completeWorked=(new GeneQCController(dataType).writeLog());
+							isSearchingComplete=true;
+						}
+			        }.start();
+			        Display display=WorkPart.display();
+			        while(!isSearchingComplete){
+			        	if (!display.readAndDispatch()) {
+			                display.sleep();
+			              }	
+			        }
+			        shellComplete.close();
+			        if(completeWorked){
+			        	displayMessage("Comparison is over. See file QClog.txt for results");
+			        }else{
+			        	displayMessage("Comparison Failed. Please check that database connection works and that workspace is accessible.");
+			        }
+					WorkPart.updateSteps();
+					WorkPart.updateFiles();
+				}else{
+					displayMessage("Connection to database is not possible");
+				}
+			}
+		});
+
 		
 		Label probeNumber=new Label(this.scrolledComposite, SWT.NONE);
 		probeNumber.setText("Probe number: "+this.number);
@@ -170,13 +230,21 @@ public class QualityControlUI implements WorkItf{
 	}
 	public Composite createBody(String probe){
 		this.probeId=probe;
+		this.c1=new Vector<String>();
+		this.c2=new Vector<String>();
+		this.c3=new Vector<String>();
+		this.c4=new Vector<String>();
 		Composite body=new Composite(this.scrolledComposite, SWT.NONE);
 		GridLayout gd=new GridLayout();
 		gd.numColumns=4;
 		gd.horizontalSpacing=10;
 		gd.verticalSpacing=5;
 		body.setLayout(gd);
-		if(!FileHandler.getProbes(((GeneExpressionData)this.dataType).getRawFile()).contains(probeId)){
+		Vector<String> probes=new Vector<String>();
+		for(File rawFile: ((GeneExpressionData)this.dataType).getRawFiles()){
+			probes.addAll(FileHandler.getProbes(rawFile));
+		}
+		if(!probes.contains(probeId)){
 			Label label=new Label(body, SWT.NONE);
 			label.setText("This probe identifier does not exist");
 			return body;
@@ -214,6 +282,7 @@ public class QualityControlUI implements WorkItf{
 		
 		Label column1=new Label(body, SWT.NONE);
 		column1.setText("Sample");
+		this.c1.add("Sample");
 		GridData gridData = new GridData();
 		gridData.horizontalAlignment = SWT.FILL;
 		gridData.grabExcessHorizontalSpace = true;
@@ -221,6 +290,7 @@ public class QualityControlUI implements WorkItf{
 		
 		Label column2=new Label(body, SWT.NONE);
 		column2.setText("Raw data");
+		this.c2.add("Raw data");
 		gridData = new GridData();
 		gridData.horizontalAlignment = SWT.FILL;
 		gridData.grabExcessHorizontalSpace = true;
@@ -228,6 +298,7 @@ public class QualityControlUI implements WorkItf{
 		
 		Label column3=new Label(body, SWT.NONE);
 		column3.setText("Database values");
+		this.c3.add("Database values");
 		gridData = new GridData();
 		gridData.horizontalAlignment = SWT.FILL;
 		gridData.grabExcessHorizontalSpace = true;
@@ -235,6 +306,7 @@ public class QualityControlUI implements WorkItf{
 		
 		Label column4=new Label(body, SWT.NONE);
 		column4.setText("Equals");
+		this.c4.add("Equals");
 		gridData = new GridData();
 		gridData.horizontalAlignment = SWT.FILL;
 		gridData.grabExcessHorizontalSpace = true;
@@ -243,6 +315,7 @@ public class QualityControlUI implements WorkItf{
 		for(String key: fileValues.keySet()){
 			Label label=new Label(body, SWT.NONE);
 			label.setText(key);
+			this.c1.add(key);
 			gridData = new GridData();
 			gridData.horizontalAlignment = SWT.FILL;
 			gridData.grabExcessHorizontalSpace = true;
@@ -250,6 +323,7 @@ public class QualityControlUI implements WorkItf{
 			
 			Label rawLabel=new Label(body, SWT.NONE);
 			rawLabel.setText(String.valueOf(fileValues.get(key)));
+			this.c2.add(String.valueOf(fileValues.get(key)));
 			gridData = new GridData();
 			gridData.horizontalAlignment = SWT.FILL;
 			gridData.grabExcessHorizontalSpace = true;
@@ -258,9 +332,11 @@ public class QualityControlUI implements WorkItf{
 			Label dbLabel=new Label(body, SWT.NONE);
 			if(dbValues.containsKey(key)){
 				dbLabel.setText(String.valueOf(dbValues.get(key)));
+				this.c3.add(String.valueOf(dbValues.get(key)));
 			}
 			else{
 				dbLabel.setText("NO VALUE");
+				this.c3.add("NO VALUE");
 			}
 			gridData = new GridData();
 			gridData.horizontalAlignment = SWT.FILL;
@@ -271,13 +347,16 @@ public class QualityControlUI implements WorkItf{
 			if(dbValues.containsKey(key) && fileValues.containsKey(key)){
 				if((dbValues.get(key)-fileValues.get(key))<=0.001 && (dbValues.get(key)-fileValues.get(key))>=-0.001){
 					eqLabel.setText("OK");
+					this.c4.add("OK");
 				}
 				else{
 					eqLabel.setText("FAIL");
+					this.c4.add("FAIL");
 				}
 			}
 			else{
 				eqLabel.setText("FAIL");
+				this.c4.add("FAIL");
 			}
 			gridData = new GridData();
 			gridData.horizontalAlignment = SWT.FILL;
@@ -285,5 +364,40 @@ public class QualityControlUI implements WorkItf{
 			eqLabel.setLayoutData(gridData);
 		}
 		return body;
+	}
+	@Override
+	public boolean canCopy() {
+		if(this.probeId==null || this.probeId.compareTo("")==0){
+			return false;
+		}
+		return true;
+	}
+	@Override
+	public boolean canPaste() {
+		return false;
+	}
+	@Override
+	public Vector<Vector<String>> copy() {
+		Vector<Vector<String>> data=new Vector<Vector<String>>();
+		data.add(c1);
+		data.add(c2);
+		data.add(c3);
+		data.add(c4);
+		return data;
+	}
+	@Override
+	public void paste(Vector<Vector<String>> data) {
+		// nothing to do
+		
+	}
+	@Override
+	public void mapFromClipboard(Vector<Vector<String>> data) {
+		// nothing to do	
+	}
+	public void displayMessage(String message){
+	    int style = SWT.ICON_INFORMATION | SWT.OK;
+	    MessageBox messageBox = new MessageBox(new Shell(), style);
+	    messageBox.setMessage(message);
+	    messageBox.open();
 	}
 }

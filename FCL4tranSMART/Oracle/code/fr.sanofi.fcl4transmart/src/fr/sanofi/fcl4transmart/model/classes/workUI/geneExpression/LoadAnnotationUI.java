@@ -1,14 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2012 Sanofi-Aventis Recherche et Développement.
+ * Copyright (c) 2012 Sanofi-Aventis Recherche et Dï¿½veloppement.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Public License v3.0
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/gpl.html
  * 
  * Contributors:
- *    Sanofi-Aventis Recherche et Développement - initial API and implementation
+ *    Sanofi-Aventis Recherche et Dï¿½veloppement - initial API and implementation
  ******************************************************************************/
 package fr.sanofi.fcl4transmart.model.classes.workUI.geneExpression;
+
+import java.util.Vector;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -25,15 +27,16 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import fr.sanofi.fcl4transmart.controllers.PreferencesHandler;
 import fr.sanofi.fcl4transmart.controllers.RetrieveData;
 import fr.sanofi.fcl4transmart.controllers.listeners.geneExpression.CheckAnnotationListener;
 import fr.sanofi.fcl4transmart.controllers.listeners.geneExpression.LoadAnnotationListener;
+import fr.sanofi.fcl4transmart.handlers.PreferencesHandler;
 import fr.sanofi.fcl4transmart.model.interfaces.DataTypeItf;
-import fr.sanofi.fcl4transmart.model.interfaces.StudyItf;
 import fr.sanofi.fcl4transmart.model.interfaces.WorkItf;
 import fr.sanofi.fcl4transmart.ui.parts.WorkPart;
-
+/**
+ *This class allows the creation of the composite to load platform anottation data
+ */
 public class LoadAnnotationUI implements WorkItf{
 	private Composite scrolledComposite;
 	private Composite resultsPart;
@@ -49,8 +52,16 @@ public class LoadAnnotationUI implements WorkItf{
 	private Display display;
 	private String message;
 	private DataTypeItf dataType;
+	private Button searchPath;
+	private Button loadButton;
+	private Button loadAgain;
+	private boolean etlServer;
+	private Button etlButton;
+	private boolean sqlldr;
 	public LoadAnnotationUI(DataTypeItf dataType){
 		this.dataType=dataType;
+		this.etlServer=false;
+		this.sqlldr=false;
 	}
 	@Override
 	public Composite createUI(Composite parent){
@@ -121,11 +132,11 @@ public class LoadAnnotationUI implements WorkItf{
 		gd.horizontalSpacing=0;
 		gd.verticalSpacing=0;
 		loaded.setLayout(gd);
-		Label label=new Label(loaded, SWT.NONE);
-		label.setText("This platform annotation has already been loaded");
-		this.replaceResultsPart(loaded);
+		
+		this.addLoadPart(false);
 	}
-	public void addLoadPart(){
+	@SuppressWarnings("unused")
+	public void addLoadPart(boolean editable){
 		Composite loadPart=new Composite(this.scrolledComposite, SWT.NONE);
 		GridLayout gd=new GridLayout();
 		gd.numColumns=1;
@@ -133,8 +144,28 @@ public class LoadAnnotationUI implements WorkItf{
 		gd.verticalSpacing=5;
 		loadPart.setLayout(gd);
 		
-		Label warn=new Label(loadPart, SWT.NONE);
-		warn.setText("This platform annotation has not been loaded yet.\nTo load it now, please fill the following form:");
+		if(editable){
+			Label warn=new Label(loadPart, SWT.NONE);
+			warn.setText("This platform annotation has not been loaded yet.\nTo load it now, please fill the following form:");
+		}else{
+			Label warn=new Label(loadPart, SWT.NONE);
+			warn.setText("This platform annotation has already been loaded.");
+			this.loadAgain=new Button(loadPart, SWT.CHECK);
+			loadAgain.setText("Load this platform again");
+			loadAgain.addListener(SWT.Selection, new Listener(){
+				@Override
+				public void handleEvent(Event event) {
+					boolean bool=loadAgain.getSelection();
+					pathField.setEditable(bool);
+					searchPath.setEnabled(bool);
+					annotationTitleField.setEditable(bool);
+					annotationDateField.setEditable(bool);
+					annotationReleaseField.setEditable(bool);
+					loadButton.setEnabled(bool);
+					etlButton.setEnabled(bool);
+				}
+			});
+		}
 		
 		Composite load=new Composite(loadPart, SWT.NONE);
 		gd=new GridLayout();
@@ -147,15 +178,16 @@ public class LoadAnnotationUI implements WorkItf{
 		Label pathLabel=new Label(load, SWT.NONE);
 		pathLabel.setText("Annotation file: ");
 		this.pathField=new Text(load, SWT.BORDER);
+		this.pathField.setEditable(editable);
 		GridData gridData=new GridData();
 		gridData.widthHint=100;
 		this.pathField.setLayoutData(gridData);
-		Button searchPath=new Button(load, SWT.PUSH);
+		this.searchPath=new Button(load, SWT.PUSH);
 		searchPath.setText("Browse");
+		searchPath.setEnabled(editable);
 		Listener listener=new Listener(){
 			@Override
 			public void handleEvent(Event event) {
-				// TODO Auto-generated method stub
 				FileDialog dialog=new FileDialog(new Shell());
 				String dialogResult=dialog.open();
 				if(dialogResult!=null){
@@ -168,6 +200,7 @@ public class LoadAnnotationUI implements WorkItf{
 		Label titleLabel=new Label(load, SWT.NONE);
 		titleLabel.setText("Title: ");
 		this.annotationTitleField=new Text(load, SWT.BORDER);
+		this.annotationTitleField.setEditable(editable);
 		gridData=new GridData();
 		gridData.widthHint=100;
 		this.annotationTitleField.setLayoutData(gridData);
@@ -176,6 +209,7 @@ public class LoadAnnotationUI implements WorkItf{
 		Label dateLabel=new Label(load, SWT.NONE);
 		dateLabel.setText("Date: ");
 		this.annotationDateField=new Text(load, SWT.BORDER);
+		this.annotationDateField.setEditable(editable);
 		gridData=new GridData();
 		gridData.widthHint=100;
 		this.annotationDateField.setLayoutData(gridData);
@@ -184,20 +218,38 @@ public class LoadAnnotationUI implements WorkItf{
 		Label releaseLabel=new Label(load, SWT.NONE);
 		releaseLabel.setText("Release: ");
 		this.annotationReleaseField=new Text(load, SWT.BORDER);
+		this.annotationReleaseField.setEditable(editable);
 		gridData=new GridData();
 		gridData.widthHint=100;
 		this.annotationReleaseField.setLayoutData(gridData);
 		Label lab3=new Label(load, SWT.NONE);
 		
-		Button loadButton=new Button(load, SWT.PUSH);
+		etlButton=new Button(load, SWT.CHECK);
+		etlButton.setEnabled(false);
+		etlButton.setText("Use ETL server");
+		etlButton.addListener(SWT.Selection, new Listener(){
+
+			@Override
+			public void handleEvent(Event event) {
+				etlServer=etlButton.getSelection();
+				if(!etlButton.getSelection()){
+					sqlldr=false;
+				}
+			}
+		});
+		Label lab4=new Label(load, SWT.NONE);
+		Label lab5=new Label(load, SWT.NONE);
+		
+		this.loadButton=new Button(load, SWT.PUSH);
 		loadButton.setText("Load");
+		loadButton.setEnabled(editable);
 		if(RetrieveData.testTm_czConnection() && RetrieveData.testTm_lzConnection() && RetrieveData.testDeappConnection()){
 			loadButton.addListener(SWT.Selection, new LoadAnnotationListener(this, this.dataType));
 		}
 		else{
 			loadButton.setEnabled(false);
 		}
-		this.replaceResultsPart(load);
+		this.replaceResultsPart(loadPart);
 	}
 	public void replaceResultsPart(Composite resultsPart){
 		this.resultsPart.dispose();
@@ -293,5 +345,33 @@ public class LoadAnnotationUI implements WorkItf{
 	}
 	public void setMessage(String message){
 		this.message=message;
+	}
+	@Override
+	public boolean canCopy() {
+		return false;
+	}
+	@Override
+	public boolean canPaste() {
+		return false;
+	}
+	@Override
+	public Vector<Vector<String>> copy() {
+		return null;
+	}
+	@Override
+	public void paste(Vector<Vector<String>> data) {
+		// nothing to do
+		
+	}
+	@Override
+	public void mapFromClipboard(Vector<Vector<String>> data) {
+		// nothing to do
+		
+	}
+	public boolean getEtlServer(){
+		return this.etlServer;
+	}
+	public boolean getSqlldr(){
+		return this.sqlldr;
 	}
 }

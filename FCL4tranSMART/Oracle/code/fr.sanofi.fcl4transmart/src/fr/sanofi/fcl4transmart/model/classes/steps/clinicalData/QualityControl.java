@@ -15,7 +15,9 @@ import fr.sanofi.fcl4transmart.model.classes.workUI.clinicalData.QualityControlU
 import fr.sanofi.fcl4transmart.model.interfaces.DataTypeItf;
 import fr.sanofi.fcl4transmart.model.interfaces.StepItf;
 import fr.sanofi.fcl4transmart.model.interfaces.WorkItf;
-
+/**
+ *This class represents the quality control for clinical data
+ */	
 public class QualityControl implements StepItf{
 	private WorkItf workUI;
 	private DataTypeItf dataType;
@@ -30,14 +32,10 @@ public class QualityControl implements StepItf{
 	public String toString(){
 		return "Quality control";
 	}
-	@Override
-	public boolean isRealized() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+
 	public String getDescription(){
-		return "This step allows controling clinical data loading quality.\n"+
-				"Values for each property are get in the raw files and in the database, and displayed. It is also indicated if theses values are the same in the two cases.\n"+
+		return "This step allows controlling clinical data loading quality.\n"+
+				"Values for each property are got in the raw files and in the database, and displayed. It is also indicated if theses values are the same in the two cases.\n"+
 				"A database connection is needed for this step.";
 	}
 	public boolean isAvailable(){

@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2012 Sanofi-Aventis Recherche et Développement.
+ * Copyright (c) 2012 Sanofi-Aventis Recherche et Dï¿½veloppement.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Public License v3.0
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/gpl.html
  * 
  * Contributors:
- *    Sanofi-Aventis Recherche et Développement - initial API and implementation
+ *    Sanofi-Aventis Recherche et Dï¿½veloppement - initial API and implementation
  ******************************************************************************/
 package fr.sanofi.fcl4transmart.controllers;
 
@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 
+import fr.sanofi.fcl4transmart.handlers.PreferencesHandler;
 import fr.sanofi.fcl4transmart.model.classes.Study;
 import fr.sanofi.fcl4transmart.model.interfaces.StudyItf;
 import fr.sanofi.fcl4transmart.ui.parts.StudySelectionPart;
@@ -51,7 +52,7 @@ public class StudySelectionController {
 		this.workspace=new File(workspaceString);
 		if(!workspace.exists()){
 			this.studySelectionPart.warningMessage("The workspace does not exist.");
-			this.studySelectionPart.askNewWorkspace();
+			this.workspace=new File(this.studySelectionPart.askNewWorkspace());
 		}
 		staticWorkspace=this.workspace;
 		this.readDirectory();
@@ -60,6 +61,9 @@ public class StudySelectionController {
 	public Vector<StudyItf> getStudies(){
 		return this.studies;
 	}
+	/**
+	 *Reads the workspace to create studies objects
+	 */	
 	public void readDirectory(){
 		File[] filesInWorkspace=workspace.listFiles();
 		for(int i=0; i<filesInWorkspace.length; i++){
@@ -86,6 +90,9 @@ public class StudySelectionController {
 			this.studySelectionPart.warningMessage(message);
 		}
 	}
+	/**
+	 *Creates a new study
+	 */	
 	public void studyAdded(){
 		File path=new File(this.workspace.getAbsolutePath()+File.separator+"New_study");
 		if(path.exists()){
@@ -94,12 +101,34 @@ public class StudySelectionController {
 		}
 		path.mkdir();
 		(new File(path.getAbsoluteFile()+File.separator+"clinical")).mkdir();
-		(new File(path.getAbsoluteFile()+File.separator+"description")).mkdir();
+		//(new File(path.getAbsoluteFile()+File.separator+"description")).mkdir();
 		(new File(path.getAbsoluteFile()+File.separator+"gene")).mkdir();
 		this.studies.add(new Study("New_study", path));
 		this.studySelectionPart.setList(studies);
 		this.studySelectionPart.selectLast();
 	}
+	
+	/**
+	 *Creates a new study with accession number
+	 */	
+	public void addStudy(String accession){
+		File path=new File(this.workspace.getAbsolutePath()+File.separator+accession);
+		if(path.exists()){
+			this.studySelectionPart.warningMessage("This study is already present in your workspace");
+			return;
+		}
+		path.mkdir();
+		(new File(path.getAbsoluteFile()+File.separator+"clinical")).mkdir();
+		(new File(path.getAbsoluteFile()+File.separator+"gene")).mkdir();
+		(new File(path.getAbsoluteFile()+File.separator+"analysis")).mkdir();
+		(new File(path.getAbsoluteFile()+File.separator+"snp")).mkdir();
+		this.studies.add(new Study(accession, path));
+		this.studySelectionPart.setList(studies);
+		this.studySelectionPart.selectLast();
+	}
+	/**
+	 *Checks a new workspace availability and calls the readDirectory(ï¿½ method
+	 */	
 	public void workspaceChanged(){
 		this.studies=new Vector<StudyItf>();
 		String workspaceString=this.studySelectionPart.askNewWorkspace();
@@ -107,14 +136,19 @@ public class StudySelectionController {
 			return;
 		}
 		this.workspace=new File(workspaceString);
-		if(!workspace.exists()){
+		while(!workspace.exists()){
 			this.studySelectionPart.warningMessage("The workspace does not exist.");
-			this.studySelectionPart.askNewWorkspace();
+			String path=this.studySelectionPart.askNewWorkspace();
+			if(path==null) return;
+			this.workspace=new File(path);
 		}
 		staticWorkspace=this.workspace;
 		this.readDirectory();
 		this.studySelectionPart.setList(studies);
 	}
+	/**
+	 *Removes a study from the database after asking the identifier
+	 */	
 	public void removeStudyDatabase(){
 		//check database connection
   		if(RetrieveData.testMetadataConnection() && RetrieveData.testDemodataConnection() && RetrieveData.testDemodataConnection() && RetrieveData.testBiomartConnection()){
@@ -140,6 +174,9 @@ public class StudySelectionController {
   			this.studySelectionPart.displayMessage("No database connection");
   		}
 	}
+	/**
+	 *Removes a study folder in the workspace after asking the identifier
+	 */	
 	public void removeStudyFile(){
 		//ask for a study id
 		String studyId=this.studySelectionPart.askRemoveFolder();
@@ -169,7 +206,10 @@ public class StudySelectionController {
 			this.studySelectionPart.displayMessage("Error while deleting the study");
 		}
 	}
-	  public boolean deleteDir(File dir) {
+	/**
+	 *Removes a given study folder
+	 */	 
+	public boolean deleteDir(File dir) {
 	        if (dir.isDirectory()) {
 	            String[] children = dir.list();
 	            for (int i=0; i<children.length; i++) {
@@ -181,7 +221,10 @@ public class StudySelectionController {
 	        }
 	        return dir.delete();
 	    } 
-	  	public boolean deleteDbStudy(String studyId){
+	/**
+	 *Removes a given study in database
+	 */	  	
+	public boolean deleteDbStudy(String studyId){
 	  		this.studyIdentifier=studyId;
 			Shell shell=new Shell();
 			shell.setSize(50, 100);
@@ -224,11 +267,11 @@ public class StudySelectionController {
 					rs=stmt.executeQuery("delete from i2b2_tags where tag='"+studyIdentifier.toUpperCase()+"'");
 					rs=stmt.executeQuery("delete from i2b2 where sourcesystem_cd='"+studyIdentifier.toUpperCase()+"'");
 					con.close();
+					
 			  		isStudyDeleted=true;
 				}catch(SQLException e){
 					isStudyDeleted=false;
 				} catch (ClassNotFoundException e) {
-					// TODO Auto-generated catch block
 					isStudyDeleted=false;
 				}
 		  		isSearching=false;

@@ -9,7 +9,9 @@
  *    Sanofi-Aventis Recherche et Développement - initial API and implementation
  ******************************************************************************/
 package fr.sanofi.fcl4transmart.controllers;
-
+/**
+ *This class represents an ontology term
+ */
 public class OntologyTerm {
 	private String term;
 	private String code;

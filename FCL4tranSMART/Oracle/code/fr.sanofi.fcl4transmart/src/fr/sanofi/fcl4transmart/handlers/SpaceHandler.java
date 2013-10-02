@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2012 Sanofi-Aventis Recherche et Développement.
+ * Copyright (c) 2012 Sanofi-Aventis Recherche et Dï¿½veloppement.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Public License v3.0
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/gpl.html
  * 
  * Contributors:
- *    Sanofi-Aventis Recherche et Développement - initial API and implementation
+ *    Sanofi-Aventis Recherche et Dï¿½veloppement - initial API and implementation
  ******************************************************************************/
 package fr.sanofi.fcl4transmart.handlers;
 
@@ -19,7 +19,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.DecimalFormat;
 import java.util.Vector;
-
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -30,12 +29,12 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ProgressBar;
-
-import fr.sanofi.fcl4transmart.controllers.PreferencesHandler;
 import fr.sanofi.fcl4transmart.controllers.RetrieveData;
 import fr.sanofi.fcl4transmart.controllers.StudySelectionController;
-import fr.sanofi.fcl4transmart.ui.parts.WorkPart;
-
+/**
+ *This class controls the window to see database and workspace free disk space, called from menu
+ */	
+@SuppressWarnings("restriction")
 public class SpaceHandler {
 	private boolean isSearching;
 	private File workspace;
@@ -232,7 +231,6 @@ public class SpaceHandler {
 			}
 			
 		}
-		
 		shell.open();
 	}
 }

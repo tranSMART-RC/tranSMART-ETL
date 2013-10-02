@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2012 Sanofi-Aventis Recherche et Développement.
+ * Copyright (c) 2012 Sanofi-Aventis Recherche et Dï¿½veloppement.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Public License v3.0
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/gpl.html
  * 
  * Contributors:
- *    Sanofi-Aventis Recherche et Développement - initial API and implementation
+ *    Sanofi-Aventis Recherche et Dï¿½veloppement - initial API and implementation
  ******************************************************************************/
 package fr.sanofi.fcl4transmart.controllers;
 
@@ -20,7 +20,9 @@ import java.util.Vector;
 import fr.sanofi.fcl4transmart.model.classes.StudyTree;
 import fr.sanofi.fcl4transmart.model.classes.TreeNode;
 import fr.sanofi.fcl4transmart.model.interfaces.DataTypeItf;
-
+/**
+ *Controls the study top nodes
+ */	
 public class TopNodeController {
 	private TreeNode root;
 	private DataTypeItf dataType;
@@ -30,6 +32,9 @@ public class TopNodeController {
 		this.dataType=dataType;
 		this.tree=tree;
 	}
+	/**
+	 *Create a dataset explorer tree from database paths
+	 */	
 	public TreeNode buildTree(){
 		if(!(RetrieveData.testDemodataConnection() && RetrieveData.testMetadataConnection())){
 			this.root.setName("");
@@ -55,51 +60,12 @@ public class TopNodeController {
 				}
 			}
 		}
-		/*
-		//get all sub-folders
-		Vector<String> subFolders=RetrieveData.getSubFolders();
-		//create top folders
-		for(String topFolder: RetrieveData.getTopFolders()){
-			TreeNode topNode=new TreeNode(topFolder, this.root, false);
-			this.root.addChild(topNode);
-			for(String subFolder: subFolders){
-				if(subFolder.split("\\\\", -1)[1].compareTo(topFolder)==0){
-					this.addFolders(topNode, subFolder, 2);
-				}
-			}
-			//for each node, search if a study is a child
-			this.addStudies(topNode, "\\");
-			
-		}
-		if(!this.tree.hasStudy()){
-			String topNode=this.dataType.getStudy().getTopNode();
-			if(topNode!=null && topNode.compareTo("")!=0){
-				for(TreeNode topFolder: this.root.getChildren()){
-					if(topFolder.toString().compareTo(topNode.split("\\\\", -1)[1])==0){
-						this.addThisStudy(topFolder, topNode, 2);
-					}
-				}
-				if(!this.tree.hasStudy()){
-					TreeNode newTopFolder=new TreeNode(topNode.split("\\\\", -1)[1], this.root, false);
-					this.root.addChild(newTopFolder);
-					this.addThisStudy(newTopFolder, topNode, 2);
-				}
-			}
-		}*/
+		
 		return this.root;
 	}
-	/*public void addFolders(TreeNode node, String pathToAdd, int n){
-		if(pathToAdd.split("\\\\", -1).length<4) return;
-		String nodeName=pathToAdd.split("\\\\", -1)[n];
-		TreeNode child=node.getChild(nodeName);
-		if(child==null){
-			child=new TreeNode(nodeName, node, false);
-			node.addChild(child);
-		}
-		if(n<pathToAdd.split("\\\\", -1).length-2){
-			this.addFolders(child, pathToAdd, n+1);
-		}
-	}*/
+	/**
+	 *Creates a tree node (recursive method)
+	 */	
 	public void addNode(TreeNode node, String pathToAdd, int n){
 		if(pathToAdd.split("\\\\", -1).length<4) return;
 		String nodeName=pathToAdd.split("\\\\", -1)[n];
@@ -112,7 +78,6 @@ public class TopNodeController {
 						child.setIsStudyTree(true);
 						node.addChild(child);
 						tree.setHasStudy(true);
-						this.dataType.getStudy().setTopNode(pathToAdd);
 					}
 				}
 				else{
@@ -128,6 +93,9 @@ public class TopNodeController {
 			this.addNode(child, pathToAdd, n+1);
 		}
 	}
+	/**
+	 *Adds the study to the tree 
+	 */	
 	public void addThisStudy(TreeNode node, String path, int n){
 		if(path.split("\\\\", -1).length<4) return;
 		String nodeName=path.split("\\\\", -1)[n];
@@ -146,31 +114,10 @@ public class TopNodeController {
 			this.addThisStudy(child, path, n+1);
 		}
 	}
-	/*
-	public void addStudies(TreeNode node, String path){//for the root, put '\' as the path
-		path+=node.toString()+"\\";
-		for(TreeNode child: node.getChildren()){
-			addStudies(child, path);
-		}
-		Vector<String> studies=RetrieveData.getStudies(path);
-		for(String study: studies){
-			String name=study.split("\\\\", -1)[study.split("\\\\", -1).length-2];
-			TreeNode newNode;
-			if(RetrieveData.getIdFromPath(study).compareTo(this.dataType.getStudy().toString().toUpperCase())==0){
-				if(this.dataType.getStudy().getTopNode()==null || this.dataType.getStudy().getTopNode().compareTo("")==0){
-					newNode=new TreeNode(name, node, true);
-					newNode.setIsStudyTree(true);
-					tree.setHasStudy(true);
-					node.addChild(newNode);
-					this.dataType.getStudy().setTopNode(path+name+"\\");
-				}
-			}
-			else{
-				newNode=new TreeNode(name, node, true);
-				node.addChild(newNode);
-			}
-		}
-	}*/
+	
+	/**
+	 *Gets the study top node in the tree
+	 */	
 	public String getTopNode(TreeNode root){
 		for(TreeNode topFolder: root.getChildren()){
 			String path=this.getPath(topFolder, "\\");
@@ -180,7 +127,10 @@ public class TopNodeController {
 		}
 		return "";
 	}
-	public String getPath(TreeNode node, String path){
+	/**
+	 *Gets the study top node in the tree (recursive method)
+	 */	
+	private String getPath(TreeNode node, String path){
 		path+=node.toString()+"\\";
 		String topNode="";
 		for(TreeNode child: node.getChildren()){
@@ -188,9 +138,15 @@ public class TopNodeController {
 				return path+child.toString()+"\\";
 			}
 			topNode=this.getPath(child, path);
+			if(topNode.compareTo("")!=0){
+				return topNode;
+			}
 		}
-		return topNode;
+		return "";
 	}
+	/**
+	 *Writes the study top node in a file
+	 */	
 	public void writeTopNode(){
 		String topNode=this.getTopNode(this.root);
 		if(topNode!=null){
@@ -204,10 +160,13 @@ public class TopNodeController {
 			catch(Exception e){
 				e.printStackTrace();
 			}
-			this.dataType.getStudy().setTopNode(topNode);
 		}
 	}
+	/**
+	 *Reads the study top node from a file
+	 */	
 	public static String readTopNode(File file){
+
 		String line;
 		try{
 			BufferedReader br = new BufferedReader(new FileReader(file));

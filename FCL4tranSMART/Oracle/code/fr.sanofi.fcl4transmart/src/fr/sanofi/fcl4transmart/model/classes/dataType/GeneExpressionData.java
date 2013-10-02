@@ -30,15 +30,24 @@ import fr.sanofi.fcl4transmart.model.classes.steps.geneExpressionData.SetTissueT
 import fr.sanofi.fcl4transmart.model.interfaces.DataTypeItf;
 import fr.sanofi.fcl4transmart.model.interfaces.StepItf;
 import fr.sanofi.fcl4transmart.model.interfaces.StudyItf;
-
+import fr.sanofi.fcl4transmart.ui.parts.WorkPart;
+/**
+ *This class handles the gene expression data loading. It contains the paths to the folder representing gene expression data for a study, and paths to:
+ *-raw data file
+ *-subject to sample mapping file
+ *-Kettle log file for gene expression loading
+ *-Kettle log file for platform annotation loading
+ * The list of steps required for gene expression data loading are set in this class
+ */	
 public class GeneExpressionData implements DataTypeItf{
 	private Vector<StepItf> steps;
-	private File rawFile;
+	private Vector<File> rawFiles;
 	private File stsmf;//subject to sample mapping file
 	private File logFile;
 	private File annotationLogFile;
 	private StudyItf study; 
 	private File path;
+	private File QCLog;
 	public GeneExpressionData(StudyItf study){
 		this.study=study;
 		this.steps=new Vector<StepItf>();
@@ -68,7 +77,9 @@ public class GeneExpressionData implements DataTypeItf{
 	public void setFiles(File path){
 		this.path=path;
 		File[] children=this.path.listFiles();
+		this.rawFiles=new Vector<File>();
 		Pattern patternSTSMF=Pattern.compile(".*\\.subject_mapping");
+		Pattern patternRaw=Pattern.compile("raw\\..*");
 		for(int i=0; i<children.length;i++){
 			if(children[i].isFile()){
 				Matcher matcherSTSMF=patternSTSMF.matcher(children[i].getName());
@@ -78,19 +89,23 @@ public class GeneExpressionData implements DataTypeItf{
 					this.logFile=children[i];
 				}else if(children[i].getName().compareTo("annotation.kettle.log")==0){
 					this.annotationLogFile=children[i];
+				}else if(children[i].getName().compareTo("QClog.txt")==0){
+					this.QCLog=children[i];
 				}
 				else{
-					if(this.rawFile==null){
-						this.rawFile=children[i];
+					Matcher matcherRaw=patternRaw.matcher(children[i].getName());
+					if(!matcherRaw.matches()){
+						children[i].renameTo(new File(this.path+File.separator+"raw."+children[i].getName()));
 					}
+					this.rawFiles.add(children[i]);
 				}
 			}
 		}
 	}
 	public Vector<File> getFiles(){
 		Vector<File> v=new Vector<File>();
-		if(this.rawFile!=null){
-			v.add(this.rawFile);
+		if(this.rawFiles!=null){
+			v.addAll(this.rawFiles);
 		}
 		if(this.stsmf!=null){
 			v.add(this.stsmf);
@@ -101,6 +116,9 @@ public class GeneExpressionData implements DataTypeItf{
 		if(this.annotationLogFile!=null){
 			v.add(this.annotationLogFile);
 		}
+		if(this.QCLog!=null){
+			v.add(this.QCLog);
+		}
 		return v;
 	}	
 	public StudyItf getStudy(){
@@ -109,14 +127,21 @@ public class GeneExpressionData implements DataTypeItf{
 	public File getPath(){
 		return this.path;
 	}
-	public File getRawFile(){
-		return this.rawFile;
+	public Vector<File> getRawFiles(){
+		return this.rawFiles;
 	}
 	public File getStsmf(){
 		return this.stsmf;
 	}
-	public void setRawFile(File file){
-		this.rawFile=file;
+	public Vector<String> getRawFilesNames(){
+		Vector<String> rawFilesNames=new Vector<String>();
+		for(File f: this.rawFiles){
+			rawFilesNames.add(f.getName());
+		}
+		return rawFilesNames;
+	}
+	public void addRawFile(File rawFile){
+		this.rawFiles.add(rawFile);
 	}
 	public void setSTSMF(File file){
 		this.stsmf=file;
@@ -126,5 +151,9 @@ public class GeneExpressionData implements DataTypeItf{
 	}
 	public void setLogFile(File logFile){
 		this.logFile=logFile;
+	}
+	public void setQClog(File log){
+		this.QCLog=log;
+		WorkPart.filesChanged(this);
 	}
 }

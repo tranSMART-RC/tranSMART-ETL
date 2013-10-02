@@ -13,10 +13,11 @@ package fr.sanofi.fcl4transmart.controllers;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-
 import fr.sanofi.fcl4transmart.model.classes.TreeNode;
 import fr.sanofi.fcl4transmart.model.interfaces.DataTypeItf;
-
+/**
+ *Controls a study tree item for clinical data
+ */	
 public class StudyTreeController {
 	private TreeNode root;
 	private DataTypeItf dataType;
@@ -24,6 +25,9 @@ public class StudyTreeController {
 		this.root=root;
 		this.dataType=dataType;
 	}
+	/**
+	 *Creates the tree from a column mapping file
+	 */	
 	public TreeNode buildTree(File file){
 		try{
 			BufferedReader br = new BufferedReader(new FileReader(file));
@@ -35,10 +39,14 @@ public class StudyTreeController {
 				String name=s[0]+" - "+header;
 				if(s[3].compareTo("\\")==0){
 					String sourceName=rawFile.getName()+" - "+FileHandler.getColumnByNumber(rawFile, Integer.parseInt(s[4]));
-					this.buildNode(this.root, s[1], name, sourceName);
+					this.buildNode(this.root, s[1], name, sourceName, false);
 				}
-				else if(s[3].compareTo("OMIT")!=0 && s[3].compareTo("SUBJ_ID")!=0 && s[3].compareTo("VISIT_NAME")!=0 && s[3].compareTo("SITE_ID")!=0){
-					this.buildNode(this.root, s[1], name, "");
+				else if(s[4].compareTo("MIN")==0 || s[4].compareTo("MAX")==0 || s[4].compareTo("MEAN")==0){
+					name=s[4]+": "+name;
+					this.buildNode(this.root, s[1], name, "", true);
+				}
+				else if(s[3].compareTo("OMIT")!=0 && s[3].compareTo("SUBJ_ID")!=0 && s[3].compareTo("VISIT_NAME")!=0 && s[3].compareTo("VISIT_NAME_2")!=0 && s[3].compareTo("SITE_ID")!=0 && s[3].compareTo("UNITS")!=0&& s[3].compareTo("VISIT_DATE")!=0 && s[3].compareTo("ENROLL_DATE")!=0){
+					this.buildNode(this.root, s[1], name, "", false);
 				}
 			}
 			br.close();
@@ -48,7 +56,10 @@ public class StudyTreeController {
 		
 		return this.root;
 	}
-	public void buildNode(TreeNode node, String path, String label, String dataLabelSource){
+	/**
+	 *Creates a study node (recursive method)
+	 */	
+	private void buildNode(TreeNode node, String path, String label, String dataLabelSource, boolean isOperation){
 		String[] splitedPath=path.split("\\+", 2);
 		TreeNode child=node.getChild(splitedPath[0].replace('_', ' '));
 		if(child==null){
@@ -56,19 +67,22 @@ public class StudyTreeController {
 			node.addChild(child);
 		}
 		if(splitedPath.length>1){
-			this.buildNode(child, splitedPath[1], label, dataLabelSource);
+			this.buildNode(child, splitedPath[1], label, dataLabelSource, isOperation);
 		}
 		else{
 			if(dataLabelSource.compareTo("")==0){
 				if(child.getChild(label)==null){
-					child.addChild(new TreeNode(label, child, true));
+					TreeNode newNode=new TreeNode(label, child, true);
+					newNode.setIsOperation(isOperation);
+					child.addChild(newNode);
 				}
 			}
 			else{
-				if(child.getChild(dataLabelSource)!=null){
-					if(child.getChild(dataLabelSource).getChild(label)==null){
-						child.getChild(dataLabelSource).addChild(new TreeNode(label, child.getChild(dataLabelSource), true));
-					}
+				if(child.getChild(dataLabelSource)==null){
+					child.addChild(new TreeNode(dataLabelSource, child, true));
+				}
+				if(child.getChild(dataLabelSource).getChild(label)==null){
+					child.getChild(dataLabelSource).addChild(new TreeNode(label, child.getChild(dataLabelSource), true));
 				}
 			}
 		}

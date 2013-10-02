@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2012 Sanofi-Aventis Recherche et Développement.
+ * Copyright (c) 2012 Sanofi-Aventis Recherche et Dï¿½veloppement.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Public License v3.0
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/gpl.html
  * 
  * Contributors:
- *    Sanofi-Aventis Recherche et Développement - initial API and implementation
+ *    Sanofi-Aventis Recherche et Dï¿½veloppement - initial API and implementation
  ******************************************************************************/
 package fr.sanofi.fcl4transmart.controllers.listeners.clinicalData;
 
@@ -26,7 +26,9 @@ import fr.sanofi.fcl4transmart.model.classes.workUI.clinicalData.SetTermsUI;
 import fr.sanofi.fcl4transmart.model.interfaces.DataTypeItf;
 import fr.sanofi.fcl4transmart.ui.parts.UsedFilesPart;
 import fr.sanofi.fcl4transmart.ui.parts.WorkPart;
-
+/**
+ *This class controls the terms setting step
+ */	
 public class SetTermsListener implements Listener{
 	private SetTermsUI setTermsUI;
 	private DataTypeItf dataType;
@@ -36,13 +38,12 @@ public class SetTermsListener implements Listener{
 	}
 	@Override
 	public void handleEvent(Event event) {
-		// TODO Auto-generated method stub
 		File file=new File(this.dataType.getPath().toString()+File.separator+this.dataType.getStudy().toString()+".words.tmp");
 		try{			  
 			FileWriter fw = new FileWriter(file);
 			BufferedWriter out = new BufferedWriter(fw);
 			out.write("Filename\tColumn Number\tOriginal Data Value\tNew Data Value\n");
-			//  
+
 			HashMap<String, Vector<String>> oldValues=this.setTermsUI.getOldValues();
 			HashMap<String, Vector<String>> newValues=this.setTermsUI.getNewValues();
 			

@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2012 Sanofi-Aventis Recherche et Développement.
+ * Copyright (c) 2012 Sanofi-Aventis Recherche et Dï¿½veloppement.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Public License v3.0
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/gpl.html
  * 
  * Contributors:
- *    Sanofi-Aventis Recherche et Développement - initial API and implementation
+ *    Sanofi-Aventis Recherche et Dï¿½veloppement - initial API and implementation
  ******************************************************************************/
 package fr.sanofi.fcl4transmart.ui.parts;
 
@@ -32,7 +32,10 @@ import fr.sanofi.fcl4transmart.model.interfaces.StudyItf;
 
 import org.eclipse.e4.ui.di.UIEventTopic;
 
-
+/**
+ *This class handles the data type selection part
+ */
+@SuppressWarnings("restriction")
 public class DataTypeSelectionPart {
 	private ListViewer viewer;
 	private DataTypeSelectionController dataTypeSelectionController;
@@ -57,24 +60,18 @@ public class DataTypeSelectionPart {
 				return v.toArray();
 			}
 			public void dispose() {
-				// TODO Auto-generated method stub
+				// nothing to do
 				
 			}
 
 			public void inputChanged(Viewer viewer, Object oldInput,
 					Object newInput) {
-				// TODO Auto-generated method stub
+				// nothing to do
 				
 			}
 		});	
 		viewer.setInput(new Vector<DataTypeItf>());
-		/*viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
-				selectionService.setSelection(selection.getFirstElement());
-			}
-		});*/
+		
 		this.viewer.getList().addSelectionListener(new SelectionListener(){
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -84,7 +81,7 @@ public class DataTypeSelectionPart {
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
-				// TODO Auto-generated method stub
+				// nothing to do
 				
 			}
 		});
@@ -94,15 +91,20 @@ public class DataTypeSelectionPart {
 		 viewer.setInput(dataTypes);
 		 parent.layout(true, true);
 	}
+	/**
+	 *Update data type if an event indicates that the selected study changed
+	 */
 	@Inject
 	void eventReceived(@Optional @UIEventTopic("studyChanged/*") StudyItf selectedStudy) {  
 		if (selectedStudy != null) {
 			  this.dataTypeSelectionController.selectionChanged(selectedStudy);
 			  this.viewer.getList().select(0);
 			  eventBroker.send("dataTypeChanged/syncEvent",viewer.getElementAt(viewer.getList().getSelectionIndex()));
-			 
 		  }
 	} 
+	/**
+	*Update data types if an event indicates that a new study has been addes
+	*/
 	@Inject
 	void eventReceived(@Optional @UIEventTopic("newStudy/*") String string) {
 		if(string!=null){
@@ -111,5 +113,4 @@ public class DataTypeSelectionPart {
 			}
 		}
 	} 
-
 }

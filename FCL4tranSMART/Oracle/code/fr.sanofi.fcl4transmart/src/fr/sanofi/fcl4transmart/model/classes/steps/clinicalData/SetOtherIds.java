@@ -15,7 +15,9 @@ import fr.sanofi.fcl4transmart.model.classes.workUI.clinicalData.SetOtherIdsUI;
 import fr.sanofi.fcl4transmart.model.interfaces.DataTypeItf;
 import fr.sanofi.fcl4transmart.model.interfaces.StepItf;
 import fr.sanofi.fcl4transmart.model.interfaces.WorkItf;
-
+/**
+ *This class represents the step to set the visit names, sub-visit names and site identifiers columns for clinical data
+ */	
 public class SetOtherIds implements StepItf{
 	private WorkItf workUI;
 	private DataTypeItf dataType;
@@ -30,13 +32,9 @@ public class SetOtherIds implements StepItf{
 	public String toString(){
 		return "Set other identifiers (optional)";
 	}
-	@Override
-	public boolean isRealized() {
-		// TODO Auto-generated method stub
-		return false;
-	}
 	public String getDescription(){
-		return "This optional step allows chosing the column corresponding to the columns corresponding to site and visit identifiers."+
+		return "This optional step allows choosing the column corresponding to site, visit and sub-visit identifiers.\n"+
+				"A sub-visit name column can not be set if visit name column is not.\n"+
 				"If a column mapping file is already existing, the identifiers are retrieved in this file and given as parameters by default";
 	}
 	public boolean isAvailable(){

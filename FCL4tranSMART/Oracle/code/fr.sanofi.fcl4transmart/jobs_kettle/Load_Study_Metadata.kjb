@@ -22,25 +22,20 @@
             <description/>
         </parameter>
         <parameter>
-            <name>METADATA_MAP_FILENAME</name>
-            <default_value>x</default_value>
-            <description/>
-        </parameter>
-        <parameter>
             <name>SORT_DIR</name>
             <default_value>c:\</default_value>
             <description/>
         </parameter>
     </parameters>
   <connection>
-    <name>SQLLDR_LZ</name>
-    <server>${TM_LZ_DB_SERVER}</server>
+    <name>BIOMART</name>
+    <server>${BIOMART_DB_SERVER}</server>
     <type>ORACLE</type>
     <access>Native</access>
-    <database>${TM_LZ_DB_NAME}</database>
-    <port>${TM_LZ_DB_PORT}</port>
-    <username>${TM_LZ_DB_USER}</username>
-    <password>${TM_LZ_DB_PWD}</password>
+    <database>${BIOMART_DB_NAME}</database>
+    <port>${BIOMART_DB_PORT}</port>
+    <username>${BIOMART_DB_USER}</username>
+    <password>${BIOMART_DB_PWD}</password>
     <servername/>
     <data_tablespace/>
     <index_tablespace/>
@@ -48,21 +43,21 @@
       <attribute><code>FORCE_IDENTIFIERS_TO_LOWERCASE</code><attribute>N</attribute></attribute>
       <attribute><code>FORCE_IDENTIFIERS_TO_UPPERCASE</code><attribute>N</attribute></attribute>
       <attribute><code>IS_CLUSTERED</code><attribute>N</attribute></attribute>
-      <attribute><code>PORT_NUMBER</code><attribute>${TM_LZ_DB_PORT}</attribute></attribute>
+      <attribute><code>PORT_NUMBER</code><attribute>${BIOMART_DB_PORT}</attribute></attribute>
       <attribute><code>QUOTE_ALL_FIELDS</code><attribute>N</attribute></attribute>
       <attribute><code>SUPPORTS_BOOLEAN_DATA_TYPE</code><attribute>N</attribute></attribute>
       <attribute><code>USE_POOLING</code><attribute>N</attribute></attribute>
     </attributes>
   </connection>
   <connection>
-    <name>TM_BIOMART</name>
-    <server>${TM_BIOMART_DB_SERVER}</server>
+    <name>BIOMART_STAGE</name>
+    <server>${BIOMART_STAGE_DB_SERVER}</server>
     <type>ORACLE</type>
     <access>Native</access>
-    <database>${TM_BIOMART_DB_NAME}</database>
-    <port>${TM_BIOMART_DB_PORT}</port>
-    <username>${TM_BIOMART_DB_USER}</username>
-    <password>${TM_BIOMART_DB_PWD}</password>
+    <database>${BIOMART_STAGE_DB_NAME}</database>
+    <port>${BIOMART_STAGE_DB_PORT}</port>
+    <username>${BIOMART_STAGE_DB_USER}</username>
+    <password>${BIOMART_STAGE_DB_PWD}</password>
     <servername/>
     <data_tablespace/>
     <index_tablespace/>
@@ -70,7 +65,51 @@
       <attribute><code>FORCE_IDENTIFIERS_TO_LOWERCASE</code><attribute>N</attribute></attribute>
       <attribute><code>FORCE_IDENTIFIERS_TO_UPPERCASE</code><attribute>N</attribute></attribute>
       <attribute><code>IS_CLUSTERED</code><attribute>N</attribute></attribute>
-      <attribute><code>PORT_NUMBER</code><attribute>${TM_BIOMART_DB_PORT}</attribute></attribute>
+      <attribute><code>PORT_NUMBER</code><attribute>${BIOMART_STAGE_DB_PORT}</attribute></attribute>
+      <attribute><code>QUOTE_ALL_FIELDS</code><attribute>N</attribute></attribute>
+      <attribute><code>SUPPORTS_BOOLEAN_DATA_TYPE</code><attribute>N</attribute></attribute>
+      <attribute><code>USE_POOLING</code><attribute>N</attribute></attribute>
+    </attributes>
+  </connection>
+  <connection>
+    <name>DEAPP</name>
+    <server>${DEAPP_DB_SERVER}</server>
+    <type>ORACLE</type>
+    <access>Native</access>
+    <database>${DEAPP_DB_NAME}</database>
+    <port>${DEAPP_DB_PORT}</port>
+    <username>${DEAPP_DB_USER}</username>
+    <password>${DEAPP_DB_PWD}</password>
+    <servername/>
+    <data_tablespace/>
+    <index_tablespace/>
+    <attributes>
+      <attribute><code>FORCE_IDENTIFIERS_TO_LOWERCASE</code><attribute>N</attribute></attribute>
+      <attribute><code>FORCE_IDENTIFIERS_TO_UPPERCASE</code><attribute>N</attribute></attribute>
+      <attribute><code>IS_CLUSTERED</code><attribute>N</attribute></attribute>
+      <attribute><code>PORT_NUMBER</code><attribute>${DEAPP_DB_PORT}</attribute></attribute>
+      <attribute><code>QUOTE_ALL_FIELDS</code><attribute>N</attribute></attribute>
+      <attribute><code>SUPPORTS_BOOLEAN_DATA_TYPE</code><attribute>N</attribute></attribute>
+      <attribute><code>USE_POOLING</code><attribute>N</attribute></attribute>
+    </attributes>
+  </connection>
+  <connection>
+    <name>I2B2DEMODATA</name>
+    <server>${I2B2DEMODATA_DB_SERVER}</server>
+    <type>ORACLE</type>
+    <access>Native</access>
+    <database>${I2B2DEMODATA_DB_NAME}</database>
+    <port>${I2B2DEMODATA_DB_PORT}</port>
+    <username>${I2B2DEMODATA_DB_USER}</username>
+    <password>${I2B2DEMODATA_DB_PWD}</password>
+    <servername/>
+    <data_tablespace/>
+    <index_tablespace/>
+    <attributes>
+      <attribute><code>FORCE_IDENTIFIERS_TO_LOWERCASE</code><attribute>N</attribute></attribute>
+      <attribute><code>FORCE_IDENTIFIERS_TO_UPPERCASE</code><attribute>N</attribute></attribute>
+      <attribute><code>IS_CLUSTERED</code><attribute>N</attribute></attribute>
+      <attribute><code>PORT_NUMBER</code><attribute>${I2B2DEMODATA_DB_PORT}</attribute></attribute>
       <attribute><code>QUOTE_ALL_FIELDS</code><attribute>N</attribute></attribute>
       <attribute><code>SUPPORTS_BOOLEAN_DATA_TYPE</code><attribute>N</attribute></attribute>
       <attribute><code>USE_POOLING</code><attribute>N</attribute></attribute>
@@ -120,28 +159,6 @@
       <attribute><code>USE_POOLING</code><attribute>N</attribute></attribute>
     </attributes>
   </connection>
-  <connection>
-    <name>Transmart</name>
-    <server>${TRANSMART_DB_SERVER}</server>
-    <type>ORACLE</type>
-    <access>Native</access>
-    <database>${TRANSMART_DB_NAME}</database>
-    <port>${TRANSMART_DB_PORT}</port>
-    <username>${TRANSMART_DB_USER}</username>
-    <password>${TRANSMART_DB_PWD}</password>
-    <servername/>
-    <data_tablespace/>
-    <index_tablespace/>
-    <attributes>
-      <attribute><code>FORCE_IDENTIFIERS_TO_LOWERCASE</code><attribute>N</attribute></attribute>
-      <attribute><code>FORCE_IDENTIFIERS_TO_UPPERCASE</code><attribute>N</attribute></attribute>
-      <attribute><code>IS_CLUSTERED</code><attribute>N</attribute></attribute>
-      <attribute><code>PORT_NUMBER</code><attribute>${TRANSMART_DB_PORT}</attribute></attribute>
-      <attribute><code>QUOTE_ALL_FIELDS</code><attribute>N</attribute></attribute>
-      <attribute><code>SUPPORTS_BOOLEAN_DATA_TYPE</code><attribute>N</attribute></attribute>
-      <attribute><code>USE_POOLING</code><attribute>N</attribute></attribute>
-    </attributes>
-  </connection>
     <slaveservers>
     </slaveservers>
 <job-log-table><connection/>
@@ -181,8 +198,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>68</xloc>
-      <yloc>184</yloc>
+      <xloc>73</xloc>
+      <yloc>61</yloc>
       </entry>
     <entry>
       <name>Checks if files exist</name>
@@ -193,15 +210,12 @@
         <field>
           <name>${METADATA_LOCATION}&#47;${METADATA_FILENAME}</name>
         </field>
-        <field>
-          <name>${METADATA_LOCATION}&#47;${METADATA_MAP_FILENAME}</name>
-        </field>
       </fields>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>300</xloc>
-      <yloc>184</yloc>
+      <xloc>305</xloc>
+      <yloc>61</yloc>
       </entry>
     <entry>
       <name>Write To Log</name>
@@ -213,8 +227,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>302</xloc>
-      <yloc>267</yloc>
+      <xloc>307</xloc>
+      <yloc>144</yloc>
       </entry>
     <entry>
       <name>Abort job</name>
@@ -224,8 +238,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>304</xloc>
-      <yloc>354</yloc>
+      <xloc>309</xloc>
+      <yloc>231</yloc>
       </entry>
     <entry>
       <name>Load Study Metadata to LZ</name>
@@ -256,8 +270,8 @@
       </parameters>      <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>491</xloc>
-      <yloc>184</yloc>
+      <xloc>477</xloc>
+      <yloc>61</yloc>
       </entry>
     <entry>
       <name>run i2b2_load_study_metadata</name>
@@ -265,7 +279,7 @@
       <type>TRANS</type>
       <specification_method>filename</specification_method>
       <trans_object_id/>
-      <filename>${Internal.Job.Filename.Directory}&#47;run_i2b2_load_study_metadata.ktr</filename>
+      <filename>${Internal.Job.Filename.Directory}&#47;${RUN_I2B2_LOAD_STUDY_METADATA}</filename>
       <transname/>
       <arg_from_previous>N</arg_from_previous>
       <params_from_previous>N</params_from_previous>
@@ -288,21 +302,21 @@
       </parameters>      <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>677</xloc>
-      <yloc>183</yloc>
+      <xloc>706</xloc>
+      <yloc>61</yloc>
       </entry>
     <entry>
       <name>Write To Log 2</name>
       <description/>
       <type>WRITE_TO_LOG</type>
       <logmessage/>
-      <loglevel/>
+      <loglevel>Basic</loglevel>
       <logsubject>${METADATA_LOCATION}   ${METADATA_FILENAME}   ${METADATA_MAP_FILENAME}</logsubject>
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>181</xloc>
-      <yloc>184</yloc>
+      <xloc>186</xloc>
+      <yloc>61</yloc>
       </entry>
   </entries>
   <hops>
@@ -362,5 +376,40 @@
     </hop>
   </hops>
   <notepads>
+    <notepad>
+      <note>&#47;*************************************************************************
+* Copyright 2008-2012 Janssen Research &amp; Development, LLC.
+*
+* Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http:&#47;&#47;www.apache.org&#47;licenses&#47;LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+******************************************************************&#47;</note>
+      <xloc>65</xloc>
+      <yloc>375</yloc>
+      <width>444</width>
+      <heigth>197</heigth>
+      <fontname/>
+      <fontsize>-1</fontsize>
+      <fontbold>N</fontbold>
+      <fontitalic>N</fontitalic>
+      <fontcolorred>0</fontcolorred>
+      <fontcolorgreen>0</fontcolorgreen>
+      <fontcolorblue>0</fontcolorblue>
+      <backgroundcolorred>255</backgroundcolorred>
+      <backgroundcolorgreen>165</backgroundcolorgreen>
+      <backgroundcolorblue>0</backgroundcolorblue>
+      <bordercolorred>100</bordercolorred>
+      <bordercolorgreen>100</bordercolorgreen>
+      <bordercolorblue>100</bordercolorblue>
+      <drawshadow>Y</drawshadow>
+    </notepad>
   </notepads>
 </job>

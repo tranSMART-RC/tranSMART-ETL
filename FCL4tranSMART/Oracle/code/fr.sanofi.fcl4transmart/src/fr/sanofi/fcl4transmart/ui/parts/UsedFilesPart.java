@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2012 Sanofi-Aventis Recherche et Développement.
+ * Copyright (c) 2012 Sanofi-Aventis Recherche et Dï¿½veloppement.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Public License v3.0
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/gpl.html
  * 
  * Contributors:
- *    Sanofi-Aventis Recherche et Développement - initial API and implementation
+ *    Sanofi-Aventis Recherche et Dï¿½veloppement - initial API and implementation
  ******************************************************************************/
 package fr.sanofi.fcl4transmart.ui.parts;
 
@@ -29,7 +29,10 @@ import org.eclipse.swt.widgets.Composite;
 
 import fr.sanofi.fcl4transmart.controllers.UsedFilesController;
 import fr.sanofi.fcl4transmart.model.interfaces.DataTypeItf;
-
+/**
+ *This class handles the file viewer list part
+ */
+@SuppressWarnings("restriction")
 public class UsedFilesPart {
 	private ListViewer viewer;
 	private UsedFilesController usedFilesController;
@@ -56,13 +59,13 @@ public class UsedFilesPart {
 			}
 
 			public void dispose() {
-				// TODO Auto-generated method stub
+				// nothing to do
 				
 			}
 
 			public void inputChanged(Viewer viewer, Object oldInput,
 					Object newInput) {
-				// TODO Auto-generated method stub
+				// nothing to do
 				
 			}
 		});	
@@ -74,7 +77,7 @@ public class UsedFilesPart {
 			}
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
-				// TODO Auto-generated method stub
+				// nothing to do
 				
 			}
 		});
@@ -85,14 +88,20 @@ public class UsedFilesPart {
 		 this.displayNames();
 		 this.parent.layout(true, true);
 	}
+	/**
+	 *Updates the file list if an event indicates that data type changed
+	 */
 	@Inject
 	void eventReceived(@Optional @UIEventTopic("dataTypeChanged/*") DataTypeItf selectedDataType) {
 		if (selectedDataType != null) {
 			  this.usedFilesController.selectionChanged(selectedDataType);
 			  this.viewer.getList().select(0);
+			  eventBroker.send("fileChanged/syncEvent",viewer.getElementAt(viewer.getList().getSelectionIndex()));
 		  }
 	} 
-	
+	/**
+	 *Updates the file list if an event indicates that files have been modified
+	 */
 	@Inject
 	void fileEventReceived(@Optional @UIEventTopic("filesChanged/*") DataTypeItf selectedDataType) {
 		if (selectedDataType != null) {
@@ -100,16 +109,25 @@ public class UsedFilesPart {
 			  this.viewer.getList().select(0);
 		  }
 	}
+	/**
+	 *Allows to display file names in the list instead of file paths
+	 */
 	public void displayNames(){
 		for(int i=0; i<this.viewer.getList().getItemCount(); i++){
 			this.viewer.getList().setItem(i, ((File)this.viewer.getElementAt(i)).getName());
 		}
-	}
+	}	
+	/**
+	 *Send an event indicating that the selected file changed
+	 */
 	public static void sendFilesChanged(DataTypeItf dataType){
 		if(UsedFilesPart.staticEventBroker!=null){
 			UsedFilesPart.staticEventBroker.send("filesChanged/syncEvent",dataType);
 		}
 	}
+	/**
+	 *Sets an empty list if an event indicates that a new study has been created (no files)
+	 */
 	@Inject
 	void eventReceived(@Optional @UIEventTopic("newStudy/*") String string) {
 		if(string!=null){

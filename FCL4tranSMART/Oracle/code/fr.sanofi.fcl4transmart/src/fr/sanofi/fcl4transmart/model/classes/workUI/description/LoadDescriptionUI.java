@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2012 Sanofi-Aventis Recherche et Développement.
+ * Copyright (c) 2012 Sanofi-Aventis Recherche et Dï¿½veloppement.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Public License v3.0
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/gpl.html
  * 
  * Contributors:
- *    Sanofi-Aventis Recherche et Développement - initial API and implementation
+ *    Sanofi-Aventis Recherche et Dï¿½veloppement - initial API and implementation
  ******************************************************************************/
 package fr.sanofi.fcl4transmart.model.classes.workUI.description;
 
@@ -14,8 +14,6 @@ import java.util.Vector;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -29,13 +27,15 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import fr.sanofi.fcl4transmart.controllers.PreferencesHandler;
 import fr.sanofi.fcl4transmart.controllers.RetrieveData;
 import fr.sanofi.fcl4transmart.controllers.listeners.description.LoadDescriptionListener;
+import fr.sanofi.fcl4transmart.handlers.PreferencesHandler;
 import fr.sanofi.fcl4transmart.model.interfaces.StudyItf;
 import fr.sanofi.fcl4transmart.model.interfaces.WorkItf;
 import fr.sanofi.fcl4transmart.ui.parts.WorkPart;
-
+/**
+ *This class allows the creation of the composite to load the study description
+ */
 public class LoadDescriptionUI implements WorkItf{
 	private StudyItf study;
 	private Text titleField;
@@ -127,7 +127,6 @@ public class LoadDescriptionUI implements WorkItf{
 		gd.horizontalSpacing=5;
 		gd.verticalSpacing=5;
 		scroller.setLayout(gd);
-		//scroller.setLayout(new FillLayout(SWT.HORIZONTAL));
 		scroller.setLayoutData(new GridData(GridData.FILL_BOTH));
 		scroller.setExpandHorizontal(true);
 		scroller.setMinWidth(200);
@@ -307,6 +306,9 @@ public class LoadDescriptionUI implements WorkItf{
 		
 		Button load=new Button(scrolledComposite, SWT.PUSH);
 		load.setText("Load");
+		gridData = new GridData(GridData.FILL_VERTICAL);
+		gridData.widthHint=45;
+		load.setLayoutData(gridData);
 		if(this.testBiomart && this.testMetadata){
 			if(this.study.getTopNode()==null || this.study.getTopNode().compareTo("")==0){
 				load.setEnabled(false);
@@ -331,21 +333,15 @@ public class LoadDescriptionUI implements WorkItf{
 			load.setEnabled(false);
 			Label warn=new Label(scrolledComposite, SWT.NONE);
 			warn.setText("Warning: connection to database is not possible");
-			gridData = new GridData();
-			gridData.horizontalAlignment = SWT.FILL;
-			gridData.grabExcessHorizontalSpace = true;
+			gridData = new GridData(GridData.FILL_BOTH);
 			warn.setLayoutData(gridData);
 		}
-		gridData = new GridData();
-		gridData.widthHint=45;
-		load.setLayoutData(gridData);
 		
 		scrolledComposite.setSize(scrolledComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		return composite;
 	}
 	
 	public String getTitle(){
-		//return this.titleField.getText();
 		return this.titleField.getText().replaceAll("'", "''");
 	}
 	public String getDescription(){
@@ -392,5 +388,27 @@ public class LoadDescriptionUI implements WorkItf{
 	    MessageBox messageBox = new MessageBox(new Shell(), style);
 	    messageBox.setMessage(message);
 	    messageBox.open();
+	}
+	@Override
+	public boolean canCopy() {
+		return false;
+	}
+	@Override
+	public boolean canPaste() {
+		return false;
+	}
+	@Override
+	public Vector<Vector<String>> copy() {
+		return null;
+	}
+	@Override
+	public void paste(Vector<Vector<String>> data) {
+		// nothing to do
+		
+	}
+	@Override
+	public void mapFromClipboard(Vector<Vector<String>> data) {
+		// nothing to do
+		
 	}
 }

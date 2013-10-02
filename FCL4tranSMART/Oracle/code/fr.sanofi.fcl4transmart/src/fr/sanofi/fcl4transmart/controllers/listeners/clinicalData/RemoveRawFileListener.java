@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2012 Sanofi-Aventis Recherche et Développement.
+ * Copyright (c) 2012 Sanofi-Aventis Recherche et Dï¿½veloppement.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Public License v3.0
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/gpl.html
  * 
  * Contributors:
- *    Sanofi-Aventis Recherche et Développement - initial API and implementation
+ *    Sanofi-Aventis Recherche et Dï¿½veloppement - initial API and implementation
  ******************************************************************************/
 package fr.sanofi.fcl4transmart.controllers.listeners.clinicalData;
 
@@ -27,7 +27,9 @@ import fr.sanofi.fcl4transmart.model.classes.workUI.clinicalData.SelectRawFilesU
 import fr.sanofi.fcl4transmart.model.interfaces.DataTypeItf;
 import fr.sanofi.fcl4transmart.ui.parts.UsedFilesPart;
 import fr.sanofi.fcl4transmart.ui.parts.WorkPart;
-
+/**
+ *This class controls a clinical data file removing
+ */	
 public class RemoveRawFileListener implements Listener{
 	private SelectRawFilesUI selectRawFilesUI;
 	private DataTypeItf dataType;
@@ -38,6 +40,10 @@ public class RemoveRawFileListener implements Listener{
 	@Override
 	public void handleEvent(Event event) {
 		Vector<File> files=this.selectRawFilesUI.getSelectedRemovedFile();
+		if(files.size()<1){
+			this.selectRawFilesUI.displayMessage("No file selected");
+			return;
+		}
 		File cmf=((ClinicalData)this.dataType).getCMF();
 		File wmf=((ClinicalData)this.dataType).getWMF();
 		boolean confirm=this.selectRawFilesUI.confirm("The column mapping file and the word mapping file will be updated or removed consequently.\nAre you sure to remove these files?");
@@ -53,7 +59,6 @@ public class RemoveRawFileListener implements Listener{
 							try {
 								FileUtils.forceDelete(cmf);
 							} catch (IOException e) {
-								// TODO Auto-generated catch block
 								this.selectRawFilesUI.displayMessage("File error: "+e.getLocalizedMessage());
 								e.printStackTrace();
 							}
@@ -63,7 +68,6 @@ public class RemoveRawFileListener implements Listener{
 							try {
 								FileUtils.forceDelete(wmf);
 							} catch (IOException e) {
-								// TODO Auto-generated catch block
 								this.selectRawFilesUI.displayMessage("File error: "+e.getLocalizedMessage());
 								e.printStackTrace();
 							}

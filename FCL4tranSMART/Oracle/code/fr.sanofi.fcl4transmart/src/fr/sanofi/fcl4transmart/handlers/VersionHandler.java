@@ -17,7 +17,10 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-
+/**
+ *This class controls the version window called from menu
+ */	
+@SuppressWarnings("restriction")
 public class VersionHandler {
 	@Execute
 	public void execute(Display display) {
@@ -40,14 +43,14 @@ public class VersionHandler {
 		gridData.widthHint=480;
 		gridData.grabExcessHorizontalSpace = true;
 		label2.setLayoutData(gridData);
-		label2.setText("Version 1.1\n"+
+		label2.setText("Version 1.2\n"+
 						"\n"+
 						"This version has been tested with tranSMART version 1.0 RC2, with Java Runtime Environment 1.6 and 1.7.\n"+
 						"\n"+
-						"This application has been developed by Sanofi-Aventis Recherche et Développement, and is distributed under GNU General Public License version 3."+
+						"This application has been developed by Sanofi-Aventis Recherche et Dï¿½veloppement, and is distributed under GNU General Public License version 3."+
 						"\n\n"+
 						"Framework of Curation and Loading for tranSMART - Version 1.1\n"+  
-						"Copyright (C) 2012 Sanofi-Aventis Recherche et Développement\n\n"+
+						"Copyright (C) 2012 Sanofi-Aventis Recherche et Dï¿½veloppement\n\n"+
 						"This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.\n\n"+
 						"This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.\n\n"+
 						"You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.\n\n"+

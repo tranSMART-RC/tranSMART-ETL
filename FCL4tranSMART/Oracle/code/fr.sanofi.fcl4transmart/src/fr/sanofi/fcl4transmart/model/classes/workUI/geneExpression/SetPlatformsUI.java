@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2012 Sanofi-Aventis Recherche et Développement.
+ * Copyright (c) 2012 Sanofi-Aventis Recherche et Dï¿½veloppement.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Public License v3.0
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/gpl.html
  * 
  * Contributors:
- *    Sanofi-Aventis Recherche et Développement - initial API and implementation
+ *    Sanofi-Aventis Recherche et Dï¿½veloppement - initial API and implementation
  ******************************************************************************/
 package fr.sanofi.fcl4transmart.model.classes.workUI.geneExpression;
 
@@ -33,7 +33,9 @@ import fr.sanofi.fcl4transmart.controllers.listeners.geneExpression.SetPlatforms
 import fr.sanofi.fcl4transmart.model.classes.dataType.GeneExpressionData;
 import fr.sanofi.fcl4transmart.model.interfaces.DataTypeItf;
 import fr.sanofi.fcl4transmart.model.interfaces.WorkItf;
-
+/**
+ *This class allows the creation of the composite to set the platform attribute of the sample to subject mapping file
+ */
 public class SetPlatformsUI implements WorkItf{
 	private DataTypeItf dataType;
 	private Text appliedText;
@@ -156,11 +158,13 @@ public class SetPlatformsUI implements WorkItf{
 		column3.setLayoutData(gridData);
 		
 		for(int i=0; i<this.samples.size(); i++){
-			Label valueLabel=new Label(body, SWT.NONE);
+			Text valueLabel=new Text(body, SWT.BORDER);
 			valueLabel.setText(samples.elementAt(i));
+			valueLabel.setEditable(false);
 			gridData = new GridData();
 			gridData.horizontalAlignment = SWT.FILL;
 			gridData.grabExcessHorizontalSpace = true;
+			gridData.widthHint=150;
 			valueLabel.setLayoutData(gridData);
 			
 			Text valueText=new Text(body, SWT.BORDER);
@@ -168,7 +172,7 @@ public class SetPlatformsUI implements WorkItf{
 			gridData = new GridData();
 			gridData.horizontalAlignment = SWT.FILL;
 			gridData.grabExcessHorizontalSpace = true;
-			gridData.widthHint=100;
+			gridData.widthHint=150;
 			valueText.setLayoutData(gridData);
 			this.valuesFields.add(valueText);
 			this.valuesFields.elementAt(i).addModifyListener(new ModifyListener(){
@@ -177,10 +181,6 @@ public class SetPlatformsUI implements WorkItf{
 					values.setElementAt(valuesFields.elementAt(n).getText(), n);
 				}
 			});
-			gridData = new GridData();
-			gridData.horizontalAlignment = SWT.FILL;
-			gridData.grabExcessHorizontalSpace = true;
-			valueText.setLayoutData(gridData);
 			
 			Button checkBox=new Button(body, SWT.CHECK);
 			
@@ -241,7 +241,10 @@ public class SetPlatformsUI implements WorkItf{
 	}
 	public void initiate(){
 		this.values=new Vector<String>();
-		this.samples=FileHandler.getSamplesId(((GeneExpressionData)this.dataType).getRawFile());
+		this.samples=new Vector<String>();
+		for(File rawFile: ((GeneExpressionData)this.dataType).getRawFiles()){
+			samples.addAll(FileHandler.getSamplesId(rawFile));
+		}
 		File stsmf=((GeneExpressionData)this.dataType).getStsmf();
 		for(@SuppressWarnings("unused") String sample: samples){
 			this.values.add("");
@@ -279,5 +282,44 @@ public class SetPlatformsUI implements WorkItf{
 	    MessageBox messageBox = new MessageBox(new Shell(), style);
 	    messageBox.setMessage(message);
 	    messageBox.open();
+	}
+	@Override
+	public boolean canCopy() {
+		return true;
+	}
+	@Override
+	public boolean canPaste() {
+		return true;
+	}
+	@Override
+	public Vector<Vector<String>> copy() {
+		Vector<Vector<String>> data=new Vector<Vector<String>>();
+		data.add(samples);
+		data.add(values);
+		return data;
+	}
+	@Override
+	public void paste(Vector<Vector<String>> data) {
+		if(data.size()<1) return;
+		int l=values.size();
+		if(data.get(0).size()<l) l=data.get(0).size();
+		for(int i=0; i<l; i++){
+			this.values.set(i, data.get(0).get(i));
+			this.valuesFields.get(i).setText(data.get(0).get(i));
+		}		
+	}
+	@Override
+	public void mapFromClipboard(Vector<Vector<String>> data) {
+		if(data.size()<2) return;
+		for(int i=0; i<data.get(0).size(); i++){
+			int index=samples.indexOf(data.get(0).get(i));
+			if(index!=-1){
+				if(data.get(1).size()>i){
+					this.values.set(index, data.get(1).get(i));
+					this.valuesFields.get(index).setText(this.values.get(index));
+				}
+			}
+		}
+		
 	}
 }

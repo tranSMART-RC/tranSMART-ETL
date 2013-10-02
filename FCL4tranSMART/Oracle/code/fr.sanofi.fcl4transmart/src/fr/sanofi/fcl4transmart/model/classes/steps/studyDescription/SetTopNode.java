@@ -10,13 +10,13 @@
  ******************************************************************************/
 package fr.sanofi.fcl4transmart.model.classes.steps.studyDescription;
 
-import fr.sanofi.fcl4transmart.model.classes.workUI.description.LoadDescriptionUI;
 import fr.sanofi.fcl4transmart.model.classes.workUI.description.SetTopNodeUI;
 import fr.sanofi.fcl4transmart.model.interfaces.DataTypeItf;
 import fr.sanofi.fcl4transmart.model.interfaces.StepItf;
-import fr.sanofi.fcl4transmart.model.interfaces.StudyItf;
 import fr.sanofi.fcl4transmart.model.interfaces.WorkItf;
-
+/**
+ *This class represents the step to set the study top node
+ */	
 public class SetTopNode implements StepItf{
 	private WorkItf workUI;
 	private DataTypeItf dataType;
@@ -31,15 +31,10 @@ public class SetTopNode implements StepItf{
 	public String toString(){
 		return "Set study node";
 	}
-	@Override
-	public boolean isRealized() {
-		// TODO Auto-generated method stub
-		return false;
-	}
 	public String getDescription(){
-		return "This step allows definning the study node of the study, which is the place where the study will appear in tranSMART dataset explorer.\n"+
+		return "This step allows defining the study node of the study, which is the place where the study will appear in tranSMART dataset explorer.\n"+
 				"A tree can be built by adding free text nodes. Then the study can be added to the tree by indicating its name and click on the 'Add' button.\n"+
-				"The study to load is indicated in orange. The other studies are indicated in grey."+
+				"The study to load is indicated in orange. The other studies are indicated in grey.\n"+
 				"This step requires a database connection.";
 	}
 	public boolean isAvailable(){

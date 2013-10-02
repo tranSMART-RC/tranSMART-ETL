@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2012 Sanofi-Aventis Recherche et Développement.
+ * Copyright (c) 2012 Sanofi-Aventis Recherche et Dï¿½veloppement.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Public License v3.0
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/gpl.html
  * 
  * Contributors:
- *    Sanofi-Aventis Recherche et Développement - initial API and implementation
+ *    Sanofi-Aventis Recherche et Dï¿½veloppement - initial API and implementation
  ******************************************************************************/
 package fr.sanofi.fcl4transmart.controllers.listeners.clinicalData;
 
@@ -24,7 +24,9 @@ import fr.sanofi.fcl4transmart.ui.parts.UsedFilesPart;
 import fr.sanofi.fcl4transmart.ui.parts.WorkPart;
 
 import org.apache.commons.io.FileUtils;
-
+/**
+ *This class controls a column mapping file selection
+ */	
 public class SelectCMFListener implements Listener{
 	private SelectCMFUI selectCMFUI;
 	private DataTypeItf dataType;
@@ -34,7 +36,6 @@ public class SelectCMFListener implements Listener{
 	}
 	@Override
 	public void handleEvent(Event event) {
-		// TODO Auto-generated method stub
 		String path=this.selectCMFUI.getPath();
 		if(path==null) return;
 		if(path.contains("%")){
@@ -60,10 +61,9 @@ public class SelectCMFListener implements Listener{
 					
 					this.selectCMFUI.displayMessage("File has been added");
 					WorkPart.updateSteps();
-					//to do: update files list
+					WorkPart.updateFiles();
 					UsedFilesPart.sendFilesChanged(dataType);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					this.selectCMFUI.displayMessage("File error: "+e.getLocalizedMessage());
 					e.printStackTrace();
 				}
@@ -76,6 +76,9 @@ public class SelectCMFListener implements Listener{
 			this.selectCMFUI.displayMessage("This path does no exist");
 		}
 	}
+	/**
+	 *Checks the format of a column mapping file
+	 */	
 	public boolean checkFormat(File file){
 		boolean isSubjectIdSet=false;
 		try{
@@ -121,7 +124,7 @@ public class SelectCMFListener implements Listener{
 						return false;
 					}
 					//check that category code is set, except for reserved words
-					if(!(fields[3].compareTo("SUBJ_ID")==0 || fields[3].compareTo("OMIT")==0 || fields[3].compareTo("SITE_ID")==0 || fields[3].compareTo("VISIT_NAME")==0) && fields[1].compareTo("")==0){
+					if(!(fields[3].compareTo("SUBJ_ID")==0 || fields[3].compareTo("OMIT")==0 || fields[3].compareTo("SITE_ID")==0 || fields[3].compareTo("VISIT_NAME")==0 || fields[3].compareTo("UNITS")==0 || fields[3].compareTo("ENROLL_DATE")==0 || fields[3].compareTo("VISIT_DATE")==0) && fields[1].compareTo("")==0){
 						this.selectCMFUI.displayMessage("Error:\nCategory codes have to be set");
 						br.close();
 						return false;

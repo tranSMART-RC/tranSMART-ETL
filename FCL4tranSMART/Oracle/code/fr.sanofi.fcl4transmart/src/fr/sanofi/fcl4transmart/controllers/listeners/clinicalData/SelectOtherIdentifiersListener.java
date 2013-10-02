@@ -26,7 +26,10 @@ import fr.sanofi.fcl4transmart.model.classes.workUI.clinicalData.SetOtherIdsUI;
 import fr.sanofi.fcl4transmart.model.interfaces.DataTypeItf;
 import fr.sanofi.fcl4transmart.ui.parts.UsedFilesPart;
 import fr.sanofi.fcl4transmart.ui.parts.WorkPart;
-
+/**
+ *This class controls the visit names and site identifiers selection step
+ *Since version 1.2: also controls observation names 
+ */	
 public class SelectOtherIdentifiersListener implements Listener{
 	private SetOtherIdsUI setOtherIdsUI;
 	private DataTypeItf dataType;
@@ -36,6 +39,19 @@ public class SelectOtherIdentifiersListener implements Listener{
 	}
 	@Override
 	public void handleEvent(Event event) {
+		 Vector<File> rawFiles=((ClinicalData)this.dataType).getRawFiles();
+		 Vector<String> siteIds=this.setOtherIdsUI.getSiteIds();
+		 Vector<String> visitNames=this.setOtherIdsUI.getVisitNames();
+		 Vector<String> obsNames=this.setOtherIdsUI.getObsNames();
+		//check that if sub-visit names are set, visit names are too. In the other case, warn the user and do not upload file
+		 for(int i=0; i<rawFiles.size(); i++){
+			 if(obsNames.elementAt(i).compareTo("")!=0){	
+				  if(visitNames.elementAt(i).compareTo("")==0){
+					this.setOtherIdsUI.displayMessage("Sub-visit names can only be set if visit names are set.");
+					return;
+				  }
+			 }
+		 }
 		//write in a new file
 		File file=new File(this.dataType.getPath().toString()+File.separator+this.dataType.getStudy().toString()+".columns.tmp");
 		try{			  
@@ -43,10 +59,6 @@ public class SelectOtherIdentifiersListener implements Listener{
 			  BufferedWriter out = new BufferedWriter(fw);
 			  out.write("Filename\tCategory Code\tColumn Number\tData Label\tData Label Source\tControlled Vocab Code\n");
 			  
-			  //subject identifier
-			  Vector<File> rawFiles=((ClinicalData)this.dataType).getRawFiles();
-			  Vector<String> siteIds=this.setOtherIdsUI.getSiteIds();
-			  Vector<String> visitNames=this.setOtherIdsUI.getVisitNames();
 			  for(int i=0; i<rawFiles.size(); i++){
 		  
 				  //site identifier
@@ -64,13 +76,21 @@ public class SelectOtherIdentifiersListener implements Listener{
 						  out.write(rawFiles.elementAt(i).getName()+"\t\t"+columnNumber+"\tVISIT_NAME\t\t\n");
 					  }
 				  }
+				  //observation names
+				  if(obsNames.elementAt(i).compareTo("")!=0){	
+					  int columnNumber=FileHandler.getHeaderNumber(rawFiles.elementAt(i), obsNames.elementAt(i));
+					  if(columnNumber!=-1){
+						  out.write(rawFiles.elementAt(i).getName()+"\t\t"+columnNumber+"\tVISIT_NAME_2\t\t\n");
+					  }
+				  }
 			  }
+			  //add lines from existing CMF
 				try{
 					BufferedReader br = new BufferedReader(new FileReader(((ClinicalData)this.dataType).getCMF()));
 					String line=br.readLine();
 					while ((line=br.readLine())!=null){
 						String[] s=line.split("\t", -1);
-						if(s[3].compareTo("SITE_ID")!=0 && s[3].compareTo("VISIT_NAME")!=0){
+						if(s[3].compareTo("SITE_ID")!=0 && s[3].compareTo("VISIT_NAME")!=0 && s[3].compareTo("VISIT_NAME_2")!=0){
 							out.write(line+"\n");
 						}
 					}

@@ -1,14 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2012 Sanofi-Aventis Recherche et Développement.
+ * Copyright (c) 2012 Sanofi-Aventis Recherche et Dï¿½veloppement.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Public License v3.0
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/gpl.html
  * 
  * Contributors:
- *    Sanofi-Aventis Recherche et Développement - initial API and implementation
+ *    Sanofi-Aventis Recherche et Dï¿½veloppement - initial API and implementation
  ******************************************************************************/
 package fr.sanofi.fcl4transmart.model.classes.workUI.description;
+
+import java.util.Vector;
 
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
@@ -30,16 +32,18 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import fr.sanofi.fcl4transmart.controllers.PreferencesHandler;
 import fr.sanofi.fcl4transmart.controllers.RetrieveData;
 import fr.sanofi.fcl4transmart.controllers.TopNodeController;
 import fr.sanofi.fcl4transmart.controllers.listeners.clinicalData.StudyContentProvider;
+import fr.sanofi.fcl4transmart.handlers.PreferencesHandler;
 import fr.sanofi.fcl4transmart.model.classes.StudyTree;
 import fr.sanofi.fcl4transmart.model.classes.TreeNode;
 import fr.sanofi.fcl4transmart.model.interfaces.DataTypeItf;
 import fr.sanofi.fcl4transmart.model.interfaces.WorkItf;
 import fr.sanofi.fcl4transmart.ui.parts.WorkPart;
-
+/**
+ *This class allows the creation of the composite to set the study top node
+ */
 public class SetTopNodeUI implements WorkItf{
 	private DataTypeItf dataType;
 	private TreeViewer viewer;
@@ -171,7 +175,6 @@ public class SetTopNodeUI implements WorkItf{
 		addChild.addListener(SWT.Selection, new Listener(){
 			@Override
 			public void handleEvent(Event event) {
-				// TODO Auto-generated method stub
 				IStructuredSelection selection=(IStructuredSelection)viewer.getSelection();
 				TreeNode node;
 				if(selection.iterator().hasNext()){
@@ -216,7 +219,6 @@ public class SetTopNodeUI implements WorkItf{
 		addLabel.addListener(SWT.Selection, new Listener(){
 			@Override
 			public void handleEvent(Event event) {
-				// TODO Auto-generated method stub
 				IStructuredSelection selection=(IStructuredSelection)viewer.getSelection();
 				TreeNode node;
 				if(selection.iterator().hasNext()){
@@ -322,5 +324,26 @@ public class SetTopNodeUI implements WorkItf{
 		}
 		return remove;
 	}
-
+	@Override
+	public boolean canCopy() {
+		return false;
+	}
+	@Override
+	public boolean canPaste() {
+		return false;
+	}
+	@Override
+	public Vector<Vector<String>> copy() {
+		return null;
+	}
+	@Override
+	public void paste(Vector<Vector<String>> data) {
+		// nothing to do
+		
+	}
+	@Override
+	public void mapFromClipboard(Vector<Vector<String>> data) {
+		// nothing to do
+		
+	}
 }

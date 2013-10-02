@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2012 Sanofi-Aventis Recherche et Développement.
+ * Copyright (c) 2012 Sanofi-Aventis Recherche et Dï¿½veloppement.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Public License v3.0
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/gpl.html
  * 
  * Contributors:
- *    Sanofi-Aventis Recherche et Développement - initial API and implementation
+ *    Sanofi-Aventis Recherche et Dï¿½veloppement - initial API and implementation
  ******************************************************************************/
 package fr.sanofi.fcl4transmart.ui.parts;
 
@@ -23,7 +23,10 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
-
+/**
+ *This class handles the file viewer part
+ */
+@SuppressWarnings("restriction")
 public class FilesViewerPart {
 	private Text editor;
 	private File lastFile;
@@ -39,11 +42,17 @@ public class FilesViewerPart {
 		this.editor.setLayoutData(new GridData(GridData.FILL_BOTH));
 		this.editor.setEditable(false);
 	}
+	/**
+	 *Changes the displayed file is another one is selected in the file viewer list
+	 */
 	@Inject
 	void eventReceived(@Optional @UIEventTopic("fileChanged/*") File file) {
 		this.lastFile=file;
 		this.changeText();
 	} 
+	/**
+	 *Updates the displayed files if an event indicates it changed
+	 */
 	@Inject
 	void eventReceived(@Optional @UIEventTopic("fileUpdated/*") String s) {
 		this.changeText();

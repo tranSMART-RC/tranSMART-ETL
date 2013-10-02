@@ -11,8 +11,16 @@
 package fr.sanofi.fcl4transmart.model.interfaces;
 
 public interface StepItf {
+	/**
+	 *Returns the work zone object associated with a step
+	 */
 	public WorkItf getWorkUI();
-	public boolean isRealized();
+	/**
+	 *Returns a string containing description to display in the 'step description' part
+	 */
 	public String getDescription();
+	/**
+	 *Returns a boolean indicating if a step is available to be selected by the user
+	 */
 	public boolean isAvailable();
 }

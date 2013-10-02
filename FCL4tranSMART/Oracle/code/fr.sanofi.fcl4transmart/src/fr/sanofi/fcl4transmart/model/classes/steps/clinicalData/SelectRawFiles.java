@@ -14,7 +14,9 @@ import fr.sanofi.fcl4transmart.model.classes.workUI.clinicalData.SelectRawFilesU
 import fr.sanofi.fcl4transmart.model.interfaces.DataTypeItf;
 import fr.sanofi.fcl4transmart.model.interfaces.StepItf;
 import fr.sanofi.fcl4transmart.model.interfaces.WorkItf;
-
+/**
+ *This class represents the step to select raw files for clinical data
+ */	
 public class SelectRawFiles implements StepItf{
 	private WorkItf workUI;
 	public SelectRawFiles(DataTypeItf dataType){
@@ -26,11 +28,6 @@ public class SelectRawFiles implements StepItf{
 	}
 	public String toString(){
 		return "Select raw files";
-	}
-	@Override
-	public boolean isRealized() {
-		// TODO Auto-generated method stub
-		return false;
 	}
 	public String getDescription(){
 		return "This step allows adding one or several raw files, by indicating the paths, separated with a ';' character, or by choosing them with the 'browse' button.\n"+

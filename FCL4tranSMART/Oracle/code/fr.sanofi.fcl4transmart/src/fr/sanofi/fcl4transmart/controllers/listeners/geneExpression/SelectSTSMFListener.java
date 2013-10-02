@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2012 Sanofi-Aventis Recherche et Développement.
+ * Copyright (c) 2012 Sanofi-Aventis Recherche et Dï¿½veloppement.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Public License v3.0
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/gpl.html
  * 
  * Contributors:
- *    Sanofi-Aventis Recherche et Développement - initial API and implementation
+ *    Sanofi-Aventis Recherche et Dï¿½veloppement - initial API and implementation
  ******************************************************************************/
 package fr.sanofi.fcl4transmart.controllers.listeners.geneExpression;
 
@@ -26,7 +26,9 @@ import fr.sanofi.fcl4transmart.model.classes.workUI.geneExpression.SelectSTSMFUI
 import fr.sanofi.fcl4transmart.model.interfaces.DataTypeItf;
 import fr.sanofi.fcl4transmart.ui.parts.UsedFilesPart;
 import fr.sanofi.fcl4transmart.ui.parts.WorkPart;
-
+/**
+ *This class controls subject to sample mapping file selection
+ */	
 public class SelectSTSMFListener implements Listener{
 	private DataTypeItf dataType;
 	private SelectSTSMFUI selectSTSMFUI;
@@ -61,10 +63,8 @@ public class SelectSTSMFListener implements Listener{
 					
 					this.selectSTSMFUI.displayMessage("File has been loaded");
 					WorkPart.updateSteps();
-					//to do: update files list
 					UsedFilesPart.sendFilesChanged(this.dataType);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					selectSTSMFUI.displayMessage("File error: "+e.getLocalizedMessage());
 					e.printStackTrace();
 				}
@@ -77,11 +77,17 @@ public class SelectSTSMFListener implements Listener{
 			this.selectSTSMFUI.displayMessage("This path does no exist");
 		}
 	}
+	/**
+	 *Checks the subject to sample mapping file format
+	 */	
 	public boolean checkFormat(File file){
 		try{
 			BufferedReader br = new BufferedReader(new FileReader(file));
 			String line=br.readLine();
-			Vector<String> samples=FileHandler.getSamplesId(((GeneExpressionData)this.dataType).getRawFile());
+			Vector<String> samples=new Vector<String>();
+			for(File rawFile: ((GeneExpressionData)this.dataType).getRawFiles()){
+				samples.addAll(FileHandler.getSamplesId(rawFile));
+			}
 			Vector<String> samplesSTSMF=new Vector<String>();
 			String category="";
 			while ((line=br.readLine())!=null){
@@ -100,19 +106,19 @@ public class SelectSTSMFListener implements Listener{
 						return false;
 					}
 					//check that subject id is set
-					if(fields[3].compareTo("")==0){
+					if(fields[2].compareTo("")==0){
 						this.selectSTSMFUI.displayMessage("Error:\nSubjects identifiers have to be set");
 						br.close();
 						return false;
 					}	
 					//check that samples id is set
-					if(fields[4].compareTo("")==0){
+					if(fields[3].compareTo("")==0){
 						this.selectSTSMFUI.displayMessage("Error:\nSamples identifiers have to be set");
 						br.close();
 						return false;
 					}	
 					//check that platform is set
-					if(fields[5].compareTo("")==0){
+					if(fields[4].compareTo("")==0){
 						this.selectSTSMFUI.displayMessage("Error:\nPlatform has to be set");
 						br.close();
 						return false;

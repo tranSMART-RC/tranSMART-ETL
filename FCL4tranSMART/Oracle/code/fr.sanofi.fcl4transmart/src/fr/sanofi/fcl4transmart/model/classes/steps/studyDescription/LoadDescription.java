@@ -14,7 +14,9 @@ import fr.sanofi.fcl4transmart.model.classes.workUI.description.LoadDescriptionU
 import fr.sanofi.fcl4transmart.model.interfaces.StepItf;
 import fr.sanofi.fcl4transmart.model.interfaces.StudyItf;
 import fr.sanofi.fcl4transmart.model.interfaces.WorkItf;
-
+/**
+ *This class represents the step to load a study description
+ */	
 public class LoadDescription implements StepItf{
 	private WorkItf workUI;
 	private StudyItf study;
@@ -29,13 +31,8 @@ public class LoadDescription implements StepItf{
 	public String toString(){
 		return "Load description";
 	}
-	@Override
-	public boolean isRealized() {
-		// TODO Auto-generated method stub
-		return false;
-	}
 	public String getDescription(){
-		return "This step allows loading a study description in the database, with SQL commands.\n The study node has to be defined in the last step to display description into tranSMART.\n"+
+		return "This step allows loading a study description in the database.\n The study node has to be defined in the last step to display description into tranSMART.\n"+
 				"For now, organisms can only be added if they have an entry in the database. Organisms in the database are presented in a dropdown.\n"+
 				"When this step is chosen, if the description has already been loaded into the database, data are retrieved to be displayed. If they are modified and loaded again, data will be replaced.\n"+
 				"A database connection is needed for this step.";

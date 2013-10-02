@@ -15,7 +15,9 @@ import fr.sanofi.fcl4transmart.model.classes.workUI.geneExpression.SetSubjectsId
 import fr.sanofi.fcl4transmart.model.interfaces.DataTypeItf;
 import fr.sanofi.fcl4transmart.model.interfaces.StepItf;
 import fr.sanofi.fcl4transmart.model.interfaces.WorkItf;
-
+/**
+ *This class represents the step to set the subject identifiers attribute for the sample to subject mapping file
+ */	
 public class SetSubjectsId implements StepItf{
 	private WorkItf workUI;
 	private DataTypeItf dataType;
@@ -30,11 +32,6 @@ public class SetSubjectsId implements StepItf{
 	public String toString(){
 		return "Set subjects identifiers";
 	}
-	@Override
-	public boolean isRealized() {
-		// TODO Auto-generated method stub
-		return false;
-	}
 	public String getDescription(){
 		return "This step allows defining subject identifiers for samples.\n"+
 				"A subject identifier has to be defined for each sample.\n"+
@@ -43,7 +40,7 @@ public class SetSubjectsId implements StepItf{
 	}
 	public boolean isAvailable(){
 		try{
-			if(((GeneExpressionData)this.dataType).getRawFile()==null){
+			if(((GeneExpressionData)this.dataType).getRawFiles()==null || ((GeneExpressionData)this.dataType).getRawFiles().size()==0){
 				return false;
 			}
 			return true;

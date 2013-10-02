@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2012 Sanofi-Aventis Recherche et Développement.
+ * Copyright (c) 2012 Sanofi-Aventis Recherche et Dï¿½veloppement.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Public License v3.0
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/gpl.html
  * 
  * Contributors:
- *    Sanofi-Aventis Recherche et Développement - initial API and implementation
+ *    Sanofi-Aventis Recherche et Dï¿½veloppement - initial API and implementation
  ******************************************************************************/
 package fr.sanofi.fcl4transmart.model.classes.workUI.clinicalData;
 
@@ -32,12 +32,15 @@ import fr.sanofi.fcl4transmart.controllers.listeners.clinicalData.SetLabelsOntol
 import fr.sanofi.fcl4transmart.model.classes.dataType.ClinicalData;
 import fr.sanofi.fcl4transmart.model.interfaces.DataTypeItf;
 import fr.sanofi.fcl4transmart.model.interfaces.WorkItf;
-
+/**
+ *This class allows the creation of the composite to set properties labels and codes
+ */
 public class SetLabelsOntologyUI implements WorkItf{
 	private DataTypeItf dataType;
 	private Vector<String> newLabels;
 	private Vector<Text> newLabelsFields;
 	private Vector<String> headers;
+	private Vector<Text> headerFields;
 	private Vector<String> codes;
 	private Vector<Text> codesFields;
 	private Vector<Button> buttons;
@@ -50,6 +53,7 @@ public class SetLabelsOntologyUI implements WorkItf{
 
 		this.newLabelsFields=new Vector<Text>();
 		this.codesFields=new Vector<Text>();
+		this.headerFields=new Vector<Text>();
 		Composite composite=new Composite(parent, SWT.NONE);
 		GridLayout gd=new GridLayout();
 		gd.numColumns=1;
@@ -98,10 +102,16 @@ public class SetLabelsOntologyUI implements WorkItf{
 		c4.setText("");
 		
 		buttons=new Vector<Button>();
-		for(this.i=0; this.i<this.headers.size(); this.i++){	
-			Label title=new Label(part, SWT.NONE);
+		for(this.i=0; this.i<this.headers.size(); this.i++){			
+			Text title=new Text(part, SWT.BORDER);
 			title.setText(this.headers.elementAt(this.i));
-			title.setLayoutData(new GridData(GridData.FILL_BOTH));
+			title.setEditable(false);
+			this.headerFields.add(title);
+			GridData gridData = new GridData();
+			gridData.widthHint=150;
+			gridData.horizontalAlignment = SWT.FILL;
+			gridData.grabExcessHorizontalSpace = true;
+			title.setLayoutData(gridData);
 			
 			Text field=new Text(part, SWT.BORDER);
 			field.setText(this.newLabels.elementAt(this.i));
@@ -112,8 +122,8 @@ public class SetLabelsOntologyUI implements WorkItf{
 					newLabels.setElementAt(newLabelsFields.elementAt(n).getText(), n);
 				}
 			});
-			GridData gridData = new GridData();
-			gridData.widthHint=75;
+			gridData = new GridData();
+			gridData.widthHint=150;
 			gridData.horizontalAlignment = SWT.FILL;
 			gridData.grabExcessHorizontalSpace = true;
 			field.setLayoutData(gridData);
@@ -129,7 +139,7 @@ public class SetLabelsOntologyUI implements WorkItf{
 			});
 			gridData = new GridData();
 			gridData.horizontalAlignment = SWT.FILL;
-			gridData.widthHint=75;
+			gridData.widthHint=150;
 			gridData.grabExcessHorizontalSpace = true;
 			field2.setLayoutData(gridData);
 			
@@ -158,7 +168,7 @@ public class SetLabelsOntologyUI implements WorkItf{
 
 				@Override
 				public void widgetDefaultSelected(SelectionEvent e) {
-					// TODO Auto-generated method stub
+					// nothing to do
 					
 				}
 			});
@@ -207,5 +217,57 @@ public class SetLabelsOntologyUI implements WorkItf{
 	}
 	public Vector<String> getCodes(){
 		return this.codes;
+	}
+	@Override
+	public boolean canCopy() {
+		return true;
+	}
+	@Override
+	public boolean canPaste() {
+		return true;
+	}
+	@Override
+	public Vector<Vector<String>> copy() {
+		Vector<Vector<String>> data=new Vector<Vector<String>>();
+		data.add(headers);
+		data.add(newLabels);
+		data.add(codes);
+		return data;
+	}
+	@Override
+	public void paste(Vector<Vector<String>> data) {
+		if(data.size()>0){
+			int l=this.newLabels.size();
+			if(data.get(0).size()<l) l=data.get(0).size();
+			for(int i=0; i<l; i++){
+				this.newLabels.set(i, data.get(0).get(i));
+				this.newLabelsFields.get(i).setText(data.get(0).get(i));
+			}
+		}
+		if(data.size()>1){
+			int l=this.codes.size();
+			if(data.get(1).size()<l) l=data.get(1).size();
+			for(int i=0; i<l; i++){
+				this.codes.set(i, data.get(1).get(i));
+				this.codesFields.get(i).setText(data.get(1).get(i));
+			}
+		}
+	}
+	@Override
+	public void mapFromClipboard(Vector<Vector<String>> data) {
+		if(data.size()<2) return;
+		for(int i=0; i<data.get(0).size(); i++){
+			int index=headers.indexOf(data.get(0).get(i));
+			if(index!=-1){
+				if(data.get(1).size()>i){
+					newLabels.set(index, data.get(1).get(i));
+					this.newLabelsFields.get(index).setText(newLabels.get(index));
+				}
+				if(data.size()>2 && data.get(2).size()>i){
+					codes.set(index, data.get(2).get(i));
+					this.codesFields.get(index).setText(codes.get(index));
+				}
+			}
+		}
 	}
 }

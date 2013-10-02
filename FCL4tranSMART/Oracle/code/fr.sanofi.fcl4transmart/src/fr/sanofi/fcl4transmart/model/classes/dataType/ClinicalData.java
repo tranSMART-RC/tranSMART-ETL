@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2012 Sanofi-Aventis Recherche et Développement.
+ * Copyright (c) 2012 Sanofi-Aventis Recherche et Dï¿½veloppement.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Public License v3.0
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/gpl.html
  * 
  * Contributors:
- *    Sanofi-Aventis Recherche et Développement - initial API and implementation
+ *    Sanofi-Aventis Recherche et Dï¿½veloppement - initial API and implementation
  ******************************************************************************/
 package fr.sanofi.fcl4transmart.model.classes.dataType;
 
@@ -24,13 +24,22 @@ import fr.sanofi.fcl4transmart.model.classes.steps.clinicalData.SetOtherIds;
 import fr.sanofi.fcl4transmart.model.classes.steps.clinicalData.SetStudyTree;
 import fr.sanofi.fcl4transmart.model.classes.steps.clinicalData.SetSubjectsId;
 import fr.sanofi.fcl4transmart.model.classes.steps.clinicalData.SetTerms;
+import fr.sanofi.fcl4transmart.model.classes.steps.clinicalData.SetVisitDates;
 import fr.sanofi.fcl4transmart.model.interfaces.DataTypeItf;
 import fr.sanofi.fcl4transmart.model.interfaces.StepItf;
 import fr.sanofi.fcl4transmart.model.interfaces.StudyItf;
+import fr.sanofi.fcl4transmart.ui.parts.WorkPart;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+/**
+ *This class handles the clinical data loading. It contains the paths to the folder representing clinical data for a study, and paths to:
+ *-raw data files
+ *-column mapping file
+ *-word mapping file
+ *-Kettle log file
+ * The list of steps required for clinical data loading are set in this class
+ */	
 public class ClinicalData implements DataTypeItf{
 	private Vector<StepItf> steps;
 	private Vector<File> rawFiles;
@@ -39,6 +48,7 @@ public class ClinicalData implements DataTypeItf{
 	private File logFile; //kettle job log file
 	private StudyItf study;
 	private File path;
+	private File QCLog;
 	public ClinicalData(StudyItf study){
 		this.study=study;
 		this.rawFiles=new Vector<File>();
@@ -50,9 +60,10 @@ public class ClinicalData implements DataTypeItf{
 		this.steps.add(new SelectWMF(this));
 		this.steps.add(new SetSubjectsId(this));
 		this.steps.add(new SetOtherIds(this));
+		this.steps.add(new SetVisitDates(this));
+		this.steps.add(new SetTerms(this));
 		this.steps.add(new SetStudyTree(this));
 		this.steps.add(new SetLabelsOntology(this));
-		this.steps.add(new SetTerms(this));
 		this.steps.add(new LoadData(this));
 		this.steps.add(new Monitoring(this));
 		this.steps.add(new QualityControl(this));
@@ -64,6 +75,9 @@ public class ClinicalData implements DataTypeItf{
 	public String toString(){
 		return "Clinical data";
 	}
+	/**
+	 *Check for the presence of the different files, set the pats to these files if they are present 
+	 */	
 	public void setFiles(File path){
 		this.path=path;
 		File[] children=this.path.listFiles();
@@ -80,6 +94,8 @@ public class ClinicalData implements DataTypeItf{
 					this.wmf=children[i];
 				}else if(children[i].getName().compareTo("kettle.log")==0){
 					this.logFile=children[i];
+				}else if(children[i].getName().compareTo("QClog.txt")==0){
+					this.QCLog=children[i];
 				}
 				else{
 					this.rawFiles.add(children[i]);
@@ -87,6 +103,9 @@ public class ClinicalData implements DataTypeItf{
 			}
 		}
 	}
+	/**
+	 *Returns a list of files to display in the file viewer list
+	 */	
 	public Vector<File> getFiles(){
 		Vector<File> v=new Vector<File>();
 		for(File f:this.rawFiles){
@@ -100,6 +119,9 @@ public class ClinicalData implements DataTypeItf{
 		}
 		if(this.logFile!=null){
 			v.add(this.logFile);
+		}
+		if(this.QCLog!=null){
+			v.add(this.QCLog);
 		}
 		return v;
 	}
@@ -139,5 +161,10 @@ public class ClinicalData implements DataTypeItf{
 	}
 	public void setLogFile(File logFile){
 		this.logFile=logFile;
+		WorkPart.filesChanged(this);
+	}
+	public void setQClog(File log){
+		this.QCLog=log;
+		WorkPart.filesChanged(this);
 	}
 }

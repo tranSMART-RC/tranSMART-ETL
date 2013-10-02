@@ -15,7 +15,9 @@ import fr.sanofi.fcl4transmart.model.classes.workUI.clinicalData.SetTermsUI;
 import fr.sanofi.fcl4transmart.model.interfaces.DataTypeItf;
 import fr.sanofi.fcl4transmart.model.interfaces.StepItf;
 import fr.sanofi.fcl4transmart.model.interfaces.WorkItf;
-
+/**
+ *This class represents the step to set replacing terms for clinical data
+ */	
 public class SetTerms implements StepItf{
 	private WorkItf workUI;
 	private DataTypeItf dataType;
@@ -30,14 +32,10 @@ public class SetTerms implements StepItf{
 	public String toString(){
 		return "Set terms";
 	}
-	@Override
-	public boolean isRealized() {
-		// TODO Auto-generated method stub
-		return false;
-	}
 	public String getDescription(){
 		return "This step allows replacing terms of raw files by other terms.\n"+
 				"A column of a raw file has to be chosen on the dropdown list. A field is then displayed for each term of this column. A new term can be indicated in this field\n"+
+				"It is possible to map terms for a property with terms from another property, by selecting a property in the 'Copy mapping from column' list and click on the 'OK' button\n"+
 				"By clicking on the 'OK' button, all the new terms of all columns are saved in a word mapping file";
 	}	
 	public boolean isAvailable(){

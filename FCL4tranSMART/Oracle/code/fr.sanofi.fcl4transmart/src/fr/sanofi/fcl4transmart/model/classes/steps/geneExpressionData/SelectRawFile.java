@@ -15,7 +15,9 @@ import fr.sanofi.fcl4transmart.model.classes.workUI.geneExpression.SelectRawFile
 import fr.sanofi.fcl4transmart.model.interfaces.DataTypeItf;
 import fr.sanofi.fcl4transmart.model.interfaces.StepItf;
 import fr.sanofi.fcl4transmart.model.interfaces.WorkItf;
-
+/**
+ *This class represents the step to select a raw file for gene expression data
+ */	
 public class SelectRawFile implements StepItf{
 	private WorkItf workUI;
 	public SelectRawFile(DataTypeItf dataType){
@@ -28,13 +30,8 @@ public class SelectRawFile implements StepItf{
 	public String toString(){
 		return "Select raw file";
 	}
-	@Override
-	public boolean isRealized() {
-		// TODO Auto-generated method stub
-		return false;
-	}
 	public String getDescription(){
-		return "This step allows chosing a raw file, by indicating the path or by choosing it with the 'browse' button.\n"+
+		return "This step allows choosing a raw file, by indicating the path or by choosing it with the 'browse' button.\n"+
 				"When the button 'Add file' is clicked, the format of the file is checked, and then the file is copied in the workspace.";
 	}
 	public boolean isAvailable(){

@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2012 Sanofi-Aventis Recherche et Développement.
+ * Copyright (c) 2012 Sanofi-Aventis Recherche et Dï¿½veloppement.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Public License v3.0
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/gpl.html
  * 
  * Contributors:
- *    Sanofi-Aventis Recherche et Développement - initial API and implementation
+ *    Sanofi-Aventis Recherche et Dï¿½veloppement - initial API and implementation
  ******************************************************************************/
 package fr.sanofi.fcl4transmart.controllers.listeners.description;
 
@@ -18,9 +18,11 @@ import java.sql.Statement;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
-import fr.sanofi.fcl4transmart.controllers.PreferencesHandler;
+import fr.sanofi.fcl4transmart.handlers.PreferencesHandler;
 import fr.sanofi.fcl4transmart.model.classes.workUI.description.LoadDescriptionUI;
-
+/**
+ *This class controls the study description loading
+ */	
 public class LoadDescriptionListener implements Listener{
 	private LoadDescriptionUI loadDescriptionUI;
 	public LoadDescriptionListener(LoadDescriptionUI loadDescriptionUI){
@@ -242,7 +244,6 @@ public class LoadDescriptionListener implements Listener{
 			this.loadDescriptionUI.displayMessage("SQL error: "+sqle.getLocalizedMessage());
 			sqle.printStackTrace();
 		} catch (ClassNotFoundException cnfe) {
-			// TODO Auto-generated catch block
 			this.loadDescriptionUI.displayMessage("Java error: Class not found exception");
 			cnfe.printStackTrace();
 		}

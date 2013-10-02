@@ -18,7 +18,9 @@ import fr.sanofi.fcl4transmart.model.classes.workUI.geneExpression.QualityContro
 import fr.sanofi.fcl4transmart.model.interfaces.DataTypeItf;
 import fr.sanofi.fcl4transmart.model.interfaces.StepItf;
 import fr.sanofi.fcl4transmart.model.interfaces.WorkItf;
-
+/**
+ *This class represents the quality control step for gene expression data
+ */	
 public class QualityControl implements StepItf{
 	private WorkItf workUI;
 	private DataTypeItf dataType;
@@ -33,21 +35,16 @@ public class QualityControl implements StepItf{
 	public String toString(){
 		return "Quality control";
 	}
-	@Override
-	public boolean isRealized() {
-		// TODO Auto-generated method stub
-		return false;
-	}
 	public String getDescription(){
-		return "This step allows controling gene expression data loading quality."+
-				"The intensity values for a probe of the micoarray are displayed for all samples, coming from the raw data file and from the database."+
-				"A probe name has to be chosen. This probe names has to be present in the raw gene expression data file."+
+		return "This step allows controlling gene expression data loading quality.\n"+
+				"The intensity values for a probe of the microarray are displayed for all samples, coming from the raw data file and from the database.\n"+
+				"A probe name has to be chosen. This probe names has to be present in the raw gene expression data file.\n"+
 				"Values for each sample are get in the raw files and in the database, and displayed. It is also indicated if theses values are the same in the two cases (with an allowed round of 0.001).\n"+
 				"A database connection is needed for this step.";
 	}
 	public boolean isAvailable(){
 		try{
-			if(((GeneExpressionData)this.dataType).getRawFile()==null){
+			if(((GeneExpressionData)this.dataType).getRawFiles()==null || ((GeneExpressionData)this.dataType).getRawFiles().size()==0){
 				return false;
 			}
 			File stsmf=((GeneExpressionData)this.dataType).getStsmf();

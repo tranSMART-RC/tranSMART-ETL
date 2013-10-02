@@ -68,11 +68,25 @@
   </info>
   <notepads>
     <notepad>
-      <note>This version uses a column map file instead of taking names from header</note>
-      <xloc>447</xloc>
-      <yloc>40</yloc>
-      <width>365</width>
-      <heigth>22</heigth>
+      <note>&#47;*************************************************************************
+* Copyright 2008-2012 Janssen Research &amp; Development, LLC.
+*
+* Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http:&#47;&#47;www.apache.org&#47;licenses&#47;LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+******************************************************************&#47;</note>
+      <xloc>28</xloc>
+      <yloc>549</yloc>
+      <width>444</width>
+      <heigth>197</heigth>
       <fontname>Microsoft Sans Serif</fontname>
       <fontsize>8</fontsize>
       <fontbold>N</fontbold>
@@ -90,14 +104,14 @@
     </notepad>
   </notepads>
   <connection>
-    <name>SQLLDR_LZ</name>
-    <server>${TM_LZ_DB_SERVER}</server>
+    <name>BIOMART</name>
+    <server>${BIOMART_DB_SERVER}</server>
     <type>ORACLE</type>
     <access>Native</access>
-    <database>${TM_LZ_DB_NAME}</database>
-    <port>${TM_LZ_DB_PORT}</port>
-    <username>${TM_LZ_DB_USER}</username>
-    <password>${TM_LZ_DB_PWD}</password>
+    <database>${BIOMART_DB_NAME}</database>
+    <port>${BIOMART_DB_PORT}</port>
+    <username>${BIOMART_DB_USER}</username>
+    <password>${BIOMART_DB_PWD}</password>
     <servername/>
     <data_tablespace/>
     <index_tablespace/>
@@ -105,21 +119,21 @@
       <attribute><code>FORCE_IDENTIFIERS_TO_LOWERCASE</code><attribute>N</attribute></attribute>
       <attribute><code>FORCE_IDENTIFIERS_TO_UPPERCASE</code><attribute>N</attribute></attribute>
       <attribute><code>IS_CLUSTERED</code><attribute>N</attribute></attribute>
-      <attribute><code>PORT_NUMBER</code><attribute>${TM_LZ_DB_PORT}</attribute></attribute>
+      <attribute><code>PORT_NUMBER</code><attribute>${BIOMART_DB_PORT}</attribute></attribute>
       <attribute><code>QUOTE_ALL_FIELDS</code><attribute>N</attribute></attribute>
       <attribute><code>SUPPORTS_BOOLEAN_DATA_TYPE</code><attribute>N</attribute></attribute>
       <attribute><code>USE_POOLING</code><attribute>N</attribute></attribute>
     </attributes>
   </connection>
   <connection>
-    <name>TM_BIOMART</name>
-    <server>${TM_BIOMART_DB_SERVER}</server>
+    <name>BIOMART_STAGE</name>
+    <server>${BIOMART_STAGE_DB_SERVER}</server>
     <type>ORACLE</type>
     <access>Native</access>
-    <database>${TM_BIOMART_DB_NAME}</database>
-    <port>${TM_BIOMART_DB_PORT}</port>
-    <username>${TM_BIOMART_DB_USER}</username>
-    <password>${TM_BIOMART_DB_PWD}</password>
+    <database>${BIOMART_STAGE_DB_NAME}</database>
+    <port>${BIOMART_STAGE_DB_PORT}</port>
+    <username>${BIOMART_STAGE_DB_USER}</username>
+    <password>${BIOMART_STAGE_DB_PWD}</password>
     <servername/>
     <data_tablespace/>
     <index_tablespace/>
@@ -127,7 +141,73 @@
       <attribute><code>FORCE_IDENTIFIERS_TO_LOWERCASE</code><attribute>N</attribute></attribute>
       <attribute><code>FORCE_IDENTIFIERS_TO_UPPERCASE</code><attribute>N</attribute></attribute>
       <attribute><code>IS_CLUSTERED</code><attribute>N</attribute></attribute>
-      <attribute><code>PORT_NUMBER</code><attribute>${TM_BIOMART_DB_PORT}</attribute></attribute>
+      <attribute><code>PORT_NUMBER</code><attribute>${BIOMART_STAGE_DB_PORT}</attribute></attribute>
+      <attribute><code>QUOTE_ALL_FIELDS</code><attribute>N</attribute></attribute>
+      <attribute><code>SUPPORTS_BOOLEAN_DATA_TYPE</code><attribute>N</attribute></attribute>
+      <attribute><code>USE_POOLING</code><attribute>N</attribute></attribute>
+    </attributes>
+  </connection>
+  <connection>
+    <name>DEAPP</name>
+    <server>${DEAPP_DB_SERVER}</server>
+    <type>ORACLE</type>
+    <access>Native</access>
+    <database>${DEAPP_DB_NAME}</database>
+    <port>${DEAPP_DB_PORT}</port>
+    <username>${DEAPP_DB_USER}</username>
+    <password>${DEAPP_DB_PWD}</password>
+    <servername/>
+    <data_tablespace/>
+    <index_tablespace/>
+    <attributes>
+      <attribute><code>FORCE_IDENTIFIERS_TO_LOWERCASE</code><attribute>N</attribute></attribute>
+      <attribute><code>FORCE_IDENTIFIERS_TO_UPPERCASE</code><attribute>N</attribute></attribute>
+      <attribute><code>IS_CLUSTERED</code><attribute>N</attribute></attribute>
+      <attribute><code>PORT_NUMBER</code><attribute>${DEAPP_DB_PORT}</attribute></attribute>
+      <attribute><code>QUOTE_ALL_FIELDS</code><attribute>N</attribute></attribute>
+      <attribute><code>SUPPORTS_BOOLEAN_DATA_TYPE</code><attribute>N</attribute></attribute>
+      <attribute><code>USE_POOLING</code><attribute>N</attribute></attribute>
+    </attributes>
+  </connection>
+  <connection>
+    <name>I2B2DEMODATA</name>
+    <server>${I2B2DEMODATA_DB_SERVER}</server>
+    <type>ORACLE</type>
+    <access>Native</access>
+    <database>${I2B2DEMODATA_DB_NAME}</database>
+    <port>${I2B2DEMODATA_DB_PORT}</port>
+    <username>${I2B2DEMODATA_DB_USER}</username>
+    <password>${I2B2DEMODATA_DB_PWD}</password>
+    <servername/>
+    <data_tablespace/>
+    <index_tablespace/>
+    <attributes>
+      <attribute><code>FORCE_IDENTIFIERS_TO_LOWERCASE</code><attribute>N</attribute></attribute>
+      <attribute><code>FORCE_IDENTIFIERS_TO_UPPERCASE</code><attribute>N</attribute></attribute>
+      <attribute><code>IS_CLUSTERED</code><attribute>N</attribute></attribute>
+      <attribute><code>PORT_NUMBER</code><attribute>${I2B2DEMODATA_DB_PORT}</attribute></attribute>
+      <attribute><code>QUOTE_ALL_FIELDS</code><attribute>N</attribute></attribute>
+      <attribute><code>SUPPORTS_BOOLEAN_DATA_TYPE</code><attribute>N</attribute></attribute>
+      <attribute><code>USE_POOLING</code><attribute>N</attribute></attribute>
+    </attributes>
+  </connection>
+  <connection>
+    <name>SQLLDR_STAGE</name>
+    <server>${SQLLDR_STAGE_DB_SERVER}</server>
+    <type>ORACLE</type>
+    <access>Native</access>
+    <database>${SQLLDR_STAGE_DB_NAME}</database>
+    <port>${BIOMART_STAGE_DB_PORT}</port>
+    <username>${SQLLDR_STAGE_DB_USER}</username>
+    <password>${SQLLDR_STAGE_DB_PWD}</password>
+    <servername/>
+    <data_tablespace/>
+    <index_tablespace/>
+    <attributes>
+      <attribute><code>FORCE_IDENTIFIERS_TO_LOWERCASE</code><attribute>N</attribute></attribute>
+      <attribute><code>FORCE_IDENTIFIERS_TO_UPPERCASE</code><attribute>N</attribute></attribute>
+      <attribute><code>IS_CLUSTERED</code><attribute>N</attribute></attribute>
+      <attribute><code>PORT_NUMBER</code><attribute>${BIOMART_STAGE_DB_PORT}</attribute></attribute>
       <attribute><code>QUOTE_ALL_FIELDS</code><attribute>N</attribute></attribute>
       <attribute><code>SUPPORTS_BOOLEAN_DATA_TYPE</code><attribute>N</attribute></attribute>
       <attribute><code>USE_POOLING</code><attribute>N</attribute></attribute>
@@ -177,33 +257,11 @@
       <attribute><code>USE_POOLING</code><attribute>N</attribute></attribute>
     </attributes>
   </connection>
-  <connection>
-    <name>Transmart</name>
-    <server>${TRANSMART_DB_SERVER}</server>
-    <type>ORACLE</type>
-    <access>Native</access>
-    <database>${TRANSMART_DB_NAME}</database>
-    <port>${TRANSMART_DB_PORT}</port>
-    <username>${TRANSMART_DB_USER}</username>
-    <password>${TRANSMART_DB_PWD}</password>
-    <servername/>
-    <data_tablespace/>
-    <index_tablespace/>
-    <attributes>
-      <attribute><code>FORCE_IDENTIFIERS_TO_LOWERCASE</code><attribute>N</attribute></attribute>
-      <attribute><code>FORCE_IDENTIFIERS_TO_UPPERCASE</code><attribute>N</attribute></attribute>
-      <attribute><code>IS_CLUSTERED</code><attribute>N</attribute></attribute>
-      <attribute><code>PORT_NUMBER</code><attribute>${TRANSMART_DB_PORT}</attribute></attribute>
-      <attribute><code>QUOTE_ALL_FIELDS</code><attribute>N</attribute></attribute>
-      <attribute><code>SUPPORTS_BOOLEAN_DATA_TYPE</code><attribute>N</attribute></attribute>
-      <attribute><code>USE_POOLING</code><attribute>N</attribute></attribute>
-    </attributes>
-  </connection>
   <order>
-  <hop> <from>Add record number to each row</from><to>Split field to rows</to><enabled>Y</enabled> </hop>  <hop> <from>Get data file</from><to>Add record number to each row</to><enabled>Y</enabled> </hop>  <hop> <from>Split field to rows</from><to>Trim column value</to><enabled>Y</enabled> </hop>  <hop> <from>Trim column value</from><to>Replace double-quote in col_value</to><enabled>Y</enabled> </hop>  <hop> <from>Trim label_col_value</from><to>Sort labels by col_num</to><enabled>Y</enabled> </hop>  <hop> <from>Replace double-quote in col_value</from><to>Sort data by column</to><enabled>Y</enabled> </hop>  <hop> <from>Sort data by column</from><to>Add data_label from header</to><enabled>Y</enabled> </hop>  <hop> <from>Add data_label from header</from><to>Select needed fields</to><enabled>Y</enabled> </hop>  <hop> <from>Unknown Column</from><to>Dummy (do nothing)</to><enabled>Y</enabled> </hop>  <hop> <from>Select needed fields</from><to>Sort by rec_num</to><enabled>Y</enabled> </hop>  <hop> <from>Sort by rec_num</from><to>Row denormaliser 2</to><enabled>Y</enabled> </hop>  <hop> <from>Sort labels by col_num</from><to>Check for valid column names</to><enabled>Y</enabled> </hop>  <hop> <from>Check for valid column names</from><to>Add data_label from header</to><enabled>Y</enabled> </hop>  <hop> <from>Check for valid column names</from><to>Unknown Column</to><enabled>Y</enabled> </hop>  <hop> <from>Row denormaliser 2</from><to>Check for missing fields</to><enabled>Y</enabled> </hop>  <hop> <from>Check for missing fields</from><to>Table output</to><enabled>Y</enabled> </hop>  <hop> <from>Check for missing fields</from><to>Write to log</to><enabled>Y</enabled> </hop>  <hop> <from>Write to log</from><to>Dummy (do nothing) 2</to><enabled>Y</enabled> </hop>  <hop> <from>Get metadata map file</from><to>Trim label_col_value</to><enabled>Y</enabled> </hop>  </order>
+  <hop> <from>Create input record from column name&#47;value</from><to>Check for missing fields</to><enabled>Y</enabled> </hop>  <hop> <from>Check for missing fields</from><to>Write to log</to><enabled>Y</enabled> </hop>  <hop> <from>Check for missing fields</from><to>Insert to lt_src_study_metadata</to><enabled>Y</enabled> </hop>  <hop> <from>Write to log</from><to>Abort</to><enabled>Y</enabled> </hop>  <hop> <from>Sort by study cols and remove dups</from><to>Create input record from column name&#47;value</to><enabled>Y</enabled> </hop>  <hop> <from>Standard Metadata Columns</from><to>Sort std columns</to><enabled>Y</enabled> </hop>  <hop> <from>Get input metadata file</from><to>Sort data columns</to><enabled>Y</enabled> </hop>  <hop> <from>Sort data columns</from><to>Merge Join</to><enabled>Y</enabled> </hop>  <hop> <from>Sort std columns</from><to>Merge Join</to><enabled>Y</enabled> </hop>  <hop> <from>Standard columns</from><to>Sort by study cols and remove dups</to><enabled>Y</enabled> </hop>  <hop> <from>Wait for insert to successfully complete</from><to>Insert to lt_src_study_metadata_ad_hoc</to><enabled>Y</enabled> </hop>  <hop> <from>Standard columns</from><to>Sort ad-hoc cols and remove dups</to><enabled>Y</enabled> </hop>  <hop> <from>Merge Join</from><to>Remove leading&#47;trailing quotes</to><enabled>Y</enabled> </hop>  <hop> <from>Sort ad-hoc cols and remove dups</from><to>Wait for insert to successfully complete</to><enabled>Y</enabled> </hop>  <hop> <from>Remove leading&#47;trailing quotes</from><to>Trim col_value</to><enabled>Y</enabled> </hop>  <hop> <from>Trim col_value</from><to>Standard columns</to><enabled>Y</enabled> </hop>  </order>
   <step>
-    <name>Add data_label from header</name>
-    <type>MergeJoin</type>
+    <name>Abort</name>
+    <type>Abort</type>
     <description/>
     <distribute>Y</distribute>
     <copies>1</copies>
@@ -211,47 +269,13 @@
            <method>none</method>
            <schema_name/>
            </partitioning>
-<join_type>INNER</join_type>
-<step1>Sort data by column</step1>
-<step2>Check for valid column names</step2>
-    <keys_1>
-      <key>col_num</key>
-    </keys_1>
-    <keys_2>
-      <key>label_col_nbr</key>
-    </keys_2>
+      <row_threshold>0</row_threshold>
+      <message>One or more required fields are missing</message>
+      <always_log_rows>Y</always_log_rows>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>271</xloc>
-      <yloc>393</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>Add record number to each row</name>
-    <type>Sequence</type>
-    <description/>
-    <distribute>Y</distribute>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-      <valuename>rec_num</valuename>
-      <use_database>N</use_database>
-      <connection/>
-      <schema/>
-      <seqname>SEQ_</seqname>
-      <use_counter>Y</use_counter>
-      <counter_name/>
-      <start_at>1</start_at>
-      <increment_by>1</increment_by>
-      <max_value>999999999</max_value>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>125</xloc>
-      <yloc>142</yloc>
+      <xloc>937</xloc>
+      <yloc>424</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -267,7 +291,7 @@
            <schema_name/>
            </partitioning>
 <send_true_to>Write to log</send_true_to>
-<send_false_to>Table output</send_false_to>
+<send_false_to>Insert to lt_src_study_metadata</send_false_to>
     <compare>
 <condition>
  <negated>N</negated>
@@ -290,7 +314,7 @@
      </condition>
     <condition>
      <negated>N</negated>
-     <operator>OR</operator>
+     <operator>AND</operator>
      <leftvalue>description</leftvalue>
      <function>IS NULL</function>
      <rightvalue/>
@@ -302,317 +326,14 @@
     </compare>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>758</xloc>
-      <yloc>394</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>Check for valid column names</name>
-    <type>FilterRows</type>
-    <description/>
-    <distribute>Y</distribute>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-<send_true_to>Add data_label from header</send_true_to>
-<send_false_to>Unknown Column</send_false_to>
-    <compare>
-<condition>
- <negated>N</negated>
- <leftvalue>label_col_value</leftvalue>
- <function>IN LIST</function>
- <rightvalue/>
- <value><name>constant</name><type>String</type><text>STUDY_ID;TITLE;DESCRIPTION;DESIGN;START_DATE;COMPLETION_DATE;PRIMARY_INVESTIGATOR;CONTACT_FIELD;STATUS;OVERALL_DESIGN;INSTITUTION;COUNTRY;BIOMARKER_TYPE;TARGET;ACCESS_TYPE;STUDY_OWNER;STUDY_PHASE;BLINDING_PROCEDURE;STUDYTYPE;DURATION_OF_STUDY_WEEKS;NUMBER_OF_PATIENTS;NUMBER_OF_SITES;ROUTE_OF_ADMINISTRATION;UNIXING_REGIMEN;GROUP_ASSIGNMENT;TYPE_OF_CONTROL;PRIMARY_END_POINTS;SECONDARY_END_POINTS;INCLUSION_CRITERIA;EXCLUSION_CRITERIA;SUBJECTS;GENDER_RESTRICTION_MFB;MIN_AGE;MAX_AGE;SECONDARY_IDS;DEVELOPMENT_PARTNER;GEO_PLATFORM;MAIN_FINDINGS;SEARCH_AREA;COMPOUND;DISEASE;PUBMED_IDS;ORGANISM</text><length>-1</length><precision>-1</precision><isnull>N</isnull><mask/></value> </condition>
-    </compare>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>273</xloc>
-      <yloc>495</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>Dummy (do nothing)</name>
-    <type>Dummy</type>
-    <description/>
-    <distribute>Y</distribute>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>506</xloc>
-      <yloc>570</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>Dummy (do nothing) 2</name>
-    <type>Dummy</type>
-    <description/>
-    <distribute>Y</distribute>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
       <xloc>765</xloc>
-      <yloc>536</yloc>
+      <yloc>339</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
 
   <step>
-    <name>Get data file</name>
-    <type>TextFileInput</type>
-    <description/>
-    <distribute>N</distribute>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-    <accept_filenames>N</accept_filenames>
-    <passing_through_fields>N</passing_through_fields>
-    <accept_field/>
-    <accept_stepname/>
-    <separator>\</separator>
-    <enclosure/>
-    <enclosure_breaks>N</enclosure_breaks>
-    <escapechar/>
-    <header>Y</header>
-    <nr_headerlines>1</nr_headerlines>
-    <footer>N</footer>
-    <nr_footerlines>1</nr_footerlines>
-    <line_wrapped>N</line_wrapped>
-    <nr_wraps>1</nr_wraps>
-    <layout_paged>N</layout_paged>
-    <nr_lines_per_page>80</nr_lines_per_page>
-    <nr_lines_doc_header>0</nr_lines_doc_header>
-    <noempty>Y</noempty>
-    <include>N</include>
-    <include_field/>
-    <rownum>N</rownum>
-    <rownumByFile>N</rownumByFile>
-    <rownum_field/>
-    <format>UNIX</format>
-    <encoding/>
-    <add_to_result_filenames>Y</add_to_result_filenames>
-    <file>
-      <name>${METADATA_LOCATION}&#47;${METADATA_FILENAME}</name>
-      <filemask/>
-      <exclude_filemask/>
-      <file_required>Y</file_required>
-      <include_subfolders>N</include_subfolders>
-      <type>CSV</type>
-      <compression>None</compression>
-    </file>
-    <filters>
-    </filters>
-    <fields>
-      <field>
-        <name>all_cols</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <ifnull/>
-        <position>-1</position>
-        <length>5000</length>
-        <precision>-1</precision>
-        <trim_type>none</trim_type>
-        <repeat>N</repeat>
-      </field>
-    </fields>
-    <limit>0</limit>
-    <error_ignored>N</error_ignored>
-    <skip_bad_files>N</skip_bad_files>
-    <file_error_field/>
-    <file_error_message_field/>
-    <error_line_skipped>N</error_line_skipped>
-    <error_count_field/>
-    <error_fields_field/>
-    <error_text_field/>
-    <bad_line_files_destination_directory/>
-    <bad_line_files_extension>warning</bad_line_files_extension>
-    <error_line_files_destination_directory/>
-    <error_line_files_extension>error</error_line_files_extension>
-    <line_number_files_destination_directory/>
-    <line_number_files_extension>line</line_number_files_extension>
-    <date_format_lenient>Y</date_format_lenient>
-    <date_format_locale>en_US</date_format_locale>
-    <shortFileFieldName/>
-    <pathFieldName/>
-    <hiddenFieldName/>
-    <lastModificationTimeFieldName/>
-    <uriNameFieldName/>
-    <rootUriNameFieldName/>
-    <extensionFieldName/>
-    <sizeFieldName/>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>122</xloc>
-      <yloc>53</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>Get metadata map file</name>
-    <type>TextFileInput</type>
-    <description/>
-    <distribute>N</distribute>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-    <accept_filenames>N</accept_filenames>
-    <passing_through_fields>N</passing_through_fields>
-    <accept_field/>
-    <accept_stepname/>
-    <separator>	</separator>
-    <enclosure/>
-    <enclosure_breaks>N</enclosure_breaks>
-    <escapechar/>
-    <header>Y</header>
-    <nr_headerlines>1</nr_headerlines>
-    <footer>N</footer>
-    <nr_footerlines>1</nr_footerlines>
-    <line_wrapped>N</line_wrapped>
-    <nr_wraps>1</nr_wraps>
-    <layout_paged>N</layout_paged>
-    <nr_lines_per_page>80</nr_lines_per_page>
-    <nr_lines_doc_header>0</nr_lines_doc_header>
-    <noempty>Y</noempty>
-    <include>N</include>
-    <include_field/>
-    <rownum>N</rownum>
-    <rownumByFile>N</rownumByFile>
-    <rownum_field/>
-    <format>UNIX</format>
-    <encoding/>
-    <add_to_result_filenames>Y</add_to_result_filenames>
-    <file>
-      <name>${METADATA_LOCATION}&#47;${METADATA_MAP_FILENAME}</name>
-      <filemask/>
-      <exclude_filemask/>
-      <file_required>Y</file_required>
-      <include_subfolders>N</include_subfolders>
-      <type>CSV</type>
-      <compression>None</compression>
-    </file>
-    <filters>
-    </filters>
-    <fields>
-      <field>
-        <name>label_col_nbr</name>
-        <type>Integer</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <ifnull/>
-        <position>-1</position>
-        <length>-1</length>
-        <precision>-1</precision>
-        <trim_type>none</trim_type>
-        <repeat>N</repeat>
-      </field>
-      <field>
-        <name>label_col_value</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <nullif/>
-        <ifnull/>
-        <position>-1</position>
-        <length>-1</length>
-        <precision>-1</precision>
-        <trim_type>both</trim_type>
-        <repeat>N</repeat>
-      </field>
-    </fields>
-    <limit>0</limit>
-    <error_ignored>N</error_ignored>
-    <skip_bad_files>N</skip_bad_files>
-    <file_error_field/>
-    <file_error_message_field/>
-    <error_line_skipped>N</error_line_skipped>
-    <error_count_field/>
-    <error_fields_field/>
-    <error_text_field/>
-    <bad_line_files_destination_directory/>
-    <bad_line_files_extension>warning</bad_line_files_extension>
-    <error_line_files_destination_directory/>
-    <error_line_files_extension>error</error_line_files_extension>
-    <line_number_files_destination_directory/>
-    <line_number_files_extension>line</line_number_files_extension>
-    <date_format_lenient>Y</date_format_lenient>
-    <date_format_locale>en_US</date_format_locale>
-    <shortFileFieldName/>
-    <pathFieldName/>
-    <hiddenFieldName/>
-    <lastModificationTimeFieldName/>
-    <uriNameFieldName/>
-    <rootUriNameFieldName/>
-    <extensionFieldName/>
-    <sizeFieldName/>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>119</xloc>
-      <yloc>490</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>Replace double-quote in col_value</name>
-    <type>ReplaceString</type>
-    <description/>
-    <distribute>Y</distribute>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-    <fields>
-      <field>
-        <in_stream_name>col_value</in_stream_name>
-        <out_stream_name/>
-        <use_regex>no</use_regex>
-        <replace_string>&quot;</replace_string>
-        <replace_by_string/>
-        <replace_field_by_string/>
-        <whole_word>no</whole_word>
-        <case_sensitive>no</case_sensitive>
-      </field>
-    </fields>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>122</xloc>
-      <yloc>263</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>Row denormaliser 2</name>
+    <name>Create input record from column name&#47;value</name>
     <type>Denormaliser</type>
     <description/>
     <distribute>Y</distribute>
@@ -624,24 +345,10 @@
       <key_field>col_name</key_field>
       <group>
         <field>
-          <name>rec_num</name>
+          <name>study_id</name>
           </field>
         </group>
       <fields>
-        <field>
-          <field_name>col_value</field_name>
-          <key_value>STUDY_ID</key_value>
-          <target_name>study_id</target_name>
-          <target_type>String</target_type>
-          <target_format/>
-          <target_length>-1</target_length>
-          <target_precision>-1</target_precision>
-          <target_decimal_symbol/>
-          <target_grouping_symbol/>
-          <target_currency_symbol/>
-          <target_null_string/>
-          <target_aggregation_type>-</target_aggregation_type>
-          </field>
         <field>
           <field_name>col_value</field_name>
           <key_value>TITLE</key_value>
@@ -952,7 +659,7 @@
           </field>
         <field>
           <field_name>col_value</field_name>
-          <key_value>UNIXING_REGIMEN</key_value>
+          <key_value>DOSING_REGIMEN</key_value>
           <target_name>dosing_regimen</target_name>
           <target_type>String</target_type>
           <target_format/>
@@ -1233,15 +940,15 @@
         </fields>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>620</xloc>
-      <yloc>394</yloc>
+      <xloc>757</xloc>
+      <yloc>269</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
 
   <step>
-    <name>Select needed fields</name>
-    <type>SelectValues</type>
+    <name>Standard Metadata Columns</name>
+    <type>DataGrid</type>
     <description/>
     <distribute>Y</distribute>
     <copies>1</copies>
@@ -1249,62 +956,74 @@
            <method>none</method>
            <schema_name/>
            </partitioning>
-    <fields>      <field>        <name>rec_num</name>
-        <rename/>
-        <length>-2</length>
-        <precision>-2</precision>
-      </field>      <field>        <name>label_col_value</name>
-        <rename>col_name</rename>
-        <length>-2</length>
-        <precision>-2</precision>
-      </field>      <field>        <name>col_value</name>
-        <rename/>
-        <length>-2</length>
-        <precision>-2</precision>
-      </field>        <select_unspecified>N</select_unspecified>
-    </fields>     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>405</xloc>
-      <yloc>394</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>Sort by rec_num</name>
-    <type>SortRows</type>
-    <description/>
-    <distribute>Y</distribute>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-      <directory>${SORT_DIR}</directory>
-      <prefix>out</prefix>
-      <sort_size>1000000</sort_size>
-      <free_memory/>
-      <compress>N</compress>
-      <compress_variable/>
-      <unique_rows>N</unique_rows>
     <fields>
       <field>
-        <name>rec_num</name>
-        <ascending>Y</ascending>
-        <case_sensitive>N</case_sensitive>
+        <name>std_column</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <length>-1</length>
+        <precision>-1</precision>
       </field>
     </fields>
+    <data>
+      <line> <item>TITLE</item> </line>
+      <line> <item>DESCRIPTION</item> </line>
+      <line> <item>DESIGN</item> </line>
+      <line> <item>START_DATE</item> </line>
+      <line> <item>COMPLETION_DATE</item> </line>
+      <line> <item>PRIMARY_INVESTIGATOR</item> </line>
+      <line> <item>CONTACT_FIELD</item> </line>
+      <line> <item>STATUS</item> </line>
+      <line> <item>OVERALL_DESIGN</item> </line>
+      <line> <item>INSTITUTION</item> </line>
+      <line> <item>COUNTRY</item> </line>
+      <line> <item>BIOMARKER_TYPE</item> </line>
+      <line> <item>TARGET</item> </line>
+      <line> <item>ACCESS_TYPE</item> </line>
+      <line> <item>STUDY_OWNER</item> </line>
+      <line> <item>STUDY_PHASE</item> </line>
+      <line> <item>BLINDING_PROCEDURE</item> </line>
+      <line> <item>STUDYTYPE</item> </line>
+      <line> <item>DURATION_OF_STUDY_WEEKS</item> </line>
+      <line> <item>NUMBER_OF_PATIENTS</item> </line>
+      <line> <item>NUMBER_OF_SITES</item> </line>
+      <line> <item>ROUTE_OF_ADMINISTRATION</item> </line>
+      <line> <item>DOSING_REGIMEN</item> </line>
+      <line> <item>GROUP_ASSIGNMENT</item> </line>
+      <line> <item>TYPE_OF_CONTROL</item> </line>
+      <line> <item>PRIMARY_END_POINTS</item> </line>
+      <line> <item>SECONDARY_END_POINTS</item> </line>
+      <line> <item>INCLUSION_CRITERIA</item> </line>
+      <line> <item>EXCLUSION_CRITERIA</item> </line>
+      <line> <item>SUBJECTS</item> </line>
+      <line> <item>GENDER_RESTRICTION_MFB</item> </line>
+      <line> <item>MIN_AGE</item> </line>
+      <line> <item>MAX_AGE</item> </line>
+      <line> <item>SECONDARY_IDS</item> </line>
+      <line> <item>DEVELOPMENT_PARTNER</item> </line>
+      <line> <item>GEO_PLATFORM</item> </line>
+      <line> <item>MAIN_FINDINGS</item> </line>
+      <line> <item>SEARCH_AREA</item> </line>
+      <line> <item>COMPOUND</item> </line>
+      <line> <item>DISEASE</item> </line>
+      <line> <item>PUBMED_IDS</item> </line>
+      <line> <item>ORGANISM</item> </line>
+      <line> <item/> </line>
+    </data>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>507</xloc>
-      <yloc>395</yloc>
+      <xloc>84</xloc>
+      <yloc>41</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
 
   <step>
-    <name>Sort data by column</name>
-    <type>SortRows</type>
+    <name>Get input metadata file</name>
+    <type>TextFileInput</type>
     <description/>
     <distribute>Y</distribute>
     <copies>1</copies>
@@ -1312,86 +1031,125 @@
            <method>none</method>
            <schema_name/>
            </partitioning>
-      <directory>${SORT_DIR}</directory>
-      <prefix>out</prefix>
-      <sort_size>1000000</sort_size>
-      <free_memory/>
-      <compress>N</compress>
-      <compress_variable/>
-      <unique_rows>N</unique_rows>
+    <accept_filenames>N</accept_filenames>
+    <passing_through_fields>N</passing_through_fields>
+    <accept_field/>
+    <accept_stepname/>
+    <separator>	</separator>
+    <enclosure>&quot;</enclosure>
+    <enclosure_breaks>N</enclosure_breaks>
+    <escapechar/>
+    <header>Y</header>
+    <nr_headerlines>1</nr_headerlines>
+    <footer>N</footer>
+    <nr_footerlines>1</nr_footerlines>
+    <line_wrapped>N</line_wrapped>
+    <nr_wraps>1</nr_wraps>
+    <layout_paged>N</layout_paged>
+    <nr_lines_per_page>80</nr_lines_per_page>
+    <nr_lines_doc_header>0</nr_lines_doc_header>
+    <noempty>Y</noempty>
+    <include>N</include>
+    <include_field/>
+    <rownum>N</rownum>
+    <rownumByFile>N</rownumByFile>
+    <rownum_field/>
+    <format>UNIX</format>
+    <encoding/>
+    <add_to_result_filenames>Y</add_to_result_filenames>
+    <file>
+      <name>${METADATA_LOCATION}&#47;${METADATA_FILENAME}</name>
+      <filemask/>
+      <exclude_filemask/>
+      <file_required>Y</file_required>
+      <include_subfolders>N</include_subfolders>
+      <type>CSV</type>
+      <compression>None</compression>
+    </file>
+    <filters>
+    </filters>
     <fields>
       <field>
-        <name>col_num</name>
-        <ascending>Y</ascending>
-        <case_sensitive>N</case_sensitive>
+        <name>study_id</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <ifnull/>
+        <position>-1</position>
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
       </field>
-    </fields>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>270</xloc>
-      <yloc>298</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>Sort labels by col_num</name>
-    <type>SortRows</type>
-    <description/>
-    <distribute>Y</distribute>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-      <directory>${SORT_DIR}</directory>
-      <prefix>out</prefix>
-      <sort_size>1000000</sort_size>
-      <free_memory/>
-      <compress>N</compress>
-      <compress_variable/>
-      <unique_rows>N</unique_rows>
-    <fields>
       <field>
-        <name>label_col_nbr</name>
-        <ascending>Y</ascending>
-        <case_sensitive>Y</case_sensitive>
+        <name>col_name</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <ifnull/>
+        <position>-1</position>
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>col_value</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif/>
+        <ifnull/>
+        <position>-1</position>
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
       </field>
     </fields>
+    <limit>0</limit>
+    <error_ignored>N</error_ignored>
+    <skip_bad_files>N</skip_bad_files>
+    <file_error_field/>
+    <file_error_message_field/>
+    <error_line_skipped>N</error_line_skipped>
+    <error_count_field/>
+    <error_fields_field/>
+    <error_text_field/>
+    <bad_line_files_destination_directory/>
+    <bad_line_files_extension>warning</bad_line_files_extension>
+    <error_line_files_destination_directory/>
+    <error_line_files_extension>error</error_line_files_extension>
+    <line_number_files_destination_directory/>
+    <line_number_files_extension>line</line_number_files_extension>
+    <date_format_lenient>Y</date_format_lenient>
+    <date_format_locale>en_US</date_format_locale>
+    <shortFileFieldName/>
+    <pathFieldName/>
+    <hiddenFieldName/>
+    <lastModificationTimeFieldName/>
+    <uriNameFieldName/>
+    <rootUriNameFieldName/>
+    <extensionFieldName/>
+    <sizeFieldName/>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>277</xloc>
-      <yloc>601</yloc>
+      <xloc>81</xloc>
+      <yloc>181</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
 
   <step>
-    <name>Split field to rows</name>
-    <type>SplitFieldToRows3</type>
-    <description/>
-    <distribute>Y</distribute>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-   <splitfield>all_cols</splitfield>
-   <delimiter>$[09]</delimiter>
-   <newfield>col_value</newfield>
-   <rownum>Y</rownum>
-   <rownum_field>col_num</rownum_field>
-   <resetrownumber>Y</resetrownumber>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>258</xloc>
-      <yloc>142</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>Table output</name>
+    <name>Insert to lt_src_study_metadata</name>
     <type>TableOutput</type>
     <description/>
     <distribute>Y</distribute>
@@ -1511,7 +1269,7 @@
           <stream_name>route_of_administration</stream_name>
         </field>
         <field>
-          <column_name>UNIXING_REGIMEN</column_name>
+          <column_name>DOSING_REGIMEN</column_name>
           <stream_name>dosing_regimen</stream_name>
         </field>
         <field>
@@ -1593,14 +1351,296 @@
     </fields>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>1005</xloc>
-      <yloc>392</yloc>
+      <xloc>768</xloc>
+      <yloc>423</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
 
   <step>
-    <name>Trim column value</name>
+    <name>Insert to lt_src_study_metadata_ad_hoc</name>
+    <type>TableOutput</type>
+    <description/>
+    <distribute>Y</distribute>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <connection>TM_LZ</connection>
+    <schema/>
+    <table>LT_SRC_STUDY_METADATA_AD_HOC</table>
+    <commit>1000</commit>
+    <truncate>Y</truncate>
+    <ignore_errors>N</ignore_errors>
+    <use_batch>Y</use_batch>
+    <specify_fields>Y</specify_fields>
+    <partitioning_enabled>N</partitioning_enabled>
+    <partitioning_field/>
+    <partitioning_daily>N</partitioning_daily>
+    <partitioning_monthly>Y</partitioning_monthly>
+    <tablename_in_field>N</tablename_in_field>
+    <tablename_field/>
+    <tablename_in_table>Y</tablename_in_table>
+    <return_keys>N</return_keys>
+    <return_field/>
+    <fields>
+        <field>
+          <column_name>STUDY_ID</column_name>
+          <stream_name>study_id</stream_name>
+        </field>
+        <field>
+          <column_name>AD_HOC_PROPERTY_KEY</column_name>
+          <stream_name>col_name</stream_name>
+        </field>
+        <field>
+          <column_name>AD_HOC_PROPERTY_VALUE</column_name>
+          <stream_name>col_value</stream_name>
+        </field>
+    </fields>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>506</xloc>
+      <yloc>431</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>Merge Join</name>
+    <type>MergeJoin</type>
+    <description/>
+    <distribute>Y</distribute>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+<join_type>LEFT OUTER</join_type>
+<step1>Sort data columns</step1>
+<step2>Sort std columns</step2>
+    <keys_1>
+      <key>col_name</key>
+    </keys_1>
+    <keys_2>
+      <key>std_column</key>
+    </keys_2>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>232</xloc>
+      <yloc>107</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>Remove leading&#47;trailing quotes</name>
+    <type>ReplaceString</type>
+    <description/>
+    <distribute>Y</distribute>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <fields>
+      <field>
+        <in_stream_name>col_value</in_stream_name>
+        <out_stream_name/>
+        <use_regex>yes</use_regex>
+        <replace_string>^&quot;|&quot;$</replace_string>
+        <replace_by_string/>
+        <replace_field_by_string/>
+        <whole_word>no</whole_word>
+        <case_sensitive>no</case_sensitive>
+      </field>
+    </fields>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>378</xloc>
+      <yloc>106</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>Sort ad-hoc cols and remove dups</name>
+    <type>SortRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+      <directory>${SORT_DIR}</directory>
+      <prefix>out</prefix>
+      <sort_size>1000000</sort_size>
+      <free_memory/>
+      <compress>N</compress>
+      <compress_variable/>
+      <unique_rows>Y</unique_rows>
+    <fields>
+      <field>
+        <name>study_id</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+      </field>
+      <field>
+        <name>col_name</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+      </field>
+      <field>
+        <name>col_value</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+      </field>
+    </fields>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>504</xloc>
+      <yloc>270</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>Sort by study cols and remove dups</name>
+    <type>SortRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+      <directory>${SORT_DIR}</directory>
+      <prefix>out</prefix>
+      <sort_size>1000000</sort_size>
+      <free_memory/>
+      <compress>N</compress>
+      <compress_variable/>
+      <unique_rows>Y</unique_rows>
+    <fields>
+      <field>
+        <name>study_id</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+      </field>
+      <field>
+        <name>col_name</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+      </field>
+      <field>
+        <name>col_value</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+      </field>
+    </fields>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>749</xloc>
+      <yloc>190</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>Sort data columns</name>
+    <type>SortRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+      <directory>${SORT_DIR}</directory>
+      <prefix>out</prefix>
+      <sort_size>1000000</sort_size>
+      <free_memory/>
+      <compress>N</compress>
+      <compress_variable/>
+      <unique_rows>N</unique_rows>
+    <fields>
+      <field>
+        <name>col_name</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+      </field>
+    </fields>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>234</xloc>
+      <yloc>183</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>Sort std columns</name>
+    <type>SortRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+      <directory>${SORT_DIR</directory>
+      <prefix>out</prefix>
+      <sort_size>1000000</sort_size>
+      <free_memory/>
+      <compress>N</compress>
+      <compress_variable/>
+      <unique_rows>N</unique_rows>
+    <fields>
+      <field>
+        <name>std_column</name>
+        <ascending>Y</ascending>
+        <case_sensitive>N</case_sensitive>
+      </field>
+    </fields>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>231</xloc>
+      <yloc>41</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>Standard columns</name>
+    <type>FilterRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+<send_true_to>Sort by study cols and remove dups</send_true_to>
+<send_false_to>Sort ad-hoc cols and remove dups</send_false_to>
+    <compare>
+<condition>
+ <negated>N</negated>
+ <leftvalue>std_column</leftvalue>
+ <function>IS NOT NULL</function>
+ <rightvalue/>
+ </condition>
+    </compare>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>503</xloc>
+      <yloc>190</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>Trim col_value</name>
     <type>StringOperations</type>
     <description/>
     <distribute>Y</distribute>
@@ -1626,15 +1666,15 @@
     </fields>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>260</xloc>
-      <yloc>228</yloc>
+      <xloc>377</xloc>
+      <yloc>190</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
 
   <step>
-    <name>Trim label_col_value</name>
-    <type>StringOperations</type>
+    <name>Wait for insert to successfully complete</name>
+    <type>BlockUntilStepsFinish</type>
     <description/>
     <distribute>Y</distribute>
     <copies>1</copies>
@@ -1642,51 +1682,16 @@
            <method>none</method>
            <schema_name/>
            </partitioning>
-    <fields>
-      <field>
-        <in_stream_name>label_col_value</in_stream_name>
-        <out_stream_name/>
-        <trim_type>both</trim_type>
-        <lower_upper>upper</lower_upper>
-        <padding_type>none</padding_type>
-        <pad_char/>
-        <pad_len/>
-        <init_cap>no</init_cap>
-        <mask_xml>none</mask_xml>
-        <digits>none</digits>
-        <remove_special_characters>none</remove_special_characters>
-      </field>
-    </fields>
+    <steps>
+      <step>
+        <name>Insert to lt_src_study_metadata</name>
+        <CopyNr>0</CopyNr>
+        </step>
+      </steps>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>119</xloc>
-      <yloc>601</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>Unknown Column</name>
-    <type>WriteToLog</type>
-    <description/>
-    <distribute>Y</distribute>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-      <loglevel>log_level_basic</loglevel>
-      <displayHeader>Y</displayHeader>
-      <logmessage>**** Unknown Column ****</logmessage>
-    <fields>
-      <field>
-        <name>label_col_value</name>
-        </field>
-      </fields>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>503</xloc>
-      <yloc>496</yloc>
+      <xloc>508</xloc>
+      <yloc>350</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -1705,9 +1710,6 @@
       <displayHeader>Y</displayHeader>
       <logmessage>*** Missing study_id, title, or description ***</logmessage>
     <fields>
-      <field>
-        <name>rec_num</name>
-        </field>
       <field>
         <name>study_id</name>
         </field>
@@ -1837,8 +1839,8 @@
       </fields>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>760</xloc>
-      <yloc>470</yloc>
+      <xloc>935</xloc>
+      <yloc>338</yloc>
       <draw>Y</draw>
       </GUI>
     </step>

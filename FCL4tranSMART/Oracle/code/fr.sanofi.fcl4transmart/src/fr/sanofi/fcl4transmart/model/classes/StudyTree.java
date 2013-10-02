@@ -11,7 +11,9 @@
 package fr.sanofi.fcl4transmart.model.classes;
 
 import java.util.Vector;
-
+/**
+ *This class represents a study tree
+ */	
 public class StudyTree {
 	private TreeNode root;
 	private boolean hasStudy;

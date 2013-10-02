@@ -12,13 +12,17 @@ package fr.sanofi.fcl4transmart.controllers;
 
 import fr.sanofi.fcl4transmart.model.interfaces.DataTypeItf;
 import fr.sanofi.fcl4transmart.ui.parts.StepSelectionPart;
-
+/**
+ *This class controls the step selection
+ */	
 public class StepSelectionController {
 	private StepSelectionPart stepSelectionPart;
 	public StepSelectionController(StepSelectionPart stepSelectionPart){
 		this.stepSelectionPart=stepSelectionPart;
-
 	}
+	/**
+	 *Changes the step list if a new data type is selected
+	 */	
 	public void selectionChanged(DataTypeItf selectedDataType){
 		  this.stepSelectionPart.setList(selectedDataType.getSteps());
 	  }

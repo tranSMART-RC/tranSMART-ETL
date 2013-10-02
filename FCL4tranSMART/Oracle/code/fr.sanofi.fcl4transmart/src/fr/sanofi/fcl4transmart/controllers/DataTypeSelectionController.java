@@ -10,15 +10,34 @@
  ******************************************************************************/
 package fr.sanofi.fcl4transmart.controllers;
 
+import java.util.Vector;
+
+import fr.sanofi.fcl4transmart.model.classes.dataType.FilesTransfer;
+import fr.sanofi.fcl4transmart.model.interfaces.DataTypeItf;
 import fr.sanofi.fcl4transmart.model.interfaces.StudyItf;
 import fr.sanofi.fcl4transmart.ui.parts.DataTypeSelectionPart;
-
+/**
+ * This class handles a data type selection
+ */
 public class DataTypeSelectionController {
 	private DataTypeSelectionPart dataTypeSelectionPart;
+	private Vector<DataTypeItf> otherDataTypes;//data types not associated with a study (e.g. file transfer)
 	public DataTypeSelectionController(DataTypeSelectionPart dataTypeSelectionPart){
 		this.dataTypeSelectionPart=dataTypeSelectionPart;
+		this.otherDataTypes=new Vector<DataTypeItf>();
+		
+		//add data types not linked to studies
+		this.otherDataTypes.add(new FilesTransfer());
+		
+		this.dataTypeSelectionPart.setList(this.otherDataTypes);
 	}
+	/**
+	 * Set the data types list to fit to the selected study
+	 */
 	public void selectionChanged(StudyItf selectedStudy){
-		  this.dataTypeSelectionPart.setList(selectedStudy.getDataTypes());
+		Vector<DataTypeItf> dataTypes=new Vector<DataTypeItf>();
+		if(selectedStudy!=null) dataTypes.addAll(selectedStudy.getDataTypes());
+		dataTypes.addAll(this.otherDataTypes);
+		this.dataTypeSelectionPart.setList(dataTypes);
 	}
 }

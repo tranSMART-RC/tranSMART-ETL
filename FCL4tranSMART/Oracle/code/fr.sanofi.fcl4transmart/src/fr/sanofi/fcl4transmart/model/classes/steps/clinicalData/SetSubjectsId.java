@@ -15,7 +15,9 @@ import fr.sanofi.fcl4transmart.model.classes.workUI.clinicalData.SetSubjectsIdUI
 import fr.sanofi.fcl4transmart.model.interfaces.DataTypeItf;
 import fr.sanofi.fcl4transmart.model.interfaces.StepItf;
 import fr.sanofi.fcl4transmart.model.interfaces.WorkItf;
-
+/**
+ *This class represents the step to set subject identifiers for clinical data
+ */	
 public class SetSubjectsId implements StepItf{
 	private WorkItf workUI;
 	private DataTypeItf dataType;
@@ -30,13 +32,8 @@ public class SetSubjectsId implements StepItf{
 	public String toString(){
 		return "Set subject identifiers";
 	}
-	@Override
-	public boolean isRealized() {
-		// TODO Auto-generated method stub
-		return false;
-	}
 	public String getDescription(){
-		return "This step allows chosing the column corresponding to the subject identifier."+
+		return "This step allows choosing the column corresponding to the subject identifier."+
 				"If a column mapping file is already existing, the identifiers are retrieved in this file and given as parameters by default";
 	}
 	public boolean isAvailable(){

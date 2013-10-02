@@ -13,9 +13,10 @@ package fr.sanofi.fcl4transmart.model.classes.steps.geneExpressionData;
 import fr.sanofi.fcl4transmart.model.classes.workUI.geneExpression.LoadAnnotationUI;
 import fr.sanofi.fcl4transmart.model.interfaces.DataTypeItf;
 import fr.sanofi.fcl4transmart.model.interfaces.StepItf;
-import fr.sanofi.fcl4transmart.model.interfaces.StudyItf;
 import fr.sanofi.fcl4transmart.model.interfaces.WorkItf;
-
+/**
+ *This class represents the step allowing to check that a platform annotation has already been loaded
+ */	
 public class CheckAnnotation implements StepItf{
 	private WorkItf workUI;
 	public CheckAnnotation(DataTypeItf dataType){
@@ -28,19 +29,14 @@ public class CheckAnnotation implements StepItf{
 	public String toString(){
 		return "Check annotation";
 	}
-	@Override
-	public boolean isRealized() {
-		// TODO Auto-generated method stub
-		return false;
-	}
 	public String getDescription(){
-		return "This step allow checking that the Affymetrix platform used in the study has annotation already loaded in the database. The identifier of the platform (e.g. 'GPL6244') has to be indicated.\n"+
-				"If annotation for this platform is not loaded yet, an annotation file can be chosen to be loaded. A title has to be provided, and optionaly a date and a release number.\n"+
+		return "This step allows checking that the Affymetrix platform used in the study has annotation already loaded in the database. The identifier of the platform (e.g. 'GPL6244') has to be indicated.\n"+
+				"If annotation for this platform is not loaded yet, an annotation file can be chosen to be loaded. A title has to be provided, and optionally a date and a release number.\n"+
 				"The file with platform annotation has to contain the following headers, in the right order:\n"+
 				"\t\tGPL_ID  PROBE_ID  GENE_SYMBOL  GENE_ID  ORGANISM  \n"+
 				"The gene identifier has to be a unique numeric identifier, and can be used to associate a pathway with a gene.\n"+
-				"This step can be very long."+
-				"A database connection is needed for this step.";
+				"A database connection is needed for this step.\n"+
+				"Warning: This step can be very long.";
 	}
 	public boolean isAvailable(){
 		return true;

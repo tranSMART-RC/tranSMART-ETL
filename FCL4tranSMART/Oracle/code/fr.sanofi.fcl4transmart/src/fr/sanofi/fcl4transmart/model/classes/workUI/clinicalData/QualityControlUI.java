@@ -1,40 +1,45 @@
 /*******************************************************************************
- * Copyright (c) 2012 Sanofi-Aventis Recherche et Développement.
+ * Copyright (c) 2012 Sanofi-Aventis Recherche et Dï¿½veloppement.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Public License v3.0
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/gpl.html
  * 
  * Contributors:
- *    Sanofi-Aventis Recherche et Développement - initial API and implementation
+ *    Sanofi-Aventis Recherche et Dï¿½veloppement - initial API and implementation
  ******************************************************************************/
 package fr.sanofi.fcl4transmart.model.classes.workUI.clinicalData;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.Vector;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 
-import fr.sanofi.fcl4transmart.controllers.ClinicalQCController;
 import fr.sanofi.fcl4transmart.controllers.FileHandler;
-import fr.sanofi.fcl4transmart.controllers.PreferencesHandler;
 import fr.sanofi.fcl4transmart.controllers.RetrieveData;
+import fr.sanofi.fcl4transmart.controllers.listeners.clinicalData.ClinicalQCController;
+import fr.sanofi.fcl4transmart.handlers.PreferencesHandler;
 import fr.sanofi.fcl4transmart.model.classes.dataType.ClinicalData;
 import fr.sanofi.fcl4transmart.model.interfaces.DataTypeItf;
 import fr.sanofi.fcl4transmart.model.interfaces.WorkItf;
 import fr.sanofi.fcl4transmart.ui.parts.WorkPart;
-
+/**
+ *This class allows the creation of the composite for clinical data quality control
+ */
 public class QualityControlUI implements WorkItf{
 	private DataTypeItf dataType;
 	private Composite body; 
@@ -44,9 +49,16 @@ public class QualityControlUI implements WorkItf{
 	private boolean testDemodata;
 	private boolean isSearching;
 
-	private HashMap<String, String> fileValues;
-	private HashMap<String, String> dbValues;
+	private HashMap<String, Vector<String>> fileValues;
+	private HashMap<String, Vector<String>> dbValues;
 	private String subjectId;
+	private Vector<String> c1;
+	private Vector<String> c2;
+	private Vector<String> c3;
+	private Vector<String> c4;
+	private Shell shellComplete;
+	private boolean isSearchingComplete;
+	private boolean completeWorked;
 	public QualityControlUI(DataTypeItf dataType){
 		this.dataType=dataType;
 	}
@@ -78,6 +90,7 @@ public class QualityControlUI implements WorkItf{
               }	
         }
 		shell.close();
+		
 		Composite composite=new Composite(parent, SWT.NONE);
 		GridLayout gd=new GridLayout();
 		gd.numColumns=1;
@@ -100,6 +113,51 @@ public class QualityControlUI implements WorkItf{
 				
 		Label subjectNumber=new Label(this.scrolledComposite, SWT.NONE);
 		subjectNumber.setText("Subject number: "+this.number);
+		
+		//button to launch complete comparison
+		Button complete=new Button(scrolledComposite, SWT.PUSH);
+		complete.setText("Launch a comparison");
+		complete.addListener(SWT.Selection, new Listener(){
+			@Override
+			public void handleEvent(Event event) {
+				if(testDemodata){
+					shellComplete=new Shell();
+					shellComplete.setSize(50, 100);
+					GridLayout gridLayout=new GridLayout();
+					gridLayout.numColumns=1;
+					shellComplete.setLayout(gridLayout);
+					ProgressBar pb = new ProgressBar(shellComplete, SWT.HORIZONTAL | SWT.INDETERMINATE);
+					pb.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+					Label searching=new Label(shellComplete, SWT.NONE);
+					searching.setText("Searching...");
+					shellComplete.open();
+					isSearchingComplete=false;
+					new Thread(){
+						public void run() {
+							completeWorked=(new ClinicalQCController(dataType).writeLog());
+							isSearchingComplete=true;
+						}
+			        }.start();
+			        Display display=WorkPart.display();
+			        while(!isSearchingComplete){
+			        	if (!display.readAndDispatch()) {
+			                display.sleep();
+			              }	
+			        }
+			        shellComplete.close();
+			        if(completeWorked){
+			        	displayMessage("Comparison is over. See file QClog.txt for results");
+			        }else{
+			        	displayMessage("Comparison Failed. Please check that database connection works and that workspace is accessible.");
+			        }
+					WorkPart.updateSteps();
+					WorkPart.updateFiles();
+				}else{
+					displayMessage("Connection to database is not possible");
+				}
+			}
+		});
 		
 		//dropdown list with subjects
 		Composite subjectPart=new Composite(this.scrolledComposite, SWT.NONE);
@@ -173,6 +231,10 @@ public class QualityControlUI implements WorkItf{
 		this.scrolledComposite.setSize(this.scrolledComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 	}
 	public Composite createBody(String subject){
+		this.c1=new Vector<String>();
+		this.c2=new Vector<String>();
+		this.c3=new Vector<String>();
+		this.c4=new Vector<String>();
 		this.subjectId=subject;
 		Composite body=new Composite(this.scrolledComposite, SWT.NONE);
 		GridLayout gd=new GridLayout();
@@ -214,6 +276,7 @@ public class QualityControlUI implements WorkItf{
 		
 		Label column1=new Label(body, SWT.NONE);
 		column1.setText("Label\t");
+		this.c1.add("Label");
 		GridData gridData = new GridData();
 		gridData.horizontalAlignment = SWT.FILL;
 		gridData.grabExcessHorizontalSpace = true;
@@ -221,6 +284,7 @@ public class QualityControlUI implements WorkItf{
 		
 		Label column2=new Label(body, SWT.NONE);
 		column2.setText("Raw data\t");
+		this.c2.add("Raw data");
 		gridData = new GridData();
 		gridData.horizontalAlignment = SWT.FILL;
 		gridData.grabExcessHorizontalSpace = true;
@@ -228,6 +292,7 @@ public class QualityControlUI implements WorkItf{
 		
 		Label column3=new Label(body, SWT.NONE);
 		column3.setText("Database values\t");
+		this.c3.add("Database values");
 		gridData = new GridData();
 		gridData.horizontalAlignment = SWT.FILL;
 		gridData.grabExcessHorizontalSpace = true;
@@ -235,66 +300,143 @@ public class QualityControlUI implements WorkItf{
 		
 		Label column4=new Label(body, SWT.NONE);
 		column4.setText("Equals");
+		this.c4.add("Equals");
 		gridData = new GridData();
 		gridData.horizontalAlignment = SWT.FILL;
 		gridData.grabExcessHorizontalSpace = true;
 		column4.setLayoutData(gridData);
 		
 		for(String key: fileValues.keySet()){
-			Label label=new Label(body, SWT.NONE);
-			label.setText(key+"\t");
-			gridData = new GridData();
-			gridData.horizontalAlignment = SWT.FILL;
-			gridData.grabExcessHorizontalSpace = true;
-			label.setLayoutData(gridData);
-			
-			Label rawLabel=new Label(body, SWT.NONE);
-			rawLabel.setText(fileValues.get(key));
-			gridData = new GridData();
-			gridData.horizontalAlignment = SWT.FILL;
-			gridData.grabExcessHorizontalSpace = true;
-			rawLabel.setLayoutData(gridData);
-			
-			Label dbLabel=new Label(body, SWT.NONE);
-			if(dbValues.containsKey(key)){
-				dbLabel.setText(dbValues.get(key));
+			Vector<String> file=this.sort(fileValues.get(key));
+			Vector<String> db=new Vector<String>();
+			if(dbValues.get(key)!=null){
+				db=this.sort(dbValues.get(key));
 			}
-			else{
-				dbLabel.setText("NO VALUE");
+			for(int i=0; i<Math.max(file.size(), db.size()); i++){
+				if(i<file.size()){
+					Label label=new Label(body, SWT.NONE);
+					label.setText(key+"\t");
+					this.c1.add(key);
+					gridData = new GridData();
+					gridData.horizontalAlignment = SWT.FILL;
+					gridData.grabExcessHorizontalSpace = true;
+					label.setLayoutData(gridData);
+					
+					Label rawLabel=new Label(body, SWT.NONE);
+					rawLabel.setText(file.get(i));
+					this.c2.add(file.get(i));
+
+					gridData = new GridData();
+					gridData.horizontalAlignment = SWT.FILL;
+					gridData.grabExcessHorizontalSpace = true;
+					rawLabel.setLayoutData(gridData);
+					
+					Label dbLabel=new Label(body, SWT.NONE);
+					if(db!=null && i<db.size()){
+						dbLabel.setText(db.get(i));
+						this.c3.add(db.get(i));
+					}
+					else{
+						dbLabel.setText("NO VALUE");
+						this.c3.add("NO VALUE");
+					}
+					gridData = new GridData();
+					gridData.horizontalAlignment = SWT.FILL;
+					gridData.grabExcessHorizontalSpace = true;
+					dbLabel.setLayoutData(gridData);
+					
+					Label eqLabel=new Label(body, SWT.NONE);
+					try{
+						if(Double.valueOf(rawLabel.getText())-Double.valueOf(dbLabel.getText())<0.001 && Double.valueOf(rawLabel.getText())-Double.valueOf(dbLabel.getText())>-0.001){
+							eqLabel.setText("OK");
+							this.c4.add("OK");
+						}
+						else if(rawLabel.getText().compareTo("")==0 && dbLabel.getText().compareTo("NO VALUE")==0){
+							eqLabel.setText("OK");
+							this.c4.add("OK");
+						}
+						else{
+							eqLabel.setText("FAIL");
+							this.c4.add("FAIL");
+						}
+					}
+					catch(Exception e){
+						if(rawLabel.getText().compareTo(dbLabel.getText())==0){
+							eqLabel.setText("OK");
+							this.c4.add("OK");
+						}
+						else if((rawLabel.getText().compareTo("")==0 || rawLabel.getText().compareTo(".")==0) && dbLabel.getText().compareTo("NO VALUE")==0){
+							eqLabel.setText("OK");
+							this.c4.add("OK");
+						}
+						else{
+							eqLabel.setText("FAIL");
+							this.c4.add("FAIL");
+						}
+					}
+					gridData = new GridData();
+					gridData.horizontalAlignment = SWT.FILL;
+					gridData.grabExcessHorizontalSpace = true;
+					eqLabel.setLayoutData(gridData);
+				}
 			}
-			gridData = new GridData();
-			gridData.horizontalAlignment = SWT.FILL;
-			gridData.grabExcessHorizontalSpace = true;
-			dbLabel.setLayoutData(gridData);
-			
-			Label eqLabel=new Label(body, SWT.NONE);
-			try{
-				if(Double.valueOf(rawLabel.getText())-Double.valueOf(dbLabel.getText())<0.001 && Double.valueOf(rawLabel.getText())-Double.valueOf(dbLabel.getText())>-0.001){
-					eqLabel.setText("OK");
-				}
-				else if(rawLabel.getText().compareTo("")==0 && dbLabel.getText().compareTo("NO VALUE")==0){
-					eqLabel.setText("OK");
-				}
-				else{
-					eqLabel.setText("FAIL");
-				}
-			}
-			catch(Exception e){
-				if(rawLabel.getText().compareTo(dbLabel.getText())==0){
-					eqLabel.setText("OK");
-				}
-				else if((rawLabel.getText().compareTo("")==0 || rawLabel.getText().compareTo(".")==0) && dbLabel.getText().compareTo("NO VALUE")==0){
-					eqLabel.setText("OK");
-				}
-				else{
-					eqLabel.setText("FAIL");
-				}
-			}
-			gridData = new GridData();
-			gridData.horizontalAlignment = SWT.FILL;
-			gridData.grabExcessHorizontalSpace = true;
-			eqLabel.setLayoutData(gridData);
 		}
 		return body;
 	}
+	public void displayMessage(String message){
+	    int style = SWT.ICON_INFORMATION | SWT.OK;
+	    MessageBox messageBox = new MessageBox(new Shell(), style);
+	    messageBox.setMessage(message);
+	    messageBox.open();
+	}
+	@Override
+	public boolean canCopy() {
+		if(this.subjectId==null || this.subjectId.compareTo("")==0){
+			return false;
+		}
+		return true;
+	}
+	@Override
+	public boolean canPaste() {
+		return false;
+	}
+	@Override
+	public Vector<Vector<String>> copy() {
+		Vector<Vector<String>> data=new Vector<Vector<String>>();
+		data.add(c1);
+		data.add(c2);
+		data.add(c3);
+		data.add(c4);
+		return data;
+	}
+	@Override
+	public void paste(Vector<Vector<String>> data) {
+		// nothing to do
+	}
+	@Override
+	public void mapFromClipboard(Vector<Vector<String>> data) {
+		// nothing to do
+		
+	}
+	
+	public Vector<String> sort(Vector<String> sort) {
+        Vector<String> v = new Vector<String>();
+        for(int count = 0; count < sort.size(); count++) {
+            String s = sort.elementAt(count).toString();
+            int i = 0;
+            for (i = 0; i < v.size(); i++) {
+                int c = s.compareTo((String) v.elementAt(i));
+                if (c < 0) {
+                    v.insertElementAt(s, i);
+                    break;
+                } else if (c == 0) {
+                    break;
+                }
+            }
+            if (i >= v.size()) {
+                v.addElement(s);
+            }
+        }
+        return v;
+    }
 }

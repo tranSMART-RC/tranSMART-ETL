@@ -15,7 +15,9 @@ import fr.sanofi.fcl4transmart.model.classes.workUI.clinicalData.SelectWMFUI;
 import fr.sanofi.fcl4transmart.model.interfaces.DataTypeItf;
 import fr.sanofi.fcl4transmart.model.interfaces.StepItf;
 import fr.sanofi.fcl4transmart.model.interfaces.WorkItf;
-
+/**
+ *This class represents the step to select the word mapping file
+ */	
 public class SelectWMF implements StepItf{
 	private WorkItf workUI;
 	private DataTypeItf dataType;
@@ -29,11 +31,6 @@ public class SelectWMF implements StepItf{
 	}
 	public String toString(){
 		return "Select Word Mapping File (optional)";
-	}
-	@Override
-	public boolean isRealized() {
-		// TODO Auto-generated method stub
-		return false;
 	}
 	public String getDescription(){
 		return "This step allows choosing a word mapping file, by indicating the path or by choosing it with the 'browse' button.\n"+

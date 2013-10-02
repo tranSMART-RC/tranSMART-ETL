@@ -16,7 +16,9 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 
 import fr.sanofi.fcl4transmart.model.classes.TreeNode;
-
+/**
+ *This class represents the way a node is displayed in a tree
+ */	
 public class StudyLabelProvider {//extends LabelProvider implements ITableLabelProvider, ITableColorProvider{ 
 		public Image getColumnImage(Object element, int columnIndex) {
 			return null;
@@ -36,6 +38,4 @@ public class StudyLabelProvider {//extends LabelProvider implements ITableLabelP
 		public Color getForeground(Object element, int columnIndex) {
 			return null;
 		}
-
-
 }

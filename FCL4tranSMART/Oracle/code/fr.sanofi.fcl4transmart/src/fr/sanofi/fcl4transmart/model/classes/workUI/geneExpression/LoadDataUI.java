@@ -1,50 +1,48 @@
 /*******************************************************************************
- * Copyright (c) 2012 Sanofi-Aventis Recherche et Développement.
+ * Copyright (c) 2012 Sanofi-Aventis Recherche et Dï¿½veloppement.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Public License v3.0
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/gpl.html
  * 
  * Contributors:
- *    Sanofi-Aventis Recherche et Développement - initial API and implementation
+ *    Sanofi-Aventis Recherche et Dï¿½veloppement - initial API and implementation
  ******************************************************************************/
 package fr.sanofi.fcl4transmart.model.classes.workUI.geneExpression;
 
-import org.eclipse.jface.viewers.AbstractTreeViewer;
+import java.util.Vector;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
-import fr.sanofi.fcl4transmart.controllers.PreferencesHandler;
 import fr.sanofi.fcl4transmart.controllers.RetrieveData;
-import fr.sanofi.fcl4transmart.controllers.TopNodeController;
-import fr.sanofi.fcl4transmart.controllers.listeners.clinicalData.StudyContentProvider;
+import fr.sanofi.fcl4transmart.controllers.RetrieveFm;
+import fr.sanofi.fcl4transmart.controllers.fileTransfer.FolderContentProvider;
 import fr.sanofi.fcl4transmart.controllers.listeners.geneExpression.LoadGeneExpressionDataListener;
-import fr.sanofi.fcl4transmart.model.classes.StudyTree;
-import fr.sanofi.fcl4transmart.model.classes.TreeNode;
+import fr.sanofi.fcl4transmart.handlers.PreferencesHandler;
+import fr.sanofi.fcl4transmart.model.classes.FolderNode;
+import fr.sanofi.fcl4transmart.model.classes.FoldersTree;
 import fr.sanofi.fcl4transmart.model.interfaces.DataTypeItf;
 import fr.sanofi.fcl4transmart.model.interfaces.WorkItf;
 import fr.sanofi.fcl4transmart.ui.parts.WorkPart;
-
+/**
+ *This class allows the creation of the composite to load gene expression data
+ */
 public class LoadDataUI implements WorkItf{
 	private DataTypeItf dataType;
-	private TreeNode root;
-	private StudyTree studyTree;
 	private TreeViewer viewer;
-	private TopNodeController topNodeController;
 	private String topNode;
 	private Display display;
 	private boolean isSearching;
@@ -54,9 +52,21 @@ public class LoadDataUI implements WorkItf{
 	private String message;
 	private Shell loadingShell;
 	private boolean isLoading;
+	private Button securityButton;
+	private boolean security;
+	private Button  indexesButton;
+	private boolean indexes;
+	private Button etlServerButton;
+	private boolean etlServer;
+	private FoldersTree folders;
+	boolean treeBuilt;
+	private boolean sqlldr;
 	public LoadDataUI(DataTypeItf dataType){
 		this.dataType=dataType;
 		this.topNode="";
+		this.security=false;
+		this.etlServer=false;
+		this.sqlldr=false;
 	}
 	@Override
 	public Composite createUI(Composite parent){
@@ -78,11 +88,10 @@ public class LoadDataUI implements WorkItf{
 				testTm_cz=RetrieveData.testTm_czConnection();
 				testTm_lz=RetrieveData.testTm_lzConnection();
 				testDeapp=RetrieveData.testDeappConnection();
-				root=new TreeNode("Dataset explorer", null, false);
-				studyTree=new StudyTree(root);	
-				topNodeController=new TopNodeController(root, dataType, studyTree);
-				root=topNodeController.buildTree();	
-				topNode=dataType.getStudy().getTopNode();
+				
+				folders=new FoldersTree();
+				treeBuilt=RetrieveFm.buildTree(folders, false);
+				topNode=RetrieveFm.searchTopNode(folders, dataType.getStudy().toString());
 				isSearching=false;
 			}
         }.start();
@@ -114,16 +123,21 @@ public class LoadDataUI implements WorkItf{
 		scroller.setContent(scrolledComposite); 
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
+		layout.verticalSpacing=10;
 		scrolledComposite.setLayout(layout);
 		scrolledComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		this.topNode=this.dataType.getStudy().getTopNode();
 		if(topNode!=null && topNode.compareTo("")!=0){
 			viewer = new TreeViewer(scrolledComposite, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL);
-			viewer.setContentProvider(new StudyContentProvider());
-			viewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
+			viewer.setContentProvider(new FolderContentProvider());
+			viewer.setAutoExpandLevel(2);
 
-			viewer.setInput(this.studyTree);
+			viewer.setInput(this.folders);
+			
+			Object elements[]=((FolderContentProvider)viewer.getContentProvider()).getElement(topNode);
+			if(elements!=null) viewer.setExpandedElements(elements);	
+			
+			//viewer.setInput(this.studyTree);
 			GridData gridData = new GridData(GridData.FILL_BOTH);
 			gridData.horizontalAlignment = SWT.FILL;
 			gridData.verticalAlignment=SWT.FILL;
@@ -140,19 +154,54 @@ public class LoadDataUI implements WorkItf{
 
 			    @Override
 			    public Color getBackground(Object element) {
-			    	if(((TreeNode)element).isStudyRoot()){
+			    	if(((FolderNode)element).getId()==RetrieveFm.getStudyId()){
 			    		return new Color(Display.getCurrent(), 237, 91, 67);
-			    	}
-			    	if(((TreeNode)element).isLabel()){
-			    		return new Color(Display.getCurrent(), 212, 212, 212);
 			    	}
 			    	return null;
 			    }
 			});
+			
+			securityButton=new Button(scrolledComposite, SWT.CHECK);
+			securityButton.setText("Security required");
+			securityButton.addListener(SWT.Selection, new Listener(){
+
+				@Override
+				public void handleEvent(Event event) {
+					security=securityButton.getSelection();
+				}	
+			});
+			
+			indexesButton=new Button(scrolledComposite, SWT.CHECK);
+			indexesButton.setText("Turn off the indexes during loading (only for large datasets)");
+			indexesButton.addListener(SWT.Selection, new Listener(){
+
+				@Override
+				public void handleEvent(Event event) {
+					indexes=indexesButton.getSelection();	
+				}
+			});
+			
+			etlServerButton=new Button(scrolledComposite, SWT.CHECK);
+			etlServerButton.setText("Use ETL server");
+			etlServerButton.addListener(SWT.Selection, new Listener(){
+
+				@Override
+				public void handleEvent(Event event) {
+					etlServer=etlServerButton.getSelection();
+					if(!etlServerButton.getSelection()){
+						sqlldr=false;
+					}
+				}
+			});
 		}
 		else{
 			Label label=new Label(scrolledComposite, SWT.NONE);
-			label.setText("Please first choose a study node in the description data type");
+			if(!RetrieveData.testFmappConnection()){
+				label.setText("Connection to database is not possible.");
+			}
+			else{
+				label.setText("The study top node can not be found for the study with accession "+this.dataType.getStudy().toString()+" in the transmart database "+PreferencesHandler.getDb()+".");
+			}
 		}
 		
 		Button button=new Button(scrolledComposite, SWT.PUSH);
@@ -216,5 +265,39 @@ public class LoadDataUI implements WorkItf{
 	}
 	public void setMessage(String message){
 		this.message=message;
+	}
+	@Override
+	public boolean canCopy() {
+		return false;
+	}
+	@Override
+	public boolean canPaste() {
+		return false;
+	}
+	@Override
+	public Vector<Vector<String>> copy() {
+		return null;
+	}
+	@Override
+	public void paste(Vector<Vector<String>> data) {
+		// nothing to do
+		
+	}
+	@Override
+	public void mapFromClipboard(Vector<Vector<String>> data) {
+		// nothing to do
+		
+	}
+	public boolean getSecurity(){
+		return this.security;
+	}
+	public boolean getIndexes(){
+		return this.indexes;
+	}
+	public boolean getEtlServer(){
+		return this.etlServer;
+	}
+	public boolean getSqlldr(){
+		return this.sqlldr;
 	}
 }

@@ -12,12 +12,17 @@ package fr.sanofi.fcl4transmart.controllers;
 
 import fr.sanofi.fcl4transmart.model.interfaces.StepItf;
 import fr.sanofi.fcl4transmart.ui.parts.StepDescriptionPart;
-
+/**
+ *This class controls the step description part
+ */	
 public class StepDescriptionController {
 	private StepDescriptionPart stepDescriptionPart;
 	public StepDescriptionController(StepDescriptionPart stepDescriptionPart){
 		this.stepDescriptionPart=stepDescriptionPart;
 	}
+	/**
+	 *Change the description if another step is selected
+	 */	
 	public void selectionChanged(StepItf selectedStep){
 		  this.stepDescriptionPart.setDescription(selectedStep.getDescription());
 	}

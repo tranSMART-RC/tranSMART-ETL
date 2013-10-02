@@ -18,7 +18,9 @@ import fr.sanofi.fcl4transmart.model.classes.workUI.geneExpression.SetTissueType
 import fr.sanofi.fcl4transmart.model.interfaces.DataTypeItf;
 import fr.sanofi.fcl4transmart.model.interfaces.StepItf;
 import fr.sanofi.fcl4transmart.model.interfaces.WorkItf;
-
+/**
+ *This class represents the step to set the tissue type attribute for the sample to subject mapping file
+ */	
 public class SetTissueType implements StepItf{
 	private WorkItf workUI;
 	private DataTypeItf dataType;
@@ -33,11 +35,6 @@ public class SetTissueType implements StepItf{
 	public String toString(){
 		return "Set tissue type";
 	}
-	@Override
-	public boolean isRealized() {
-		// TODO Auto-generated method stub
-		return false;
-	}
 	public String getDescription(){
 		return "This step allows defining tissue type for samples.\n"+
 				"The button 'Apply' allows setting all selected fields to the value in the field names 'Value'. All fields can be selected or deselected at the same time with buttons.\n"+
@@ -45,7 +42,7 @@ public class SetTissueType implements StepItf{
 	}
 	public boolean isAvailable(){
 		try{
-			if(((GeneExpressionData)this.dataType).getRawFile()==null){
+			if(((GeneExpressionData)this.dataType).getRawFiles()==null || ((GeneExpressionData)this.dataType).getRawFiles().size()==0){
 				return false;
 			}
 			File stsmf=((GeneExpressionData)this.dataType).getStsmf();
