@@ -126,7 +126,7 @@ public class LoadAnnotationListener implements Listener{
 						}
 						job.getJobMeta().setParameterValue("GPL_ID", platformId);
 						job.getJobMeta().setParameterValue("SKIP_ROWS","1");
-						job.getJobMeta().setParameterValue("GENE_ID","4");
+						job.getJobMeta().setParameterValue("GENE_ID_COL","4");
 						job.getJobMeta().setParameterValue("GENE_SYMBOL_COL","3");
 						job.getJobMeta().setParameterValue("ORGANISM_COL","5");
 						job.getJobMeta().setParameterValue("PROBE_COL","2");

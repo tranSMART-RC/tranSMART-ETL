@@ -22,8 +22,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 
-import fr.sanofi.fcl4transmart.controllers.AnalysisMonitoringController;
 import fr.sanofi.fcl4transmart.controllers.RetrieveData;
+import fr.sanofi.fcl4transmart.controllers.listeners.geneanalysis.AnalysisMonitoringController;
 
 import fr.sanofi.fcl4transmart.handlers.PreferencesHandler;
 import fr.sanofi.fcl4transmart.model.interfaces.DataTypeItf;

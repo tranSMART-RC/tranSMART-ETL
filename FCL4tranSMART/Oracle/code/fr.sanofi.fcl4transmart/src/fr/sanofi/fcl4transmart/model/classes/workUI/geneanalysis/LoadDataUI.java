@@ -26,10 +26,11 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
-import fr.sanofi.fcl4transmart.controllers.LoadAnalysisDataListener;
 import fr.sanofi.fcl4transmart.controllers.RetrieveData;
 import fr.sanofi.fcl4transmart.controllers.RetrieveFm;
+import fr.sanofi.fcl4transmart.controllers.listeners.geneanalysis.LoadAnalysisDataListener;
 import fr.sanofi.fcl4transmart.handlers.PreferencesHandler;
 import fr.sanofi.fcl4transmart.model.classes.dataType.GeneExpressionAnalysis;
 import fr.sanofi.fcl4transmart.model.interfaces.DataTypeItf;
@@ -51,6 +52,7 @@ public class LoadDataUI implements WorkItf{
 	private String name;
 	private Button etlServerButton;
 	private boolean analysisFound;
+	private Text platformId;
 	public LoadDataUI(DataTypeItf dataType){
 		this.dataType=dataType;
 	}
@@ -123,6 +125,21 @@ public class LoadDataUI implements WorkItf{
 			load.setText("Load");
 			load.setEnabled(false);
 		}else{
+			//platform identifier part definition
+			Composite platformIdPart=new Composite(scrolledComposite, SWT.NONE);gd=new GridLayout();
+			gd.numColumns=2;
+			gd.horizontalSpacing=5;
+			gd.verticalSpacing=5;
+			scroller.setLayout(gd);
+			platformIdPart.setLayout(gd);
+			
+			Label platformLabel=new Label(platformIdPart, SWT.NONE);
+			platformLabel.setText("Platform identifier:");
+			this.platformId=new Text(platformIdPart, SWT.BORDER);
+			GridData gridData=new GridData();
+			gridData.widthHint=100;
+			this.platformId.setLayoutData(gridData);
+			
 			Label lab=new Label(scrolledComposite, SWT.NONE);
 			String text="You are going to load the analysis "+this.name+"\n";
 			text+="You are connected to database "+PreferencesHandler.getDb();
@@ -209,5 +226,8 @@ public class LoadDataUI implements WorkItf{
 	}
 	public boolean getEtlServer() {
 		return this.etlServer;
+	}
+	public String getPlatform(){
+		return this.platformId.getText();
 	}
 }

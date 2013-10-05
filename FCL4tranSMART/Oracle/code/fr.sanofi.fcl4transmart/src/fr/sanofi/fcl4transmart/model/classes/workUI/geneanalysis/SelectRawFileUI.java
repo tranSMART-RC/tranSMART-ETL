@@ -24,7 +24,8 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import fr.sanofi.fcl4transmart.controllers.SelectGeneAnalysisFileController;
+
+import fr.sanofi.fcl4transmart.controllers.listeners.geneanalysis.SelectGeneAnalysisFileController;
 import fr.sanofi.fcl4transmart.model.interfaces.DataTypeItf;
 import fr.sanofi.fcl4transmart.model.interfaces.WorkItf;
 /**
