@@ -61,7 +61,7 @@ class SubjectSnpDataset {
 				subjectSnpDatasetRecord["subject_id"] = subjectId
 				subjectSnpDatasetRecord["patient_gender"] = gender
 				subjectSnpDatasetRecord["sample_type"] = sampleType
-				subjectSnpDatasetRecord["dataset_name"] = trialName + "_" + subjectId + "_" + conceptCode
+				subjectSnpDatasetRecord["dataset_name"] = trialName + "_" + subjectId
 
 				insertSubjectSnpDataset(subjectSnpDatasetRecord)
 			} else{
