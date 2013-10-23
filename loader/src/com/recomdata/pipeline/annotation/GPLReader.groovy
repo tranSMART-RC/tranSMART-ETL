@@ -80,8 +80,8 @@ class GPLReader {
 		}
 	}
 
-	void processGPLs(String inputFileName){
-
+	void processGPLs(Properties props){
+		String inputFileName=props.get("input_file")
 		long numProbes
 		if(inputFileName.indexOf(";")){
 			String [] names = inputFileName.split(";")
@@ -92,7 +92,7 @@ class GPLReader {
 					log.info("Start parsing " + inputFile.toString())
 
 					setGPLInputFile(inputFile)
-					numProbes = parseGPLFile() //probeInfo, snpGeneMap, snpMapFile)
+					numProbes = parseGPLFile(props) //probeInfo, snpGeneMap, snpMapFile)
 					if(numProbes == expectedProbes[names[i]])
 						log.info("Probes in " + names[i] + ": " + numProbes + "; expected: " + expectedProbes[names[i]])
 					else
@@ -107,7 +107,7 @@ class GPLReader {
 			log.info("Start parsing " + inputFile.toString())
 
 			setGPLInputFile(inputFile)
-			numProbes = parseGPLFile() //probeInfo, snpGeneMap, snpMapFile)
+			numProbes = parseGPLFile(props) //probeInfo, snpGeneMap, snpMapFile)
 			if(numProbes == expectedProbes[inputFileName])
 				log.info("Probes in " + inputFileName + ": " + numProbes + "; expected: " + expectedProbes[inputFileName])
 			else
@@ -116,7 +116,7 @@ class GPLReader {
 	}
 
 
-	long parseGPLFile(){
+	long parseGPLFile(Properties props){
 		String [] str, header
 		def genes = [:]
 		boolean isHeaderLine = false
@@ -127,59 +127,71 @@ class GPLReader {
 		StringBuffer sb_snpMap = new StringBuffer()
 
 		long numProbes = 0
-		gplInput.eachLine{
-			str = it.split("\t")
-			if(str.size() > 14){
-				if(it.indexOf("ID") == 0) {
-					isHeaderLine = true
 
-					if((gplInput.name.indexOf("GPL2004") > -1) || (gplInput.name.indexOf("GPL2005") > -1)){
-						// used for GPL2004 and GPL2005
-						log.info str[0] + "\t" + str[1] + "\t" + str[2] + "\t" + str[5] + "\t" + str[12]
+		//check there is all column numbers in properties
+		def c_snpId=props.get("snp_id")
+		def c_rsId=props.get("rsId")
+		def c_chr=props.get("chr")
+		def c_pos=props.get("pos")
+		def c_gene=props.get("gene")//optional
+		Map columns=[:]
+		def hadHeaderLine=false
+		if(c_snpId!=null && c_rsId!=null && c_chr!=null && c_pos!=null){
+			gplInput.eachLine{
+				if(hadHeaderLine) {
+					str = it.split("\t")
+					String snpId, rsId, chr, pos
+					snpId = str[columns["snpId"]]
+					rsId = str[columns["rsId"]]
+					chr = str[columns["chr"]]
+					pos = str[columns["pos"]]
+					if(!chr.equals(null) && !pos.equals(null) && (chr.size()>0) && (pos.size() > 0)){
+						numProbes++
+						if(!rsId.equals(null) && (rsId.indexOf("---") == -1))  sb_probeinfo.append(snpId + "\t" + rsId + "\n")
+						sb_snpMap.append(chr + "\t" + snpId + "\t0\t" + pos + "\n")
 					}
-
-					if((gplInput.name.indexOf("GPL3718") > -1) || (gplInput.name.indexOf("GPL3720") > -1)){
-						// used for GPL3718 and GPL3720
-						log.info str[0] + "\t" + str[1] + "\t" + str[2] + "\t" + str[5] + "\t" + str[13]
+					if(columns["gene"]!=null){
+						for(String g in str[columns["gene"]].split("///", -1)) {
+							if(g.compareTo("")!=0){
+								sb_snpGeneMap.append(rsId+"\t"+g + "\n")
+							}
+						}
 					}
-				}else{
-					//if(isHeaderLine && numProbes < 10) {
-					if(isHeaderLine) {
-						String snpId, rsId, chr, pos
-						if((gplInput.name.indexOf("GPL2004") > -1) || (gplInput.name.indexOf("GPL2005") > -1)){
-							// used for GPL2004 and GPL2005
-							snpId = str[0].trim()
-							rsId = str[1].trim()
-							chr = str[2].trim()
-							pos = str[5].trim()
-							genes = getSNPGeneMapping(str[12])
+				}else if(it.indexOf(c_snpId) >= 0 && it.indexOf(c_rsId) >= 0 && it.indexOf(c_chr) >= 0 && it.indexOf(c_pos) >= 0) {
+					str = it.split("\t")
+					for(int i=0; i<str.size(); i++){
+						switch ( str[i] ) {
+							case c_snpId:
+								columns["snpId"]=i
+								break
+						
+							case c_rsId:
+								columns["rsId"]=i
+								break
+						
+							case c_chr:
+								columns["chr"]=i
+								break
+						
+							case c_pos:
+								columns["pos"]=i
+								break
+						
+							case c_gene:
+								columns["gene"]=i
+								break
 						}
-
-						if((gplInput.name.indexOf("GPL3718") > -1) || (gplInput.name.indexOf("GPL3720") > -1)){
-							// used for GPL3718 and GPL3720
-							snpId = str[0].trim()
-							rsId = str[2].trim()
-							chr = str[3].trim()
-							pos = str[6].trim()
-							genes = getSNPGeneMapping(str[13])
-
-						}
-
-						if(!chr.equals(null) && !pos.equals(null) && (chr.size()>0) && (pos.size() > 0) &&
-						!(snpId.indexOf("AFFX") >= 0)){
-							numProbes++
-							if(!rsId.equals(null) && (rsId.indexOf("---") == -1))  sb_probeinfo.append(snpId + "\t" + rsId + "\n")
-							sb_snpMap.append(chr + "\t" + snpId + "\t0\t" + pos + "\n")
-						}
-
-						genes.each { key, val ->
-							String [] s = val.split(":")
-							String mappingRecord = str[0] + "\t" + key
-							sb_snpGeneMap.append(mappingRecord + "\n")
-						}
+					}
+					if(columns["snpId"]!=null && columns["rsId"]!=null && columns["chr"]!=null && columns["pos"]!=null){
+						hadHeaderLine = true
+						Util.printMap(columns)
+					}else{
+						log.info ("There is a problem with headers of the annotation file. Annotation cannot eb loaded")
 					}
 				}
 			}
+		} else{
+			log.info("Annotation file cannot be parsed, all the columns names are not provided")
 		}
 
 		probeInfo.append(sb_probeinfo.toString())
@@ -191,7 +203,6 @@ class GPLReader {
 
 
 	Map getSNPGeneMapping(String associatedGene){
-
 		String [] str, gene
 		def mapping = [:]
 

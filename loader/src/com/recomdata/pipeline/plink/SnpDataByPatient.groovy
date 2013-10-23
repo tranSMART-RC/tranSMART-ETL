@@ -57,7 +57,7 @@ class SnpDataByPatient {
 	 */
 	def loadPatientSnpDataFromPed(String pedPath, String chr){
 
-		log.info "Start loaing SNP data for Chromosome $chr into DE_SNP_DATA_BY_PATIENT ..."
+		log.info "Start loading SNP data for Chromosome $chr into DE_SNP_DATA_BY_PATIENT ..."
 
 		String qry = """ insert into de_snp_data_by_patient (snp_dataset_id, 
 		                   trial_name, patient_num, chrom, 
@@ -118,7 +118,7 @@ class SnpDataByPatient {
 	 */
 	def loadPatientSnpDataFromPedWithCN(String chr, Map cnMap){
 
-		log.info "Start loaing SNP data with Copy Number for Chromosome $chr into DE_SNP_DATA_BY_PATIENT ..."
+		log.info "Start loading SNP data with Copy Number for Chromosome $chr into DE_SNP_DATA_BY_PATIENT ..."
 
 		List map = getMapData()
 
@@ -144,7 +144,7 @@ class SnpDataByPatient {
 					loadPatientSnpData(dataMap)
 			}
 		}
-		log.info "End loaing SNP data for Chromosome $chr into DE_SNP_DATA_BY_PATIENT ..."
+		log.info "End loading SNP data for Chromosome $chr into DE_SNP_DATA_BY_PATIENT ..."
 	}
 
 
@@ -155,14 +155,13 @@ class SnpDataByPatient {
 	 * @return
 	 */
 	def loadPatientSnpDataFromPed(String chr){
-
-		log.info "Start loaing SNP data for Chromosome $chr into DE_SNP_DATA_BY_PATIENT ..."
+		//this one is used
+		log.info "Start loading SNP data for Chromosome $chr from file "+pedFile.getName()+" into DE_SNP_DATA_BY_PATIENT ..."
 
 		Map dataMap = [:]
-
+		
 		pedFile.eachLine {
 			String [] str = it.split(" +")
-
 			long patientNum = Long.parseLong(str[0])
 			dataMap["patientNum"] = patientNum
 

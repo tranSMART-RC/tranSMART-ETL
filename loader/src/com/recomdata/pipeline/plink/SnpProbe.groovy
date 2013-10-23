@@ -38,33 +38,26 @@ class SnpProbe {
 		// create a temp table for snp_probe data
 		createTempSnpProbeTable("tmp_de_snp_probe")
 
-		// store unique set of SNP ID -> rs#
-		Map rs = [:]
-		if(probeInfo.size() >0){
-			log.info("Start loading " + probeInfo.toString() + " into DE_SNP_PROBE ...")
-			probeInfo.eachLine{
-				String [] str = it.split(/\t/)
-				rs[str[0]] = str[1]
-			}
-		}else{
-			log.error(probeInfo.toString() + " is empty.")
-		}
-
-		String qry = """ insert into tmp_de_snp_probe(probe_name, snp_name) values(?, ?) """
 		if(probeInfo.size() > 0){
 			deapp.withTransaction {
-				deapp.withBatch(qry, {stmt ->
-					rs.each{k, v ->
-						stmt.addBatch([k, v])
+				def cnt=0
+				deapp.withBatch('insert into tmp_de_snp_probe(probe_name, snp_name) values(?, ?)') {stmt ->
+					probeInfo.eachLine{
+						cnt++
+						String [] str = it.split(/\t/)
+						stmt.addBatch([str[0], str[1]])
+						if(cnt%1000==0){//execute regularly the batch, or only the 26307 first lines are inserted
+							stmt.executeBatch()
+						}
 					}
-				})
+				}
 			}
 		}
-
+		
 		loadSnpProbe("tmp_de_snp_probe")
 
 		log.info "Drop the temp table TMP_DE_SNP_PROBE "
-		qry = " drop table tmp_de_snp_probe purge"
+		def qry = " drop table tmp_de_snp_probe purge"
 		deapp.execute(qry)
 	}
 

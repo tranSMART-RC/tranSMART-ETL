@@ -52,7 +52,7 @@ class PlinkConverter {
 		log.info "Write Binary PLINK files to " + plinkDestinationDirectory 
 		StringBuffer sb = new StringBuffer()
 		sb.append(plink + " --lfile " + plinkSourceFile)
-		sb.append(" --noweb --make-bed ")
+		sb.append(" --nonfounders --noweb --make-bed")
 		sb.append(" --out " + outputFile)
 		
 		String command = sb.toString()
@@ -65,7 +65,7 @@ class PlinkConverter {
 	
 	void recodePlinkFileByChrs() {
 		
-		for(int chr in 1..24){
+		for(int chr in 1..26){
 			recodePlinkFileByChr(chr.toString())
 		}
 	}
@@ -79,7 +79,7 @@ class PlinkConverter {
 		
 		StringBuffer sb = new StringBuffer()
 		sb.append(plink + " --bfile " + plinkDestinationDirectory + "/" + studyName)
-		sb.append(" --noweb --recode --chr " + chr)
+		sb.append(" --nonfounders --noweb --recode --chr " + chr)
 		sb.append(" --out " + plinkDestinationDirectory + "/chr" + chr)
 		
 		String command = sb.toString()
@@ -96,7 +96,7 @@ class PlinkConverter {
 		
 		StringBuffer sb = new StringBuffer()
 		sb.append(plink + " --bfile " + plinkDestinationDirectory + "/" + studyName)
-		sb.append(" --noweb --recode ")
+		sb.append(" --nonfounders --noweb --recode ")
 		sb.append(" --out " + plinkDestinationDirectory + "/all")
 		
 		String command = sb.toString()

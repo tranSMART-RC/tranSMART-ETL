@@ -46,20 +46,44 @@ class Loader {
 	static List subjectSamples
 
 	static main(args) {
-
-		PropertyConfigurator.configure("conf/log4j.properties");
+		String propertiesFile
+		String log4jFile
+		String dbUrl
+		String dbDriver
+		String deappUser
+		String deappPwd
+		String metadataUser
+		String metadataPwd
+		String demodataUser
+		String demodataPwd
+		try {
+			propertiesFile = args[0]
+			log4jFile = args[1]
+			dbUrl = args[2]
+			dbDriver = args[3]
+			deappUser = args[4]
+			deappPwd = args[5]
+			metadataUser = args[6]
+			metadataPwd = args[7]
+			demodataUser = args[8]
+			demodataPwd = args[9]
+		}
+		catch (ArrayIndexOutOfBoundsException e){
+			println ("There are missing arguments")
+			log.error("There are missing arguments")
+			return
+		}
+		
+		PropertyConfigurator.configure(log4jFile);
 		
 		println new Date()
 
 		log.info("Start loading property file ...")
-		//Properties props = Util.loadConfiguration("loader.properties")
-		Properties props = Util.loadConfiguration("conf/SNP.properties")
+		Properties props = Util.loadConfiguration(propertiesFile)
 
-		Sql i2b2demodata = Util.createSqlFromPropertyFile(props, "i2b2demodata")
-		Sql i2b2metadata = Util.createSqlFromPropertyFile(props, "i2b2metadata")
-		Sql deapp = Util.createSqlFromPropertyFile(props, "deapp")
-		Sql biomart = Util.createSqlFromPropertyFile(props, "biomart")
-		Sql searchapp = Util.createSqlFromPropertyFile(props, "searchapp")
+		Sql deapp = Sql.newInstance(dbUrl, deappUser, deappPwd, dbDriver)
+		Sql i2b2demodata = Sql.newInstance(dbUrl, demodataUser, demodataPwd, dbDriver)
+		Sql i2b2metadata = Sql.newInstance(dbUrl, metadataUser, metadataPwd, dbDriver)
 
 		File subjectSampleMappingFile = new File(props.get("source_directory") + "/" + props.get("subject_sample_mapping"))
 
@@ -70,8 +94,6 @@ class Loader {
 		Map visualAttributes = loader.getVisualAttributes(props)
 
 		// mapping between subject id/sample id and sample type
-		//Util.printMap(subjects)
-		//Util.printMap(sampleTypes)
 		Util.printMap(visualAttributes)
 
 		//loader.deleteConceptPath(props.get("snp_base_node").toString().replace("/", "\\"), i2b2demodata, i2b2metadata, deapp)
@@ -107,13 +129,13 @@ class Loader {
 		loader.loadDeSubjectSampleMapping(props, deapp, subjectToPatient, conceptPathToCode)
 
 		// loading records into BIO_CONTENT_REPOSITORY
-		loader.loadBioContentRepository(props, biomart)
+		//loader.loadBioContentRepository(props, biomart)
 
 		// loading records into BIO_CONTENT
-		loader.loadBioContent(props, biomart)
+		//loader.loadBioContent(props, biomart)
 
 		// loading records into BIO_CONTENT_REFERENCE
-		loader.loadBioContentReference(props, biomart)
+		//loader.loadBioContentReference(props, biomart)
 	
 	}
 
@@ -139,7 +161,7 @@ class Loader {
 	}
 
 
-	Map getVisualAttributes(Properties props){
+	Map getVisualAttributes(Properties props ){
 
 		String snpBaseNode = props.get("snp_base_node")
 		String platformName = props.get("platform_name")

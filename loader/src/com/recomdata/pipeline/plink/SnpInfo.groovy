@@ -32,28 +32,28 @@ class SnpInfo {
 	String annotationTable
 
 	void loadSnpInfo(File snpMap){
-
 		String qry
 
 		createTempSnpInfoTable("TMP_DE_SNP_INFO")
 
-		qry = "insert into tmp_de_snp_info(name, chrom, chrom_pos) values(?, ?, ?)"
 		if(snpMap.size() > 0){
 			deapp.withTransaction {
-
+				def cnt=0
 				log.info("Start loading " + snpMap.toString() + " into TMP_DE_SNP_INFO ...")
-
-				deapp.withBatch(qry, {stmt ->
+				deapp.withBatch('insert into tmp_de_snp_info(name, chrom, chrom_pos) values(?, ?, ?)') {stmt ->
 					snpMap.eachLine{
+						cnt++
 						String [] str = it.split(/\t/)
 						stmt.addBatch([str[1], str[0], str[3]])
+						if(cnt%1000==0){//execute regularly the batch, or only the 26307 first lines are inserted
+							stmt.executeBatch()
+						}
 					}
-				})
+				}
 			}
 		}else{
 			log.error(snpMap.toString() + " is empty.")
 		}
-
 
 		loadSnpInfo("tmp_de_snp_info")
 

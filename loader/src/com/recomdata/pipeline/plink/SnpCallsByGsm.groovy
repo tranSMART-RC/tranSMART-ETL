@@ -38,25 +38,31 @@ class SnpCallsByGsm {
 	// in the format: GSM#   snp_name   snp_calls
 	File genotypeFile
 
-	void loadSnpCallsByGsm(int batchSize){
+	void loadSnpCallsByGsm(int batchSize, String trial){
 
 		if(genotypeFile.size() > 0) {
 
-			log.info("Start loading Copy Number from ${genotypeFile.toString()} into DE_SNP_CALLS_BY_GSM ...")
+			log.info("Start loading SNP calls from ${genotypeFile.toString()} into DE_SNP_CALLS_BY_GSM ...")
 
 			String [] str
-			String qry = " insert into DE_SNP_CALLS_BY_GSM (gsm_num, patient_num, snp_name, snp_calls) values(?, ?, ?, ?)"
+			String qry = " insert into DE_SNP_CALLS_BY_GSM (trial_name, gsm_num, patient_num, snp_name, snp_calls) values(?, ?, ?, ?, ?)"
 
 			deapp.withTransaction {
+				def cnt=0
 				deapp.withBatch(batchSize, qry, { stmt ->
 					genotypeFile.eachLine {
+						cnt++
 						str = it.split("\t")
 						stmt.addBatch([
+							trial,
 							str[0],
-							patientSampleMap[str[0]],
 							str[1],
-							str[2]
+							str[2],
+							str[3]
 						])
+						if(cnt%10000==0){
+							stmt.executeBatch()
+						}
 					}
 				})
 			}

@@ -1,0 +1,22 @@
+Modifications of the loader for SNP calls:
+-Modify the property files to have one file for each step of the loading
+-Some properties, like database parameters, location of the property files... have to be passed as command line parameters
+-The platform annotation file is less constraint: it requires columns for chromosome number, SNP position, rs id, SNP id and optionally gene name, but in any order (columns description in the property file)
+-For the conversion step, a new class has been added to load SNP data from Illumina platform
+-Modification of some insert functions where only a maximum of 26307 lines where added to database (without even warn the user)
+-Make some inserts in the database faster
+
+Usage:
+-Load platform annotation data:
+java -classpath loader.jar com.recomdata.pipeline.annotation.AnnotationLoader conf/annotation.properties conf/log4j.properties jdbc:oracle:thin:@<database server>:<db port>:<db name> oracle.jdbc.driver.OracleDriver deapp <deapp password> biomart <biomart password>
+
+-Load SNP metadata:
+java -classpath loader.jar com.recomdata.pipeline.loader.Loader conf/metaTables.properties conf/log4j.properties jdbc:oracle:thin:@<database server>:<db port>:<db name> oracle.jdbc.driver.OracleDriver deapp <deapp password> i2b2metadata <i2b2metadata password> i2b2demodata <i2b2demodata password>
+
+-Convert files with Plink for Illumina platform:
+java -classpath loader.jar com.recomdata.pipeline.converter.IlluminaGenotypingFormatter conf/convert.properties conf/log4j.properties jdbc:oracle:thin:@<database server>:<db port>:<db name> oracle.jdbc.driver.OracleDriver deapp <deapp password> i2b2demodata <i2b2demodata password>
+
+-Load data:
+java -classpath loader.jar com.recomdata.pipeline.plink.PlinkLoader conf/data.properties conf/log4j.properties jdbc:oracle:thin:@<database server>:<db port>:<db name> oracle.jdbc.driver.OracleDriver deapp <deapp password> i2b2demodata <i2b2demodata password>
+
+Warning: the modifications hhave not been tested for copy number data

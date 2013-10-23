@@ -20,12 +20,17 @@
 
 package com.recomdata.pipeline.plink
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 
 import com.recomdata.pipeline.converter.CopyNumberReader
 import com.recomdata.pipeline.util.Util
+
 import groovy.sql.Sql
 
 
@@ -57,7 +62,8 @@ class SnpDataByProbe {
 			File cn = getCopyNumberFile(chr)
 			if(cn.equals(null)){
 				log.info "Start loading data without Copy Number ... "
-				loadSnpDataByProbeWithoutCN()
+				//Call the one with batch
+				loadSnpDataByProbeWithoutCN2()
 			}else{
 				log.info "Start loading data with Copy Number ... "
 				copyNumberReader.setCopyNumberFile(cn)
@@ -130,6 +136,90 @@ class SnpDataByProbe {
 			}
 		}
 		log.info "End loading DE_SNP_DATA_BY_PROBE for Chromosome $chr ..."
+	}
+	
+	//Add batch
+	def loadSnpDataByProbeWithoutCN2(){
+		log.info "Start loading DE_SNP_DATA_BY_PROBE for Chromosome $chr ..."
+		
+				File pedFile = getPedFile(chr)
+				List snpList = getMapData(chr)
+		
+				Map snpMap = [:]
+				for(i in 0 .. snpList.size()-1){
+					snpMap[snpList[i]] = " "
+				}
+		
+				log.info "Loop through PED file: " + pedFile.toString()
+		
+				def index = 0
+				pedFile.eachLine {
+					String [] str = it.split(" +")
+		
+					for(i in 6 .. str.size()-1){
+						if(i % 2 == 0) {
+							int m = (i-6)/2
+							String rs = snpList[m]
+							snpMap[rs] += str[i]
+						} else  {
+							int m = (i-7)/2
+							String rs = snpList[m]
+							snpMap[rs] += str[i] + " "
+						}
+					}
+					index++
+				}
+		
+				Map snpIdMap = getSnpIdMapByChr()
+deapp.withTransaction {
+					def cnt=0
+					deapp.withBatch('insert into de_snp_data_by_probe (probe_id, probe_name, snp_id, snp_name, trial_name, data_by_probe) values(?, ?, ?, ?, ?, ?)', { stmt ->
+						snpMap.each() { key, value ->
+							if(snpIdMap[key]){
+								cnt++
+								String [] str =  snpIdMap[key].split(":")
+								Map dataMap = [:]
+								int probeId = Integer.parseInt(str[1])
+								String probeName = key
+								int snpId = Integer.parseInt(str[0])
+								String snpName = str[2]
+								String trialName  = trial
+								String dataByProbe = value
+								//loadSnpDataByProbe(dataMap)
+
+								
+								if(probeId == 0){
+									stmt.addBatch([
+										null,
+										"",
+										snpId,
+										snpName,
+										trialName,
+										dataByProbe
+									])
+								}else{
+									stmt.addBatch([
+										probeId,
+										probeName,
+										snpId,
+										snpName,
+										trialName,
+										dataByProbe
+									])
+								}
+								if(cnt%1000==0){
+									println cnt
+									stmt.executeBatch()
+								}
+								
+							}else{
+								log.info "No mapping info for " + key + " in Chromosome " + chr
+							}
+						}
+					})
+				}
+				log.info "End loading DE_SNP_DATA_BY_PROBE for Chromosome $chr ..."
+		
 	}
 
 	
@@ -257,6 +347,98 @@ class SnpDataByProbe {
 		}
 		log.info "End loading DE_SNP_DATA_BY_PROBE for Chromosome $chr ..."
 	}
+	
+	//Add batch
+	def loadSnpDataByProbeWithCN2(){
+		
+				log.info "Start loading DE_SNP_DATA_BY_PROBE for Chromosome $chr ..."
+		
+				//File pedFile = getPedFile(chr)
+		
+				List snpList = getMapData(chr)
+				log.info(Util.getMemoryUsage(runtime))
+				log.info(new Date())
+		
+				Map snpMap = [:]
+				for(i in 0 .. snpList.size()-1){
+					snpMap[snpList[i]] = " "
+				}
+				log.info(Util.getMemoryUsage(runtime))
+		
+				log.info "Start loop through PED file: " + pedFile.toString()
+		
+				def index = 0
+				pedFile.eachLine {
+					String [] str = it.split(" +")
+		
+					List pedLineData = getPedDataByLine(it)
+		
+					if(snpList.size() == pedLineData.size()){
+						for(i in 0..snpList.size()-1){
+							String key = str[0] + ":" + snpList[i]
+							if(copyNumberMap[key].equals(null)) snpMap[snpList[i]] += pedLineData[i] + " "
+							else snpMap[snpList[i]] += copyNumberMap[key] + pedLineData[i] + " "
+						}
+					}else{
+						log.error("SNPs in MAP file did match to columns in PED file:" + pedFile.toString())
+					}
+					index++
+				}
+		
+				log.info(Util.getMemoryUsage(runtime))
+				log.info(new Date())
+				log.info "End loop through PED file: " + pedFile.toString()
+		
+				Map snpIdMap = getSnpIdMapByChr()
+				deapp.withTransaction {
+					def cnt=0
+					deapp.withBatch('insert into de_snp_data_by_probe (probe_id, probe_name, snp_id, snp_name, trial_name, data_by_probe) values(?, ?, ?, ?, ?, ?)', { stmt ->
+						snpMap.each() { key, value ->
+							if(snpIdMap[key]){
+								cnt++
+								String [] str =  snpIdMap[key].split(":")
+								Map dataMap = [:]
+								int probeId = Integer.parseInt(str[1])
+								String probeName = key
+								int snpId = Integer.parseInt(str[0])
+								String snpName = str[2]
+								String trialName  = trial
+								String dataByProbe = value
+								//loadSnpDataByProbe(dataMap)
+
+								
+								if(probeId == 0){
+									stmt.addBatch([
+										null,
+										"",
+										snpId,
+										snpName,
+										trialName,
+										dataByProbe
+									])
+								}else{
+									stmt.addBatch([
+										probeId,
+										probeName,
+										snpId,
+										snpName,
+										trialName,
+										dataByProbe
+									])
+								}
+								if(cnt%1000==0){
+									println cnt
+									stmt.executeBatch()
+								}
+								
+							}else{
+								log.info "No mapping info for " + key + " in Chromosome " + chr
+							}
+						}
+					})
+				}
+				log.info "End loading DE_SNP_DATA_BY_PROBE for Chromosome $chr ..."
+			}
 
 
 	def loadSnpDataByProbeWithCN1(){
@@ -388,19 +570,33 @@ class SnpDataByProbe {
 		 *  otherwise SNPs w/o RS# will be lost in the following analysis
 		 *    de_snp_info.name: SNP_ID
 		 */
-		String qry = """ select t1.name, t1.snp_info_id, t2.snp_name, t2.snp_probe_id 
+		
+		String qry = """ select t1.name, t1.snp_info_id, t2.snp_name, t2.snp_probe_id
 		                 from de_snp_info t1, de_snp_probe t2
-		                 where t1.chrom = ? and t1.snp_info_id=t2.snp_id(+) """
+		                 where t1.chrom = '""" + chr + """' and t1.snp_info_id=t2.snp_id(+) """
+		
+		Connection connection = deapp.getConnection()
+		Statement  statement = connection.createStatement()
+		statement.setFetchSize(1000)
+		ResultSet resultSet = statement.executeQuery(qry)
 
-		deapp.eachRow(qry, [chr]) {
-			if(it.snp_name.equals(null)) {
-				log.info it.name + " in Chromosome " + chr + " without RS# "
-				snpIdMap[it.name] = it.snp_info_id + ":0:NA"
+		while(resultSet.next()){
+			String snpName=resultSet.getString("snp_name")
+			String name=resultSet.getString("name")
+			int snpInfoId=resultSet.getInt("snp_info_id")
+			int snpProbeId=resultSet.getInt("snp_probe_id")
+			if(snpName.equals(null)) {
+				println name + " in Chromosome " + chr + " without RS# "
+				snpIdMap[name] = snpInfoId + ":0:NA"
 			}
 			else{
-				snpIdMap[it.name] = it.snp_info_id + ":" + it.snp_probe_id + ":" + it.snp_name
+				snpIdMap[name] = snpInfoId + ":" + snpProbeId + ":" + snpName
 			}
 		}
+		resultSet.close()
+		statement.close()
+		
+		log.info "End retrieve mapping info for SNP ID and RS#"
 		return snpIdMap
 	}
 

@@ -43,9 +43,13 @@ class Util {
 	static Properties loadConfiguration(String file) throws IOException {
 
 		Properties prop1 = new Properties();
-		FileInputStream fis = new FileInputStream("conf/Common.properties");
-		prop1.load(fis);
-		fis.close();
+		try{
+			FileInputStream fis = new FileInputStream("conf/Common.properties");
+			prop1.load(fis);
+			fis.close();
+		}catch(Exception e){
+			println "Error while loading Common.properties"
+		}
 		def common = new ConfigSlurper().parse(prop1)
 
 		def config

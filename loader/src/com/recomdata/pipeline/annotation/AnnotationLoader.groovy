@@ -35,20 +35,44 @@ class AnnotationLoader {
 	private static final Logger log = Logger.getLogger(AnnotationLoader)
 
 	static main(args) {
-
-		PropertyConfigurator.configure("conf/log4j.properties");
+		String propertiesFile
+		String log4jFile
+		String dbUrl
+		String dbDriver
+		String deappUser
+		String deappPwd
+		String biomartUser
+		String biomartPwd
+		try {
+			propertiesFile = args[0]
+			log4jFile = args[1]
+			dbUrl = args[2]
+			dbDriver = args[3]
+			deappUser = args[4]
+			deappPwd = args[5]
+			biomartUser = args[6]
+			biomartPwd = args[7]
+			
+		}
+		catch (ArrayIndexOutOfBoundsException e){
+			println ("There are missing arguments")
+			return
+		}
+		println "search log properties"
+		PropertyConfigurator.configure(log4jFile);
 
 		Util util = new Util()
 		AnnotationLoader al = new AnnotationLoader()
 
 		Map expectedProbes = ["GPL2005-3532.txt":59015, "GPL2004-3450.txt":57299,
-					"GPL3718-44346.txt":2622264, "GPL3720-22610.txt":238304]
+					"GPL3718-44346.txt":2622264, "GPL3720-22610.txt":238304, "GPL8882-36644.txt": 1140419]
 
-		Properties props = Util.loadConfiguration("conf/Annotation.properties")
+		println "search annotation properties"
+		Properties props = Util.loadConfiguration(propertiesFile)
 
-		Sql deapp = Util.createSqlFromPropertyFile(props, "deapp")
-		Sql biomart = Util.createSqlFromPropertyFile(props, "biomart")
-
+		Sql deapp = Sql.newInstance(dbUrl, deappUser, deappPwd, dbDriver)
+		Sql biomart =Sql.newInstance(dbUrl, biomartUser, biomartPwd, dbDriver)
+		
 		al.loadGPL(props, biomart, expectedProbes)
 		println new Date()
 		al.loadSnpInfo(props, deapp)
@@ -163,7 +187,7 @@ class AnnotationLoader {
 			gr.setSourceDirectory(props.get("source_directory"))
 			gr.setSql(biomart)
 			gr.setExpectedProbes(expectedProbes)
-			gr.processGPLs(props.get("input_file"))
+			gr.processGPLs(props)
 		}
 	}
 

@@ -40,37 +40,65 @@ class PlinkLoader {
 	
 	// Get the Java runtime
 	private Runtime runtime = Runtime.getRuntime();
+	private Sql deapp
+	private Sql i2b2demodata
+	
 	
 	public static void main(String [] args){
-
-		PropertyConfigurator.configure("conf/log4j.properties");
-		
+		String propertiesFile
+		String log4jFile
+		String dbUrl
+		String dbDriver
+		String deappUser
+		String deappPwd
+		String demodataUser
+		String demodataPwd
+		try {
+			propertiesFile = args[0]
+			log4jFile = args[1]
+			dbUrl = args[2]
+			dbDriver = args[3]
+			deappUser = args[4]
+			deappPwd = args[5]
+			demodataUser = args[6]
+			demodataPwd = args[7]
+		}
+		catch (ArrayIndexOutOfBoundsException e){
+			println ("There are missing arguments")
+			return
+		}
+		PropertyConfigurator.configure(log4jFile);
 		// extract parameters
-		//Properties props = Util.loadConfiguration("PLINK.properties");
-		Properties props = Util.loadConfiguration("conf/SNP.properties")
+		
+		log.info("Loading property file: SNP.properties ...")
+		Properties props = Util.loadConfiguration(propertiesFile)
 
 		PlinkLoader pl = new PlinkLoader()
+		pl.setDeapp(Sql.newInstance(dbUrl, deappUser, deappPwd, dbDriver))
+		pl.setDemodata(Sql.newInstance(dbUrl, demodataUser, demodataPwd, dbDriver))
 
 		// check if loading MAP file into de_snp_info and de_snp_probe tables
 		if(props.get("skip_load_map_info").toString().toLowerCase().equals("yes")){
 			log.info "Skip loading annotation data from MAP ..."
-		}else{
-			//log.info "Start loading annotation data from MAP ..."
-			//pl.loadAnnotationData(props)
 		}
 
 		// loading SNP data
 		pl.load(props)
 	}
 
+	public void setDeapp(Sql deapp){
+		this.deapp=deapp
+	}
+	public void setDemodata(Sql i2b2demodata){
+		this.i2b2demodata=i2b2demodata
+	}
 
 	// this method is specifically developed for U Mich situation
 	void loadAnnotationData(Properties props){
-		Sql deapp = Util.createSqlFromPropertyFile(props, "deapp")
 
 		File map = new File(props.get("output_directory") + "/all.map")
 		if(map.exists()){
-			log.info("Satrt loading annotation data from MAP: " + map.toString())
+			log.info("Start loading annotation data from MAP: " + map.toString())
 			SnpInfo si = new SnpInfo()
 			si.setDeapp(deapp)
 			si.loadSnpInfo(map)
@@ -90,13 +118,6 @@ class PlinkLoader {
 
 		log.info(Util.getMemoryUsage(runtime))
 
-		log.info("Loading property file: SNP.properties ...")
-
-		Sql i2b2demodata = Util.createSqlFromPropertyFile(props, "i2b2demodata")
-		Sql deapp = Util.createSqlFromPropertyFile(props, "deapp")
-
-		// truncate tables as needed
-		//		Util.truncateSNPTable(deapp)
 		log.info(new Date())
 
 		// pre-normalize chromosome from letter to number
@@ -111,12 +132,14 @@ class PlinkLoader {
 		SubjectSampleMapping subjectSampleMapping = createSubjectSampleMapping(deapp)
 		// patient_num:concept_code -> subject_id:sample_type map
 		Map patientConceptCodeMap = subjectSampleMapping.getPatientConceptCodeMap(props.get("study_name"), props.get("platform_type"))
-		//Util.printMap(patientConceptCodeMap)
+		println "patientConceptCodeMap"
+		Util.printMap(patientConceptCodeMap)
 		Map samplePatientMap = subjectSampleMapping.getSamplePatientMap(props.get("study_name"), props.get("platform_type"))
 
 		// extracted from <study_name>.fam file
 		Map patientGenderMap = getPatientGenderMap(props)
-		//Util.printMap(patientGenderMap)
+		println "patientGenderMap:"
+		Util.printMap(patientGenderMap)
 
 		// combine two maps:
 		//    1. patientConceptCodeMap:  patient_num:concept_code -> subject_id:sample_type
@@ -125,12 +148,14 @@ class PlinkLoader {
 		//     subjectSnpDatasetMap: patient_num:concept_code -> subject_id:sample_type:gender
 		// and use it to populate DE_SUBJECT_SNP_DATASET table
 		Map subjectSnpDatasetMap = getSubjectSnpDatasetMap(patientConceptCodeMap, patientGenderMap)
-		//Util.printMap(subjectSnpDatasetMap)
+		println "subjectSnpDatasetMap:"
+		Util.printMap(subjectSnpDatasetMap)
 
 		// populate DE_SUBJECT_SNP_DATASET and DE_SNP_DATASET_LOC, and also return a map:
 		Map patientSnpDatasetMap = loadSubjectSnpDataset(props, deapp, subjectSnpDatasetMap)
 		log.info(Util.getMemoryUsage(runtime))
-		//Util.printMap(patientSnpDatasetMap)
+		println "patientSnpDatasetMap: "
+		Util.printMap(patientSnpDatasetMap)
 
 
 		// Populate DE_SNP_PROBE_SORTED_DEF
@@ -226,7 +251,8 @@ class PlinkLoader {
 
 		if(fam.size() > 0){
 			fam.eachLine{
-				String [] str = it.split("\t")
+				String [] str = it.split(" ")
+				println str
 				if(str[4].equals("1")) patientGenderMap[str[0]] = "M"
 				else if(str[4].equals("2")) patientGenderMap[str[0]] = "F"
 				else patientGenderMap[str[0]] = "U"
@@ -429,11 +455,12 @@ class PlinkLoader {
 			scbg.setPatientSampleMap(samplePatientMap)
 
 			// loading the genotype file and the default name is <study_name>.genotype
-			File genotypeFile = new File(props.get("output_directory") + "/" + props.get("study_name") + ".genotype")
+			File genotypeFile = new File(props.get("output_directory") + "/" + props.get("study_name") + ".lgen.gsm")
 			scbg.setGenotypeFile(genotypeFile)
 
 			int batchSize =  Integer.parseInt(props.get("buffer_size"))
-			scbg.loadSnpCallsByGsm(batchSize)
+			String trial=  props.get("study_name")
+			scbg.loadSnpCallsByGsm(batchSize, trial)
 		}
 	}
 
@@ -449,7 +476,7 @@ class PlinkLoader {
 
 			// use one PED file's first column to populate DE_SNP_SUBJECT_SORTED_DEF table,
 			// this PED file can be from any chromsome
-			File pedFile = new File(props.get("output_directory") + "/" + props.get("chromosome_prefix") + props.get("start_chr") + ".ped")
+			File pedFile = new File(props.get("output_directory") + "/" + props.get("study_name")  + ".fam")
 			sssd.setPedFile(pedFile)
 
 			sssd.setPatientSubjectMap(patientSubjectMap)
