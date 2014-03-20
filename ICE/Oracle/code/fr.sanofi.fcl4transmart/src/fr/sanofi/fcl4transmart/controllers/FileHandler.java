@@ -446,7 +446,7 @@ public class FileHandler {
 						if(s[3].compareTo("DATA_LABEL")==0);
 						else if(s[3].compareTo("\\")==0){
 							if(dataLabelSources.get(s[4]).compareTo("")!=0){
-								dataLabels.add(dataLabelSources.get(s[4]).replace("_", " ").replace("+", "\\")+"\\"+"DATA_LABEL_SOURCE["+s[4]+"]");	
+								dataLabels.add(dataLabelSources.get(s[4].substring(0,1)).replace("_", " ").replace("+", "\\")+"\\"+"DATA_LABEL_SOURCE["+s[4].substring(0,1)+"]");	
 							}else{
 								dataLabels.add(s[3]);
 							}
@@ -606,6 +606,7 @@ public class FileHandler {
 		HashMap<String, Vector<String>> values=new HashMap<String, Vector<String>>();
 		HashMap<String, String> dataLabelSources=new HashMap<String, String>();
 		int visitColumn=-1;
+		//serach in mapping file if there are visit names or data label sources in the files
 		try{
 			BufferedReader br = new BufferedReader(new FileReader(cmf));
 			String line=br.readLine();
@@ -640,71 +641,21 @@ public class FileHandler {
 				int columnNumber=-1;
 				String[] s=line.split("\t", -1);
 				if(s[0].compareTo(rawFile.getName())==0 && !FileHandler.isReserved(s[3]) && s[3].compareTo("UNITS")!=0 && s[3].compareTo("DATA_LABEL")!=0){
-					if(s[3].compareTo("\\")==0){//if there is a data label sources, it is required to go through the raw file a first time to find the value of the data label source
+					//if there is a data label sources, it is required to go through the raw file a first time to find the value of the data label source
+					if(s[3].compareTo("\\")==0){
 						if(rawFile!=null){
-							try{
-								BufferedReader br2 = new BufferedReader(new FileReader(rawFile));
-								String line2=br2.readLine();
-								while ((line2=br2.readLine())!=null){
-									String[] s2=line2.split("\t", -1);
-									if(s2[subjIdNumber-1].compareTo(subjectId)==0){
-										if(wmf==null){
-											if(dataLabelSources.get(s[4]).compareTo("")!=0){
-												dataLabel=dataLabelSources.get(s[4]+"\\"+s2[Integer.parseInt(s[4])-1]);
-											}else{
-												dataLabel=s2[Integer.parseInt(s[4])-1];
-											}
-										}
-										else{
-											try{
-												BufferedReader br3 = new BufferedReader(new FileReader(wmf));
-												String line3=br3.readLine();
-												boolean found=false;
-												while ((line3=br3.readLine())!=null){
-													String[] s3=line3.split("\t", -1);
-													if(s3[0].compareTo(rawFile.getName())==0 && s3[1].compareTo(String.valueOf(Integer.parseInt(s[4])-1))==0 && s3[2].compareTo(s2[Integer.parseInt(s[4])-1])==0){
-														found=true;
-														if(dataLabelSources.get(s[4]).compareTo("")!=0){
-															dataLabel=dataLabelSources.get(s[4])+"\\"+s3[3];
-														}else{
-															 dataLabel=s3[3];
-														}
-													}
-												}
-												br3.close();
-												if(!found){
-													if(dataLabelSources.get(s[4]).compareTo("")!=0){
-														dataLabel=dataLabelSources.get(s[4])+"\\"+s2[Integer.parseInt(s[4])-1];
-														dataLabel=dataLabel.replace("_", " ").replace("+", "\\");	
-													}else{
-														dataLabel=s2[Integer.parseInt(s[4])-1];
-													}
-												}
-											}catch (Exception e){
-												e.printStackTrace();
-												br2.close();
-												return values;
-											}
-										}
-										break;
-									}
-								}
-								br2.close();
-							}catch (Exception e){
-								e.printStackTrace();
-								br.close();
-								return values;
-							}
+							dataLabel=getDataLabelFromSource(subjIdNumber,subjectId, rawFile, wmf, dataLabelSources,Integer.parseInt(s[4].substring(0,1)));
 						}
 					}
+					//if there is a data label
 					else if(s[3].compareTo("")!=0){
 						if(s[1].compareTo("")!=0){
 							dataLabel=s[1].replace("_", " ").replace("+", "\\")+"\\"+s[3];	
-
 						}else{
 							dataLabel=s[3];
 						}
 					}
+					//if no data label, find the header of the column
 					else{
 						String label=FileHandler.getColumnByNumber(rawFile, Integer.parseInt(s[2]));
 						if(s[1].compareTo("")!=0){
@@ -789,8 +740,6 @@ public class FileHandler {
 							return values;
 						}
 					}
-				}else if(s[3].compareTo("MEAN")==0){
-					
 				}
 			}
 			br.close();
@@ -800,6 +749,64 @@ public class FileHandler {
 			}
 		return values;
 	}
+	
+	private static String getDataLabelFromSource(int subjIdNumber, String subjectId, File rawFile, File wmf, HashMap<String, String> dataLabelSources, int sourceNumber){
+		String dataLabel="";
+		try{
+			BufferedReader br = new BufferedReader(new FileReader(rawFile));
+			String line=br.readLine();
+			while ((line=br.readLine())!=null){
+				String[] s=line.split("\t", -1);
+				if(s[subjIdNumber-1].compareTo(subjectId)==0){
+					if(wmf==null){
+						if(dataLabelSources.get(String.valueOf(sourceNumber)).compareTo("")!=0){
+							dataLabel=dataLabelSources.get(String.valueOf(sourceNumber)).replace("+", "\\")+"\\"+s[sourceNumber-1];
+						}else{
+							dataLabel=s[sourceNumber-1];
+						}
+					}
+					else{
+						try{
+							BufferedReader br2 = new BufferedReader(new FileReader(wmf));
+							String line2=br2.readLine();
+							boolean found=false;
+							while ((line2=br2.readLine())!=null){
+								String[] s2=line2.split("\t", -1);
+								if(s2[0].compareTo(rawFile.getName())==0 && s2[1].compareTo(String.valueOf(sourceNumber-1))==0 && s2[2].compareTo(s[sourceNumber-1])==0){
+									found=true;
+									if(dataLabelSources.get(String.valueOf(sourceNumber)).compareTo("")!=0){
+										dataLabel=dataLabelSources.get(String.valueOf(sourceNumber))+"\\"+s2[3];
+									}else{
+										 dataLabel=s2[3];
+									}
+								}
+							}
+							br2.close();
+							if(!found){
+								if(dataLabelSources.get(String.valueOf(sourceNumber)).compareTo("")!=0){
+									dataLabel=dataLabelSources.get(String.valueOf(sourceNumber))+"\\"+s[sourceNumber-1];
+									dataLabel=dataLabel.replace("_", " ").replace("+", "\\");	
+								}else{
+									dataLabel=s[sourceNumber-1];
+								}
+							}
+						}catch (Exception e){
+							e.printStackTrace();
+							br.close();
+							return dataLabel;
+						}
+					}
+					break;
+				}
+			}
+			br.close();
+		}catch (Exception e){
+			e.printStackTrace();
+			return dataLabel;
+		}
+		return dataLabel;
+	}
+	
 	
 	/**
 	 *Returns a vector of sample identifiers from gene expression raw data file
@@ -952,6 +959,50 @@ public class FileHandler {
 		}	
 		return probes;
 	}
+	
+
+	/**
+	 *Returns the probe identifier from a gene raw data file
+	 */	
+	public static Vector<String> getTranscripts(File rawFile){
+		Vector<String> probes=new Vector<String>();
+		try{
+			BufferedReader br = new BufferedReader(new FileReader(rawFile));
+			String line=br.readLine();
+			while ((line=br.readLine())!=null){
+				String[] s=line.split("\t", -1);
+				probes.add(s[0]);
+			}
+			br.close();
+		}catch (Exception e){
+			e.printStackTrace();
+		}	
+		return probes;
+	}
+
+	/**
+	 *Returns the antigen identifier from a RBM raw data file
+	 */	
+	public static Vector<String> getAntigens(File rawFile){
+		Vector<String> probes=new Vector<String>();
+		try{
+			BufferedReader br = new BufferedReader(new FileReader(rawFile));
+			String line=br.readLine();
+			while ((line=br.readLine())!=null){
+				String[] s=line.split("\t", -1);
+				probes.add(getAntigenWithoutUnit(s[5]));
+			}
+			br.close();
+		}catch (Exception e){
+			e.printStackTrace();
+		}	
+		return probes;
+	}
+	public static String getAntigenWithoutUnit(String antigenWithValue){
+		String antigen=antigenWithValue.replaceAll("\\(.*\\)", "");
+		antigen=antigen.trim();
+		return antigen;		
+	}
 
 	/**
 	 *Returns the intensity value for a given sample and a given probe in a gene raw data file
@@ -998,7 +1049,7 @@ public class FileHandler {
 				String[] s=line.split("\t", -1);
 				if(s[0].compareTo(probe)==0){
 					for(int i=1; i<samples.length; i++){
-						intensities.put(samples[i], Double.valueOf(s[i]));
+						if(s[i].compareTo("")!=0) intensities.put(samples[i], Double.valueOf(s[i]));
 					}
 				}
 			}
@@ -1127,6 +1178,7 @@ public class FileHandler {
 		}	
 	}
 	public static boolean getSeveralVisit(File rawFile, int visitColumn){
+		if(visitColumn==-1) return false;
 		Vector<String> v=new Vector<String>();
 		try{
 			BufferedReader br = new BufferedReader(new FileReader(rawFile));
@@ -1218,9 +1270,9 @@ public class FileHandler {
 											String[] s2=line2.split("\t", -1);
 											if(wmf==null){
 												if(dataLabelSources.get(s[4]).compareTo("")!=0){
-													dataLabel=dataLabelSources.get(s[4]+"\\"+s2[Integer.parseInt(s[4])-1]);
+													dataLabel=dataLabelSources.get(s[4].substring(0,1))+"\\"+s2[Integer.parseInt(s[4].substring(0,1))-1];
 												}else{
-													dataLabel=s2[Integer.parseInt(s[4])-1];
+													dataLabel=s2[Integer.parseInt(s[4].substring(0,1))-1];
 												}
 											}
 											else{
@@ -1230,10 +1282,10 @@ public class FileHandler {
 													boolean found=false;
 													while ((line3=br3.readLine())!=null){
 														String[] s3=line3.split("\t", -1);
-														if(s3[0].compareTo(rawFile.getName())==0 && s3[1].compareTo(String.valueOf(Integer.parseInt(s[4])-1))==0 && s3[2].compareTo(s2[Integer.parseInt(s[4])-1-1])==0){
+														if(s3[0].compareTo(rawFile.getName())==0 && s3[1].compareTo(String.valueOf(Integer.parseInt(s[4].substring(0,1))-1))==0 && s3[2].compareTo(s2[Integer.parseInt(s[4].substring(0,1))-1-1])==0){
 															found=true;
-															if(dataLabelSources.get(s[4]).compareTo("")!=0){
-																dataLabel=dataLabelSources.get(s[4])+"\\"+s3[3];
+															if(dataLabelSources.get(s[4].substring(0,1)).compareTo("")!=0){
+																dataLabel=dataLabelSources.get(s[4].substring(0,1))+"\\"+s3[3];
 															}else{
 																 dataLabel=s3[3];
 															}
@@ -1242,10 +1294,10 @@ public class FileHandler {
 													br3.close();
 													if(!found){
 														if(dataLabelSources.get(s[4]).compareTo("")!=0){
-															dataLabel=dataLabelSources.get(s[4])+"\\"+s2[Integer.parseInt(s[4])-1];
+															dataLabel=dataLabelSources.get(s[4].substring(0,1))+"\\"+s2[Integer.parseInt(s[4].substring(0,1))-1];
 															dataLabel=dataLabel.replace("_", " ").replace("+", "\\");
 														}else{
-															dataLabel=s2[Integer.parseInt(s[4])-1];
+															dataLabel=s2[Integer.parseInt(s[4].substring(0,1))-1];
 														}
 													}
 												}catch (Exception e){
@@ -1389,7 +1441,7 @@ public class FileHandler {
 				if(s[3].compareTo(string)==0 && s[0].compareTo(rawFile.getName())==0){//data label: third column
 					try{
 						br.close();
-						return s[4];
+						return s[4].substring(0,1);
 					}catch(NumberFormatException nfe){
 						br.close();
 						return "";
@@ -1418,7 +1470,7 @@ public class FileHandler {
 					String probe=s[0];
 					if(intensities.get(probe)==null) intensities.put(probe, new HashMap<String, Double>());
 					for(int i=1; i<samples.length; i++){
-						intensities.get(probe).put(samples[i], Double.valueOf(s[i]));
+						if(s[i].compareTo("")!=0) intensities.get(probe).put(samples[i], Double.valueOf(s[i]));
 					}	
 				}
 				br.close();
@@ -1842,5 +1894,357 @@ public class FileHandler {
 			}
 		}
 		return probes;
+	}
+	public static Vector<String> getRbmSamplesId(File file){
+		Vector<String> samples=new Vector<String>();
+		if(file.exists() && file.isFile()){
+			try{
+				BufferedReader br = new BufferedReader(new FileReader(file));
+				String line=br.readLine();
+				while((line=br.readLine())!=null){
+					if(line.compareTo("")!=0){
+						String[] s=line.split("\t", -1);
+						if(!samples.contains(s[2]))samples.add(s[2]);
+					}
+				}
+				br.close();
+			}catch (Exception e){
+				e.printStackTrace();
+				return samples;
+			}
+		}
+		return samples;
+	}
+	
+	public static HashMap<String, Double> getRbmValue(File rawFile, String probe){
+		HashMap<String, Double> intensities=new HashMap<String, Double>();
+		try{
+			BufferedReader br = new BufferedReader(new FileReader(rawFile));
+			String line=br.readLine();
+			while ((line=br.readLine())!=null){
+				String[] s=line.split("\t", -1);
+				if(getAntigenWithoutUnit(s[5]).compareTo(probe)==0){
+					if(s[7].compareTo("")!=0) intensities.put(s[2], Double.valueOf(s[7]));
+				}
+			}
+			br.close();
+		}catch (Exception e){
+			e.printStackTrace();
+		}	
+		return intensities;
+	}
+	
+	public static HashMap<String, HashMap<String, Double>> getRbmValuesProbes(Vector<File> rawFiles){
+		HashMap<String, HashMap<String, Double>> intensities=new HashMap<String, HashMap<String, Double>>();
+		try{
+			for(File rawFile: rawFiles){
+				BufferedReader br = new BufferedReader(new FileReader(rawFile));
+				String line=br.readLine();
+				while ((line=br.readLine())!=null){
+					String[] s=line.split("\t", -1);
+					String probe=getAntigenWithoutUnit(s[5]);
+					if(intensities.get(probe)==null) intensities.put(probe, new HashMap<String, Double>());
+					if(s[7].compareTo("")!=0) intensities.get(probe).put(s[2], Double.valueOf(s[7]));
+				}
+				br.close();
+			}
+		}catch (Exception e){
+			e.printStackTrace();
+		}	
+		return intensities;
+	}
+	//works also for metabolomics
+	public static Vector<String> getProteomicsSamplesId(File file, File columnMapping){
+		Vector<String> samples=new Vector<String>();
+		int peptideId=-1;
+		int valueStart=-1;
+		int valueEnd=-1;
+		if(file.exists() && file.isFile() && columnMapping.exists() && columnMapping.isFile()){
+			try{
+				BufferedReader br1 = new BufferedReader(new FileReader(columnMapping));
+				String line=br1.readLine();
+				while((line=br1.readLine())!=null){
+					if(line.compareTo("")!=0){
+						String[] s=line.split("\t", -1);
+						if(s[0].compareTo(file.getName())==0){
+							peptideId=Integer.valueOf(s[1])-1;
+							valueStart=Integer.valueOf(s[2]);
+							valueEnd=Integer.valueOf(s[3]);
+						}
+					}
+				}
+				br1.close();
+				if(peptideId==-1 || valueStart==-1 || valueEnd==-1) return null;
+				BufferedReader br = new BufferedReader(new FileReader(file));
+				if((line=br.readLine())!=null){
+					String[] s=line.split("\t", -1);
+					for(int i=valueStart; i<s.length; i++){
+						if(!samples.contains(s[i]))samples.add(s[i]);
+					}
+				}
+				br.close();
+			}catch (Exception e){
+				e.printStackTrace();
+				return samples;
+			}
+		}
+		return samples;
+	}
+	//works also for metabolomics
+	public static HashMap<String, Double> getProteomicsValue(File file, File columnMapping,  String probe){
+		HashMap<String, Double> intensities=new HashMap<String, Double>();
+		if(file.exists() && file.isFile() && columnMapping.exists() && columnMapping.isFile()){
+			int peptideId=-1;
+			int valueStart=-1;
+			int valueEnd=-1;
+			try{
+				BufferedReader br1 = new BufferedReader(new FileReader(columnMapping));
+				String line=br1.readLine();
+				while((line=br1.readLine())!=null){
+					if(line.compareTo("")!=0){
+						String[] s=line.split("\t", -1);
+						if(s[0].compareTo(file.getName())==0){
+							peptideId=Integer.valueOf(s[1])-1;
+							valueStart=Integer.valueOf(s[2]);
+							valueEnd=Integer.valueOf(s[3]);
+						}
+					}
+				}
+				br1.close();
+				if(peptideId==-1 || valueStart==-1 || valueEnd==-1) return null;
+					
+				BufferedReader br = new BufferedReader(new FileReader(file));
+				String[] samples=null;
+				if((line=br.readLine())!=null){
+					samples=line.split("\t", -1);
+				}
+				if(samples==null){
+					br.close();
+					return null;
+				}
+				boolean found=false;
+				while ((line=br.readLine())!=null){
+					String[] s=line.split("\t", -1);
+					for(int i=valueStart; i<s.length; i++){
+						if(s[peptideId].compareTo(probe)==0){
+							intensities.put(samples[i], Double.valueOf(s[i]));
+							found=true;
+						}
+					}
+					if(found) break;
+				}
+				br.close();
+			}catch (Exception e){
+				e.printStackTrace();
+			}	
+		}
+		return intensities;
+	}
+	//works also for metabolomics
+	public static HashMap<String, HashMap<String, Double>> getProteomicsValuesProbes(Vector<File> rawFiles, File columnMapping){
+		HashMap<String, HashMap<String, Double>> intensities=new HashMap<String, HashMap<String, Double>>();
+		try{
+			for(File file: rawFiles){
+				if(file.exists() && file.isFile() && columnMapping.exists() && columnMapping.isFile()){
+					int peptideId=-1;
+					int valueStart=-1;
+					int valueEnd=-1;
+					
+					BufferedReader br1 = new BufferedReader(new FileReader(columnMapping));
+					String line=br1.readLine();
+					while((line=br1.readLine())!=null){
+						if(line.compareTo("")!=0){
+							String[] s=line.split("\t", -1);
+							if(s[0].compareTo(file.getName())==0){
+								peptideId=Integer.valueOf(s[1])-1;
+								valueStart=Integer.valueOf(s[2]);
+								valueEnd=Integer.valueOf(s[3]);
+							}
+						}
+					}
+					br1.close();
+					if(peptideId==-1 || valueStart==-1 || valueEnd==-1) return null;
+					
+					BufferedReader br = new BufferedReader(new FileReader(file));
+					String[] samples=null;
+					if((line=br.readLine())!=null){
+						samples=line.split("\t", -1);
+					}
+					if(samples==null){
+						br.close();
+						return null;
+					}
+					while ((line=br.readLine())!=null){
+						String[] s=line.split("\t", -1);
+						for(int i=valueStart; i<s.length; i++){
+							String probe=s[peptideId];
+							if(intensities.get(probe)==null) intensities.put(probe, new HashMap<String, Double>());
+							if(s[i].compareTo("")!=0) intensities.get(probe).put(samples[i], Double.valueOf(s[i]));
+						}
+					}
+					br.close();
+				}
+			}
+		}catch (Exception e){
+			e.printStackTrace();
+		}	
+		return intensities;
+	}
+	public static Vector<String> getPeptide(File rawFile, File columnMappingFile){
+		Vector<String> probes=new Vector<String>();
+		if(rawFile.exists() && rawFile.isFile() && columnMappingFile.exists() && columnMappingFile.isFile()){
+			int peptideId=-1;
+			try{
+				BufferedReader br1 = new BufferedReader(new FileReader(columnMappingFile));
+				String line=br1.readLine();
+				while((line=br1.readLine())!=null){
+					if(line.compareTo("")!=0){
+						String[] s=line.split("\t", -1);
+						if(s[0].compareTo(rawFile.getName())==0){
+							peptideId=Integer.valueOf(s[1])-1;
+	
+						}
+					}
+				}
+				br1.close();
+				if(peptideId==-1) return null;
+
+				BufferedReader br = new BufferedReader(new FileReader(rawFile));
+				line=br.readLine();
+				while ((line=br.readLine())!=null){
+					String[] s=line.split("\t", -1);
+					probes.add(s[peptideId]);
+				}
+				br.close();
+			}catch (Exception e){
+				e.printStackTrace();
+			}	
+		}
+		return probes;
+	}
+	
+	//retrieve category codes (with values replaced) from subject to sample mapping file
+	public static Vector<String> getFullCategoryCode(File file){
+		Vector<String> categories=new Vector<String>();
+		try{
+			if(file!=null){
+				BufferedReader br = new BufferedReader(new FileReader(file));
+				String line=br.readLine();
+				while((line=br.readLine())!=null){
+					if(line.compareTo("")!=0){
+						String[] s=line.split("\t", -1);
+						String[] c=s[8].split("\\+");
+						String cat="";
+						for(int i=0; i<c.length; i++){
+							if(c[i].compareTo("PLATFORM")==0){
+								String gplName=RetrieveData.getGplName(s[4]);
+								if(gplName.compareTo("")!=0) cat+=gplName+"+";
+								else{
+									cat="Platform not found: "+s[4]+" ";
+									break;
+								}
+							}
+							else if(c[i].compareTo("TISSUETYPE")==0) cat+=s[5]+"+";
+							else if(c[i].compareTo("ATTR1")==0) cat+=s[6]+"+";
+							else if(c[i].compareTo("ATTR2")==0) cat+=s[7]+"+";					
+							else cat+=c[i]+"+";
+						}
+						if(cat.length()>0) cat = cat.substring(0, cat.length()-1);
+						boolean found=false;
+						for(String ca: categories){
+							if(ca.compareTo(cat)==0){
+								found=true;
+								break;
+							}
+						}
+						if(!found) categories.add(cat);
+					}
+				}
+				br.close();
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+			return new Vector<String>();
+		}
+		return categories;
+	}
+	
+	//retrieve category codes (with values replaced) from a single line of the sample mapping file
+	public static String getFullCategoryCode(String line){
+		if(line.compareTo("")!=0){
+			String[] s=line.split("\t", -1);
+			String[] c=s[8].split("\\+");
+			String cat="";
+			for(int i=0; i<c.length; i++){
+				if(c[i].compareTo("PLATFORM")==0){
+					String gplName=RetrieveData.getGplName(s[4]);
+					if(gplName.compareTo("")!=0) cat+=gplName+"+";
+					else{
+						cat="Platform not found: "+s[4]+" ";
+						break;
+					}
+				}
+				else if(c[i].compareTo("TISSUETYPE")==0) cat+=s[5]+"+";
+				else if(c[i].compareTo("ATTR1")==0) cat+=s[6]+"+";
+				else if(c[i].compareTo("ATTR2")==0) cat+=s[7]+"+";					
+				else cat+=c[i]+"+";
+			}
+			if(cat.length()>0) cat = cat.substring(0, cat.length()-1);
+					
+			return cat;
+		}
+		return "";
+	}
+	public static Vector<String[]> getFullClinicalCategoryCode(File mappingFile, Vector<File> rawFiles){
+		Vector<String[]> cat=new Vector<String[]>();
+		try{
+			for(File f: rawFiles){
+				int visitNumber=FileHandler.getNumberForLabel(mappingFile, "VISIT_NAME", f);
+				if(visitNumber==-1){//no visit names, just get category code and labels
+					BufferedReader br = new BufferedReader(new FileReader(mappingFile));
+					String line=br.readLine();
+					while((line=br.readLine())!=null){
+						String[] fields=line.split("\t", -1);
+						if(fields[0].compareTo(f.getName())==0 && !isReserved(fields[3])){
+							String[] tab=new String[2];
+							tab[0]=fields[1];
+							if(fields[3].compareTo("")!=0) tab[1]=fields[3];
+							else tab[1]=getHeaders(f).get(Integer.valueOf(fields[2])-1);
+							cat.add(tab);
+						}
+					}
+					br.close();					
+				}else{
+					Vector<String> visits=new Vector<String>();
+					BufferedReader br = new BufferedReader(new FileReader(f));
+					String line=br.readLine();
+					while((line=br.readLine())!=null){
+						String[] fields=line.split("\t", -1);
+						if(!visits.contains(fields[visitNumber-1])) visits.add(fields[visitNumber-1]);
+					}
+					br.close();
+					
+					br = new BufferedReader(new FileReader(mappingFile));
+					line=br.readLine();
+					while((line=br.readLine())!=null){
+						String[] fields=line.split("\t", -1);
+						if(fields[0].compareTo(f.getName())==0 && !isReserved(fields[3])){
+							for(String s: visits){
+								String[] tab=new String[2];
+								if(fields[3].compareTo("")!=0) tab[0]=fields[1]+"+"+fields[3];
+								else tab[0]=tab[0]=fields[1]+"+"+getHeaders(f).get(Integer.valueOf(fields[2])-1);
+								tab[1]=s;
+								cat.add(tab);
+							}
+						}
+					}
+					br.close();		
+				}
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+			return new Vector<String[]>();
+		}
+		return cat;
 	}
 }

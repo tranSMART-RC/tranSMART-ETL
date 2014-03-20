@@ -27,31 +27,6 @@
             <description>R - data is raw intensity, L - data has been log-transformed, T- data is fully transformed</description>
         </parameter>
         <parameter>
-            <name>DEAPP_DB_NAME</name>
-            <default_value/>
-            <description/>
-        </parameter>
-        <parameter>
-            <name>DEAPP_DB_PORT</name>
-            <default_value/>
-            <description/>
-        </parameter>
-        <parameter>
-            <name>DEAPP_DB_PWD</name>
-            <default_value/>
-            <description/>
-        </parameter>
-        <parameter>
-            <name>DEAPP_DB_SERVER</name>
-            <default_value/>
-            <description/>
-        </parameter>
-        <parameter>
-            <name>DEAPP_DB_USER</name>
-            <default_value/>
-            <description/>
-        </parameter>
-        <parameter>
             <name>FilePivot_LOCATION</name>
             <default_value>C:\Users\javitabile\Documents\tranSMART\Pivoter</default_value>
             <description>fully-qualified path to FilePivot.jar file</description>
@@ -80,6 +55,11 @@
             <name>MAP_FILENAME</name>
             <default_value>x</default_value>
             <description>subject-sample map filename</description>
+        </parameter>
+        <parameter>
+            <name>SAMPLE_MAP_FILENAME</name>
+            <default_value>dimension_mapping</default_value>
+            <description/>
         </parameter>
         <parameter>
             <name>SAMPLE_REMAP_FILENAME</name>
@@ -112,6 +92,36 @@
             <description>study id </description>
         </parameter>
         <parameter>
+            <name>TOP_NODE</name>
+            <default_value/>
+            <description/>
+        </parameter>
+	<parameter>
+            <name>DEAPP_DB_NAME</name>
+            <default_value/>
+            <description/>
+        </parameter>
+        <parameter>
+            <name>DEAPP_DB_PORT</name>
+            <default_value/>
+            <description/>
+        </parameter>
+        <parameter>
+            <name>DEAPP_DB_PWD</name>
+            <default_value/>
+            <description/>
+        </parameter>
+        <parameter>
+            <name>DEAPP_DB_SERVER</name>
+            <default_value/>
+            <description/>
+        </parameter>
+        <parameter>
+            <name>DEAPP_DB_USER</name>
+            <default_value/>
+            <description/>
+        </parameter>
+ 	<parameter>
             <name>TM_CZ_DB_NAME</name>
             <default_value/>
             <description/>
@@ -158,11 +168,6 @@
         </parameter>
         <parameter>
             <name>TM_LZ_DB_USER</name>
-            <default_value/>
-            <description/>
-        </parameter>
-        <parameter>
-            <name>TOP_NODE</name>
             <default_value/>
             <description/>
         </parameter>
@@ -390,8 +395,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>586</xloc>
-      <yloc>94</yloc>
+      <xloc>609</xloc>
+      <yloc>98</yloc>
       </entry>
     <entry>
       <name>No subject-sample map file</name>
@@ -494,7 +499,9 @@
       <name>Write To Log</name>
       <description/>
       <type>WRITE_TO_LOG</type>
-      <logmessage>This is the top level of the study and the LOAD_TYPE parameter</logmessage>
+      <logmessage>This is the top level of the study and the LOAD_TYPE parameter
+
+${SAMPLE_REMAP_FILENAME}</logmessage>
       <loglevel>Basic</loglevel>
       <logsubject>${TOP_NODE}  &#47; LOAD_TYPE: ${LOAD_TYPE}</logsubject>
       <parallel>N</parallel>
@@ -522,8 +529,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>1045</xloc>
-      <yloc>94</yloc>
+      <xloc>1040</xloc>
+      <yloc>84</yloc>
       </entry>
     <entry>
       <name>Success</name>
@@ -628,8 +635,8 @@
       </parameters>      <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>722</xloc>
-      <yloc>98</yloc>
+      <xloc>723</xloc>
+      <yloc>48</yloc>
       </entry>
   </entries>
   <hops>

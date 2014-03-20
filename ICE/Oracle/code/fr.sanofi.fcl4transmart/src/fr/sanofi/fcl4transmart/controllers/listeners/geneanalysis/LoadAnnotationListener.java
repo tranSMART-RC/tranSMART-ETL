@@ -20,6 +20,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.io.FileUtils;
@@ -30,6 +31,7 @@ import org.pentaho.di.core.KettleEnvironment;
 import org.pentaho.di.core.Result;
 import org.pentaho.di.core.logging.CentralLogStore;
 import org.pentaho.di.core.logging.Log4jBufferAppender;
+import org.pentaho.di.i18n.LanguageChoice;
 import org.pentaho.di.job.Job;
 import org.pentaho.di.job.JobMeta;
 
@@ -88,6 +90,10 @@ public class LoadAnnotationListener implements Listener{
 						kettleUrl = FileLocator.toFileURL(kettleUrl);  
 						System.setProperty("KETTLE_PLUGIN_BASE_FOLDERS", kettleUrl.getPath());
 						KettleEnvironment.init(false);
+						
+						LanguageChoice language=LanguageChoice.getInstance();
+						language.setDefaultLocale(Locale.US);	
+						
 						//find the kettle job to initiate the loading
 						URL jobUrl = new URL("platform:/plugin/fr.sanofi.fcl4transmart/jobs_kettle/load_annotation.kjb");
 						jobUrl = FileLocator.toFileURL(jobUrl);  
@@ -244,6 +250,7 @@ public class LoadAnnotationListener implements Listener{
 					 
 						java.util.Properties config = new java.util.Properties(); 
 						config.put("StrictHostKeyChecking", "no");
+						config.put("PreferredAuthentications", "publickey,keyboard-interactive,password");
 						session.setConfig(config);
 						
 						session.connect();
@@ -305,7 +312,7 @@ public class LoadAnnotationListener implements Listener{
 							loadAnnotationUI.setIsLoading(false);
 							return;
 						}
-						String command="nohup "+etlPreferences.getKettleDirectory()+"/kitchen.sh -norep=Y ";
+						String command=etlPreferences.getKettleDirectory()+"/kitchen.sh -norep=Y ";
 						command+="-file="+etlPreferences.getJobsDirectory()+"/load_annotation.kjb ";
 						command+="-param:DATA_LOCATION="+fileLoc+"  ";
 						command+="-param:SOURCE_FILENAME="+f.getName()+" ";

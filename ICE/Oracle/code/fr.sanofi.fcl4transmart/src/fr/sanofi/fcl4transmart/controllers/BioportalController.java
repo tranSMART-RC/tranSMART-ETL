@@ -1,18 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2012 Sanofi-Aventis Recherche et Dï¿½veloppement.
+ * Copyright (c) 2012 Sanofi-Aventis Recherche et Développement.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Public License v3.0
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/gpl.html
  * 
  * Contributors:
- *    Sanofi-Aventis Recherche et Dï¿½veloppement - initial API and implementation
+ *    Sanofi-Aventis Recherche et Développement - initial API and implementation
  ******************************************************************************/
 package fr.sanofi.fcl4transmart.controllers;
 
 import java.io.InputStream;
-import java.net.Authenticator;
-import java.net.ProxySelector;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,16 +39,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import com.btr.proxy.search.ProxySearch;
-
-import fr.sanofi.fcl4transmart.handlers.ProxyPreferencesHandler;
-import fr.sanofi.fcl4transmart.model.classes.Auth;
 import fr.sanofi.fcl4transmart.ui.parts.WorkPart;
 
-/**
- * This class allows opening a shell for Bioportal search, and get a set with term and code of an ontology item
- */
 public class BioportalController {
 	private static Shell shell;
 	private static Text text;
@@ -62,9 +52,6 @@ public class BioportalController {
 	private static String[] toReturn;
 	private static boolean isSearching;
 	private static boolean test;
-	/**
-	 * Test if connexion to Bioportal webservice is available
-	 */
 	public static boolean testBioportalConnection(){
 		Shell shell=new Shell();
 		shell.setSize(50, 100);
@@ -82,39 +69,15 @@ public class BioportalController {
 			public void run() {
 				test=true;
 				try{
-					if(ProxyPreferencesHandler.getMethod().compareTo("Native")==0){
-						ProxySearch proxySearch = ProxySearch.getDefaultProxySearch();
-						ProxySelector myProxySelector = proxySearch.getProxySelector();
-						ProxySelector.setDefault(myProxySelector);
-						
-						URL url=new URL("http://rest.bioontology.org"); 
-				        InputStream ins = url.openConnection().getInputStream();
-						ins.close();
-					}
-					else if(ProxyPreferencesHandler.getMethod().compareTo("Manual")==0){
-						if(ProxyPreferencesHandler.getHost()!=null && ProxyPreferencesHandler.getPort()!=null){
-							if(ProxyPreferencesHandler.getAuthRequired()){
-								Authenticator.setDefault(new Auth(ProxyPreferencesHandler.getUser(), ProxyPreferencesHandler.getPass()));
-							}
-							System.setProperty("http.proxyHost", ProxyPreferencesHandler.getHost());  
-							System.setProperty("http.proxyPort", ProxyPreferencesHandler.getPort()); 
-							URL url=new URL("http://rest.bioontology.org"); 
-					        InputStream ins = url.openConnection().getInputStream();
-							ins.close();
-							System.setProperty("http.proxyHost", "");  
-							System.setProperty("http.proxyPort", "");  
-						}
-					}else{
-						URL url=new URL("http://rest.bioontology.org"); 
-				        InputStream ins = url.openConnection().getInputStream();
-						ins.close();
-					}
+					URL url=new URL("http://rest.bioontology.org"); 
+					url.openConnection();
+					InputStream is=url.openStream();
+					is.close();
 				}
 				catch(Exception e){
 					e.printStackTrace();
 					test=false;
 				}
-
 				isSearching=false;
 			}
 	    }.start();
@@ -127,9 +90,6 @@ public class BioportalController {
 	    shell.close();
 	    return test;
 	}
-	/**
-	 * Create the search shell, and return the term and code of a selected ontology item under the form of an array with two potentially null strings
-	 */
 	public static String[] getTerms(){
 		toReturn=new String[2];
 		shell=new Shell(SWT.TITLE|SWT.SYSTEM_MODAL| SWT.CLOSE | SWT.MAX);
@@ -174,14 +134,14 @@ public class BioportalController {
 	    final HashMap<String, String> ontologies=getOntologies();
 	    combo.add("All ontologies");
 	    combo.add("----------");
-	    if(ontologies.keySet().contains("MedDRA")){
-	    	combo.add("MedDRA");
+	    if(ontologies.keySet().contains("Medical Dictionary for Regulatory Activities")){
+	    	combo.add("Medical Dictionary for Regulatory Activities");
 	    }
-	    if(ontologies.keySet().contains("SNOMED Clinical Terms")){
-	    	combo.add("SNOMED Clinical Terms");
+	    if(ontologies.keySet().contains("Systematized Nomenclature of Medicine - Clinical Terms")){
+	    	combo.add("Systematized Nomenclature of Medicine - Clinical Terms");
 	    }
-	    if(ontologies.keySet().contains("Medical Subject Headings (MeSH)")){
-	    	combo.add("Medical Subject Headings (MeSH)");
+	    if(ontologies.keySet().contains("Medical Subject Headings MESH ")){
+	    	combo.add("Medical Subject Headings MESH ");
 	    }
 	    combo.add("----------");
 	    for(String key: ontologies.keySet()){
@@ -279,9 +239,6 @@ public class BioportalController {
 
 		return toReturn;
 	}
-	/**
-	 * Search all available ontologies in Bioportal and returns a HashMap with ontology name as key and ontology identifier as value
-	 */	
 	public static HashMap<String, String> getOntologies(){
 		HashMap<String, String> ontologies=new HashMap<String, String>();
 		String getLatestOntologiesUrl = "http://rest.bioontology.org/bioportal/ontologies?apikey=";
@@ -322,9 +279,7 @@ public class BioportalController {
 		}
 		return ontologies;
 	}
-	/**
-	 * Create the columns of the table viewer
-	 */
+	
 	private static void createColumns() {
 		String[] titles = { "Term", "Code", "Ontology", "Ontology version", "Synonyme", "Obsolete" };
 		int[] bounds = { 100, 100, 100, 100, 100, 100 };
@@ -383,9 +338,7 @@ public class BioportalController {
 		});
 
 	}
-	/**
-	 * Create a column for the table viewer - called by the method createColumns()
-	 */
+
 	private static TableViewerColumn createTableViewerColumn(String title, int bound, final int colNumber) {
 		final TableViewerColumn viewerColumn = new TableViewerColumn(viewer,
 				SWT.NONE);
@@ -396,9 +349,6 @@ public class BioportalController {
 		column.setMoveable(true);
 		return viewerColumn;
 	}
-	/**
-	 * Search all terms for a given search, and fill a list with corresponding objects OntologyTerm
-	 */
 	private static void searchTerms(HashMap<String, String> ontologies){
 		terms=new ArrayList<OntologyTerm>();
 		if(combo.getText().compareTo("")==0 || text.getText().compareTo("----------")==0){

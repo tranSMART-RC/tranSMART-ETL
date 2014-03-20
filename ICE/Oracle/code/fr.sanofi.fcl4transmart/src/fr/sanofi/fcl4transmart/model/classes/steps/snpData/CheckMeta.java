@@ -21,7 +21,7 @@ public class CheckMeta implements StepItf {
 	@Override
 	public String getDescription() {
 		return "This step allows checking the loading of the meta tables.\n"+
-				"Number of expected lines are got from the raw files, and number of inserted lines are got from the database, and displayed. It is also indicated if theses values are the same in the two cases.\n"+
+				"Number of expected lines is got from the raw files, and number of inserted lines are got from the database, and displayed. It is also indicated if these values are the same in the two cases.\n"+
 				"A database connection is needed for this step";
 	}
 

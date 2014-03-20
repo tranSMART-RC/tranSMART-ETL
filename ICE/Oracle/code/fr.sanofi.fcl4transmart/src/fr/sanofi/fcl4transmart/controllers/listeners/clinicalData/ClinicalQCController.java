@@ -205,7 +205,7 @@ public class ClinicalQCController {
 			Connection con = DriverManager.getConnection(connectionString, PreferencesHandler.getDemodataUser(), PreferencesHandler.getDemodataPwd());
 			Statement stmt = con.createStatement();
 			String topNode=((ClinicalData)this.dataType).getStudy().getTopNode();
-			ResultSet rs=stmt.executeQuery("select CONCEPT_DIMENSION.CONCEPT_PATH, NVAL_NUM, patient_dimension.sourcesystem_cd from CONCEPT_DIMENSION, OBSERVATION_FACT, patient_dimension where OBSERVATION_FACT.VALTYPE_CD='N' and OBSERVATION_FACT.patient_num=patient_dimension.patient_num and OBSERVATION_FACT.CONCEPT_CD=CONCEPT_DIMENSION.CONCEPT_CD and observation_fact.sourcesystem_cd='"+this.dataType.getStudy().toString().toUpperCase()+"'");	
+			ResultSet rs=stmt.executeQuery("select CONCEPT_DIMENSION.CONCEPT_PATH, NVAL_NUM, patient_dimension.sourcesystem_cd from CONCEPT_DIMENSION, OBSERVATION_FACT, patient_dimension where OBSERVATION_FACT.VALTYPE_CD='N' and OBSERVATION_FACT.patient_num=patient_dimension.patient_num and OBSERVATION_FACT.CONCEPT_CD=CONCEPT_DIMENSION.CONCEPT_CD and concept_dimension.sourcesystem_cd='"+this.dataType.getStudy().toString().toUpperCase()+"'");	
 			while(rs.next()){
     			String path=rs.getString(1);
     			String value=String.valueOf(rs.getDouble(2));
@@ -221,7 +221,7 @@ public class ClinicalQCController {
     			}
     		}
 			
-			rs=stmt.executeQuery("select CONCEPT_DIMENSION.CONCEPT_PATH, TVAL_CHAR, patient_dimension.sourcesystem_cd from CONCEPT_DIMENSION, OBSERVATION_FACT, patient_dimension  where OBSERVATION_FACT.VALTYPE_CD='T' and OBSERVATION_FACT.patient_num=patient_dimension.patient_num and OBSERVATION_FACT.CONCEPT_CD=CONCEPT_DIMENSION.CONCEPT_CD and observation_fact.sourcesystem_cd='"+this.dataType.getStudy().toString().toUpperCase()+"'");
+			rs=stmt.executeQuery("select CONCEPT_DIMENSION.CONCEPT_PATH, TVAL_CHAR, patient_dimension.sourcesystem_cd from CONCEPT_DIMENSION, OBSERVATION_FACT, patient_dimension  where OBSERVATION_FACT.VALTYPE_CD='T' and OBSERVATION_FACT.patient_num=patient_dimension.patient_num and OBSERVATION_FACT.CONCEPT_CD=CONCEPT_DIMENSION.CONCEPT_CD and concept_dimension.sourcesystem_cd='"+this.dataType.getStudy().toString().toUpperCase()+"'");
 			while(rs.next()){
     			String path=rs.getString(1);
     			String value=rs.getString(2);
@@ -252,7 +252,7 @@ public class ClinicalQCController {
 			cnfe.printStackTrace();
 			return null;
 		}
-		
+
 		return dbValues;
 	}
 	public String replaceValue(String value){

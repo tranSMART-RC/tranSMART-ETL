@@ -17,13 +17,12 @@ import java.io.IOException;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
+import fr.sanofi.fcl4transmart.controllers.Utils;
 import fr.sanofi.fcl4transmart.model.classes.dataType.ClinicalData;
 import fr.sanofi.fcl4transmart.model.classes.workUI.clinicalData.SelectCMFUI;
 import fr.sanofi.fcl4transmart.model.interfaces.DataTypeItf;
 import fr.sanofi.fcl4transmart.ui.parts.UsedFilesPart;
 import fr.sanofi.fcl4transmart.ui.parts.WorkPart;
-
-import org.apache.commons.io.FileUtils;
 /**
  *This class controls a column mapping file selection
  */	
@@ -56,7 +55,7 @@ public class SelectCMFListener implements Listener{
 
 				File copiedFile=new File(newPath);
 				try {
-					FileUtils.copyFile(file, copiedFile);
+					Utils.copyFile(file, copiedFile);
 					((ClinicalData)this.dataType).setCMF(copiedFile);
 					
 					this.selectCMFUI.displayMessage("File has been added");
@@ -64,6 +63,7 @@ public class SelectCMFListener implements Listener{
 					WorkPart.updateFiles();
 					UsedFilesPart.sendFilesChanged(dataType);
 				} catch (IOException e) {
+					if(copiedFile.exists()) copiedFile.delete();
 					this.selectCMFUI.displayMessage("File error: "+e.getLocalizedMessage());
 					e.printStackTrace();
 				}
@@ -114,12 +114,6 @@ public class SelectCMFListener implements Listener{
 					}
 					catch(NumberFormatException e){
 						this.selectCMFUI.displayMessage("Error:\nColumns numbers have to be numbers");
-						br.close();
-						return false;
-					}
-					//check that datalabel is set
-					if(fields[3].compareTo("")==0){
-						this.selectCMFUI.displayMessage("Error:\nData labels have to be set");
 						br.close();
 						return false;
 					}

@@ -172,6 +172,7 @@ public class LoadDataListener implements Listener {
 							jarUrl = FileLocator.toFileURL(jarUrl);  
 							String jarPath = jarUrl.getPath();
 							String[] cmd = { "java", "-classpath", jarPath, "com.recomdata.pipeline.plink.PlinkLoader", ((SnpData)dataType).getDataProp().getAbsolutePath(), ((SnpData)dataType).getLogProps().getAbsolutePath(), "jdbc:oracle:thin:@"+PreferencesHandler.getDbServer()+":"+PreferencesHandler.getDbPort()+":"+PreferencesHandler.getDbName(), "oracle.jdbc.driver.OracleDriver", PreferencesHandler.getDeappUser(), PreferencesHandler.getDeappPwd(), PreferencesHandler.getDemodataUser(), PreferencesHandler.getDemodataPwd()};
+
 					        Process p = Runtime.getRuntime().exec(cmd);
 					        BufferedReader stdInput = new BufferedReader(new 
 					                InputStreamReader(p.getInputStream()));
@@ -221,6 +222,7 @@ public class LoadDataListener implements Listener {
 							 
 								java.util.Properties config = new java.util.Properties(); 
 								config.put("StrictHostKeyChecking", "no");
+								config.put("PreferredAuthentications", "publickey,keyboard-interactive,password");
 								session.setConfig(config);
 								
 								session.connect();
@@ -398,5 +400,4 @@ public class LoadDataListener implements Listener {
 		WorkPart.updateFiles();
 		UsedFilesPart.sendFilesChanged(dataType);
 	}
-
 }

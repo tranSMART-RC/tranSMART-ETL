@@ -21,8 +21,8 @@ public class SelectAnnotationFile implements StepItf {
 	@Override
 	public String getDescription() {
 		return "This step allows selecting a platform annotation file for this study. This file can be for instance found in the GEO website\n"
-				+"This file has to contain a header line. The header line can be precedeed by any number of comments lines beginning with the character \"#\"\n"
-				+"The file has to contain four or five columns, corresponding to the rs identifier, the SNP identifier, the chromosome number, the position of the SNP on this chromosome, and optionnaly the gene corresponding to this SNP\n"
+				+"This file has to contain a header line. The header line can be preceded by any number of comments lines beginning with the character \"#\"\n"
+				+"The file has to contain four or five columns, corresponding to the rs identifier, the SNP identifier, the chromosome number, the position of the SNP on this chromosome, and optionally the gene corresponding to this SNP\n"
 				+"The format is checked when the file is added";
 	}
 

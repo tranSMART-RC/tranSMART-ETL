@@ -17,10 +17,10 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
-import org.apache.commons.io.FileUtils;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import fr.sanofi.fcl4transmart.controllers.FileHandler;
+import fr.sanofi.fcl4transmart.controllers.Utils;
 import fr.sanofi.fcl4transmart.model.classes.TreeNode;
 import fr.sanofi.fcl4transmart.model.classes.dataType.ClinicalData;
 import fr.sanofi.fcl4transmart.model.classes.workUI.clinicalData.SetStudyTreeUI;
@@ -81,9 +81,9 @@ public class SetStudyTreeListener implements Listener{
 				out.close();
 				try{
 					String fileName=((ClinicalData)this.dataType).getCMF().getName();
-					((ClinicalData)this.dataType).getCMF().delete();
 					File fileDest=new File(this.dataType.getPath()+File.separator+fileName);
-					FileUtils.moveFile(file, fileDest);
+					Utils.copyFile(file, fileDest);
+					file.delete();
 					((ClinicalData)this.dataType).setCMF(fileDest);
 				}
 				catch(IOException ioe){
@@ -136,7 +136,7 @@ public class SetStudyTreeListener implements Listener{
 								dataLabel=header;
 							}
 							int columnNumber=FileHandler.getHeaderNumber(rawFile, header);
-							out.write(rawFileName+"\t"+path.replace(' ', '_')+"\t"+columnNumber+"\t"+"\\"+"\t"+FileHandler.getHeaderNumber(rawFile, child.getParent().toString().split(" - ", -1)[1])+"\t\n");
+							out.write(rawFileName+"\t"+path.replace(' ', '_')+"\t"+columnNumber+"\t"+"\\"+"\t"+FileHandler.getHeaderNumber(rawFile, child.getParent().toString().split(" - ", -1)[1])+"B\t\n");
 						} catch (IOException e) {
 							this.setStudyTreeUI.displayMessage("File error: "+e.getLocalizedMessage());
 							e.printStackTrace();

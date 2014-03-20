@@ -189,6 +189,7 @@ public class LoadAnnotationListener implements Listener {
 							jarUrl = FileLocator.toFileURL(jarUrl);  
 							String jarPath = jarUrl.getPath();
 							String[] cmd = { "java", "-classpath", jarPath, "com.recomdata.pipeline.annotation.AnnotationLoader", ((SnpData)dataType).getAnnotationProps().getAbsolutePath(), ((SnpData)dataType).getLogProps().getAbsolutePath(), "jdbc:oracle:thin:@"+PreferencesHandler.getDbServer()+":"+PreferencesHandler.getDbPort()+":"+PreferencesHandler.getDbName(), "oracle.jdbc.driver.OracleDriver", PreferencesHandler.getDeappUser(), PreferencesHandler.getDeappPwd(), PreferencesHandler.getBiomartUser(), PreferencesHandler.getBiomartPwd()};
+
 					        Process p = Runtime.getRuntime().exec(cmd);
 					        BufferedReader stdInput = new BufferedReader(new 
 					                InputStreamReader(p.getInputStream()));
@@ -238,6 +239,7 @@ public class LoadAnnotationListener implements Listener {
 							 
 								java.util.Properties config = new java.util.Properties(); 
 								config.put("StrictHostKeyChecking", "no");
+								config.put("PreferredAuthentications", "publickey,keyboard-interactive,password");
 								session.setConfig(config);
 								
 								session.connect();

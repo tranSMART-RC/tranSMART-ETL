@@ -22,8 +22,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 
+import fr.sanofi.fcl4transmart.controllers.HDDMonitoringController;
 import fr.sanofi.fcl4transmart.controllers.RetrieveData;
-import fr.sanofi.fcl4transmart.controllers.listeners.geneExpression.GeneMonitoringController;
 import fr.sanofi.fcl4transmart.handlers.PreferencesHandler;
 import fr.sanofi.fcl4transmart.model.interfaces.DataTypeItf;
 import fr.sanofi.fcl4transmart.model.interfaces.WorkItf;
@@ -95,7 +95,7 @@ public class MonitoringUI implements WorkItf{
 		this.labelText="";
 		new Thread(){
 			public void run() {
-				GeneMonitoringController controller=new GeneMonitoringController(dataType);
+				HDDMonitoringController controller=new HDDMonitoringController(dataType);
 				if(!controller.checkLogFileExists()){
 					labelText="No data loaded.\n";
 					return;

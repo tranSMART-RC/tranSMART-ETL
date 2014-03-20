@@ -38,7 +38,7 @@ public class StudyTreeController {
 				String header=FileHandler.getColumnByNumber(rawFile, Integer.parseInt(s[2]));
 				String name=s[0]+" - "+header;
 				if(s[3].compareTo("\\")==0){
-					String sourceName=rawFile.getName()+" - "+FileHandler.getColumnByNumber(rawFile, Integer.parseInt(s[4]));
+					String sourceName=rawFile.getName()+" - "+FileHandler.getColumnByNumber(rawFile, Integer.parseInt(s[4].substring(0, 1)));
 					this.buildNode(this.root, s[1], name, sourceName, false);
 				}
 				else if(s[4].compareTo("MIN")==0 || s[4].compareTo("MAX")==0 || s[4].compareTo("MEAN")==0){

@@ -20,13 +20,13 @@ import java.util.HashMap;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.commons.io.FileUtils;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 import au.com.bytecode.opencsv.CSVReader;
 
 import fr.sanofi.fcl4transmart.controllers.FileHandler;
+import fr.sanofi.fcl4transmart.controllers.Utils;
 import fr.sanofi.fcl4transmart.model.classes.dataType.ClinicalData;
 import fr.sanofi.fcl4transmart.model.classes.workUI.clinicalData.SelectRawFilesUI;
 import fr.sanofi.fcl4transmart.model.interfaces.DataTypeItf;
@@ -64,6 +64,10 @@ public class SelectClinicalRawFileListener implements Listener{
 								selectRawFilesUI.setIsLoading(false);
 								return;
 							}
+							Pattern patternTxt=Pattern.compile(".*\\.txt");
+							Pattern patternSoft=Pattern.compile(".*\\.soft");
+							Pattern patternCsv=Pattern.compile(".*\\.soft");							
+									
 							String newPath=dataType.getPath().getAbsolutePath()+File.separator+rawFile.getName();
 							if(selectRawFilesUI.getFormat().compareTo("Tab delimited raw file")!=0 && selectRawFilesUI.getFormat().compareTo("SOFT")!=0 && selectRawFilesUI.getFormat().compareTo("Tab delimited raw file with filter")!=0 && selectRawFilesUI.getFormat().compareTo("CSV")!=0){
 								selectRawFilesUI.setMessage("File format does not exist");
@@ -71,6 +75,13 @@ public class SelectClinicalRawFileListener implements Listener{
 								return;
 							}
 							if(selectRawFilesUI.getFormat().compareTo("SOFT")==0){
+								Matcher matcherSoft=patternSoft.matcher(rawFile.getName());
+								if(!matcherSoft.matches()){
+									selectRawFilesUI.setMessage("File extension must be '.soft'");
+									selectRawFilesUI.setIsLoading(false);
+									return;
+								}
+								newPath=newPath.replace(".soft", ".txt");
 								File newFile=new File(newPath);
 								if(newFile.exists()){
 									selectRawFilesUI.setMessage("File has already been added");
@@ -84,6 +95,12 @@ public class SelectClinicalRawFileListener implements Listener{
 								}
 							}
 							else if(selectRawFilesUI.getFormat().compareTo("Tab delimited raw file")==0){
+								Matcher matcherTxt=patternTxt.matcher(rawFile.getName());
+								if(!matcherTxt.matches()){
+									selectRawFilesUI.setMessage("File extension must be '.txt'");
+									selectRawFilesUI.setIsLoading(false);
+									return;
+								}
 								if(!checkTabFormat(rawFile)){
 									selectRawFilesUI.setIsLoading(false);
 									return;
@@ -92,7 +109,7 @@ public class SelectClinicalRawFileListener implements Listener{
 								File copiedRawFile=new File(newPath);
 								if(!copiedRawFile.exists()){
 									try {
-										FileUtils.copyFile(rawFile, copiedRawFile);
+										Utils.copyFile(rawFile, copiedRawFile);
 										((ClinicalData)dataType).addRawFile(copiedRawFile);
 										selectRawFilesUI.setMessage("File has been added");
 									} catch (IOException e) {
@@ -114,7 +131,13 @@ public class SelectClinicalRawFileListener implements Listener{
 								}
 							}
 							else if(selectRawFilesUI.getFormat().compareTo("Tab delimited raw file with filter")==0){
-				         	   filters=selectRawFilesUI.getFilters();
+								Matcher matcherTxt=patternTxt.matcher(rawFile.getName());
+								if(!matcherTxt.matches()){
+									selectRawFilesUI.setMessage("File extension must be '.txt'");
+									selectRawFilesUI.setIsLoading(false);
+									return;
+								}
+				         	   	filters=selectRawFilesUI.getFilters();
 								if(filters==null || filters.size()<1){
 									selectRawFilesUI.setMessage("No selected filter");
 									selectRawFilesUI.setIsLoading(false);
@@ -129,6 +152,13 @@ public class SelectClinicalRawFileListener implements Listener{
 								selectRawFilesUI.setMessage("Files have been added");
 							}
 							else if(selectRawFilesUI.getFormat().compareTo("CSV")==0){
+								Matcher matcherCsv=patternCsv.matcher(rawFile.getName());
+								if(!matcherCsv.matches()){
+									selectRawFilesUI.setMessage("File extension must be '.csv'");
+									selectRawFilesUI.setIsLoading(false);
+									return;
+								}
+								newPath=newPath.replace(".csv", ".txt");
 								File newFile=new File(newPath);
 								if(newFile.exists()){
 									selectRawFilesUI.setMessage("File has already been added");
@@ -140,7 +170,7 @@ public class SelectClinicalRawFileListener implements Listener{
 										selectRawFilesUI.setMessage("File has been added");
 									}
 								}
-								}
+							}
 						}
 						else{
 							selectRawFilesUI.setMessage("File is a directory");

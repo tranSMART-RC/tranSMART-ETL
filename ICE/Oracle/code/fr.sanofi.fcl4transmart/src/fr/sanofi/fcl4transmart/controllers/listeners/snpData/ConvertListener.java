@@ -3,10 +3,12 @@ package fr.sanofi.fcl4transmart.controllers.listeners.snpData;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -35,6 +37,8 @@ public class ConvertListener implements Listener {
 	private ConvertUI ui;
 	private String message;
 	private ChannelSftp c;
+	public String snpId;
+	public String rsId;
 	public ConvertListener(DataTypeItf dataType, ConvertUI ui){
 		this.dataType=dataType;
 		this.ui=ui;
@@ -51,6 +55,11 @@ public class ConvertListener implements Listener {
 		new Thread(){
 			public void run() {
 				try{
+					if(!searchInAnnotProperties()){
+						 message="Error: Cannot read annotation.properties";
+						  ui.setIsLoading(false);
+						  return;
+					}
 					File file=new File(dataType.getPath().toString()+File.separator+"convert.properties.tmp");
 					try{
 						FileWriter fw = new FileWriter(file);
@@ -97,6 +106,8 @@ public class ConvertListener implements Listener {
 							out.write("output_fam="+dir+"/"+dataType.getStudy().toString()+".fam"+"\n");
 							out.write("output_directory="+dir+"\n");
 						}
+						out.write("snp_id="+snpId+"\n");
+						out.write("rsId="+rsId+"\n");
 						HashMap<Boolean, String> mapBool=new HashMap<Boolean, String>();
 						mapBool.put(true, "yes");
 						mapBool.put(false, "no");
@@ -104,7 +115,6 @@ public class ConvertListener implements Listener {
 						out.write("skip_format_lgen="+mapBool.get(ui.isSkipLgen())+"\n");
 						out.write("skip_create_fam="+mapBool.get(ui.isSkipFam())+"\n");
 						out.write("skip_plink_file_creation="+mapBool.get(ui.isSkipPlink())+"\n");
-						
 						
 						out.close();
 						File fileDest=new File(dataType.getPath().toString()+File.separator+"convert.properties");
@@ -168,7 +178,14 @@ public class ConvertListener implements Listener {
 							URL jarUrl = new URL("platform:/plugin/fr.sanofi.fcl4transmart/jobs_kettle/loader.jar");
 							jarUrl = FileLocator.toFileURL(jarUrl);  
 							String jarPath = jarUrl.getPath();
-							String[] cmd = { "java", "-classpath", jarPath, "com.recomdata.pipeline.converter.IlluminaGenotypingFormatter", ((SnpData)dataType).getConversionProps().getAbsolutePath(), ((SnpData)dataType).getLogProps().getAbsolutePath(), "jdbc:oracle:thin:@"+PreferencesHandler.getDbServer()+":"+PreferencesHandler.getDbPort()+":"+PreferencesHandler.getDbName(), "oracle.jdbc.driver.OracleDriver", PreferencesHandler.getDeappUser(), PreferencesHandler.getDeappPwd(), PreferencesHandler.getDemodataUser(), PreferencesHandler.getDemodataPwd()};
+							jarPath = URLDecoder.decode(jarPath, "utf-8");
+							jarPath = new File(jarPath).getPath();
+							String[] cmd = { "java", "-classpath", jarPath, "com.recomdata.pipeline.converter.IlluminaGenotypingFormatter", 
+									((SnpData)dataType).getConversionProps().getAbsolutePath(), ((SnpData)dataType).getLogProps().getAbsolutePath(), 
+									"jdbc:oracle:thin:@"+PreferencesHandler.getDbServer()+":"+PreferencesHandler.getDbPort()+":"+PreferencesHandler.getDbName(),
+									"oracle.jdbc.driver.OracleDriver", PreferencesHandler.getDeappUser(), PreferencesHandler.getDeappPwd(), PreferencesHandler.getDemodataUser(),
+									PreferencesHandler.getDemodataPwd()};
+
 					        Process p = Runtime.getRuntime().exec(cmd);
 					        BufferedReader stdInput = new BufferedReader(new 
 					                InputStreamReader(p.getInputStream()));
@@ -222,6 +239,7 @@ public class ConvertListener implements Listener {
 							 
 								java.util.Properties config = new java.util.Properties(); 
 								config.put("StrictHostKeyChecking", "no");
+								config.put("PreferredAuthentications", "publickey,keyboard-interactive,password");
 								session.setConfig(config);
 								
 								session.connect();
@@ -402,5 +420,26 @@ public class ConvertListener implements Listener {
 		WorkPart.updateFiles();
 		UsedFilesPart.sendFilesChanged(dataType);
 	}
-
+	public boolean searchInAnnotProperties(){
+		if(((SnpData)this.dataType).getAnnotationProps()!=null){
+			try{
+				BufferedReader br = new BufferedReader(new FileReader(((SnpData)this.dataType).getAnnotationProps()));
+				String line;
+				while((line=br.readLine())!=null){
+					if(line.indexOf("snp_id=")==0){
+						this.snpId=line.split("=", 2)[1];
+					}else if(line.indexOf("rsId=")==0){
+						this.rsId=line.split("=", 2)[1];
+					}
+				}
+				br.close();
+			}catch (Exception e){
+				e.printStackTrace();
+				return false;
+			}
+		}else{
+			return false;
+		}
+		return true;
+	}
 }

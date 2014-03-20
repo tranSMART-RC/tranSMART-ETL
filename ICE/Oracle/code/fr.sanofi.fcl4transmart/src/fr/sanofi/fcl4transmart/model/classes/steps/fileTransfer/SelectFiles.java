@@ -20,7 +20,7 @@ public class SelectFiles implements StepItf {
 
 	@Override
 	public String getDescription() {
-		return "This step allows selecting local files to load them into tranSMART.";
+		return "This step allows selecting local files to load them into tranSMART Browse part.";
 	}
 
 	@Override

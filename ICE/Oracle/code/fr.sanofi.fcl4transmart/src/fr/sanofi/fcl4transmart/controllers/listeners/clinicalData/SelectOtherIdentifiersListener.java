@@ -17,10 +17,10 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Vector;
-import org.apache.commons.io.FileUtils;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import fr.sanofi.fcl4transmart.controllers.FileHandler;
+import fr.sanofi.fcl4transmart.controllers.Utils;
 import fr.sanofi.fcl4transmart.model.classes.dataType.ClinicalData;
 import fr.sanofi.fcl4transmart.model.classes.workUI.clinicalData.SetOtherIdsUI;
 import fr.sanofi.fcl4transmart.model.interfaces.DataTypeItf;
@@ -102,10 +102,10 @@ public class SelectOtherIdentifiersListener implements Listener{
 				}
 				out.close();
 				try{
-					String fileName=((ClinicalData)this.dataType).getCMF().getName();
 					((ClinicalData)this.dataType).getCMF().delete();
-					File fileDest=new File(this.dataType.getPath()+File.separator+fileName);
-					FileUtils.moveFile(file, fileDest);
+					File fileDest=new File(this.dataType.getPath()+File.separator+((ClinicalData)this.dataType).getCMF().getName());
+					Utils.copyFile(file, fileDest);
+					file.delete();
 					((ClinicalData)this.dataType).setCMF(fileDest);
 				}
 				catch(IOException ioe){

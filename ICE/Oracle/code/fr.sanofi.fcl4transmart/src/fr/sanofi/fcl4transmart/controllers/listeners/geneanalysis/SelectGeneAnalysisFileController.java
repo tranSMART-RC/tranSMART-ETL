@@ -6,10 +6,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 
-import org.apache.commons.io.FileUtils;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
+import fr.sanofi.fcl4transmart.controllers.Utils;
 import fr.sanofi.fcl4transmart.model.classes.dataType.GeneExpressionAnalysis;
 import fr.sanofi.fcl4transmart.model.classes.workUI.geneanalysis.SelectRawFileUI;
 import fr.sanofi.fcl4transmart.model.interfaces.DataTypeItf;
@@ -41,7 +41,7 @@ public class SelectGeneAnalysisFileController implements Listener{
 	
 				File copiedFile=new File(newPath);
 				try {
-					FileUtils.copyFile(file, copiedFile);
+					Utils.copyFile(file, copiedFile);
 					((GeneExpressionAnalysis)this.dataType).setResultsFile(copiedFile);
 					
 					this.selectRawFileUI.displayMessage("File has been added");
@@ -49,6 +49,7 @@ public class SelectGeneAnalysisFileController implements Listener{
 					WorkPart.updateFiles();
 					UsedFilesPart.sendFilesChanged(dataType);
 				} catch (IOException e) {
+					if(copiedFile.exists()) copiedFile.delete();
 					this.selectRawFileUI.displayMessage("File error: "+e.getLocalizedMessage());
 					e.printStackTrace();
 				}

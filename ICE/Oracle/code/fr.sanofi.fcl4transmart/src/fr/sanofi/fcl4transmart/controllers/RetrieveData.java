@@ -773,6 +773,50 @@ public class RetrieveData {
 		return n;
 	}
 	/**
+	 *Returns the RNAseq transcript count for a study
+	 */	
+	public static int getRnaSeqTranscriptNumber(String study){
+		int n=0;
+		try{
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			Connection con = DriverManager.getConnection(RetrieveData.getConnectionString(), PreferencesHandler.getDeappUser(), PreferencesHandler.getDeappPwd());
+			Statement stmt = con.createStatement();
+			ResultSet rs=stmt.executeQuery("select count(distinct probeset_id) from de_subject_rna_data where trial_name='"+study.toUpperCase()+"'");
+			if(rs.next()){
+				n=rs.getInt(1);
+			}
+			con.close();
+		}
+		catch(SQLException e){
+			e.printStackTrace();
+		}catch (ClassNotFoundException e2) {
+			e2.printStackTrace();
+		}
+		return n;
+	}
+	/**
+	 *Returns the miRNA qPCR probe count for a study
+	 */	
+	public static int getMiRnaProbeNumber(String study){
+		int n=0;
+		try{
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			Connection con = DriverManager.getConnection(RetrieveData.getConnectionString(), PreferencesHandler.getDeappUser(), PreferencesHandler.getDeappPwd());
+			Statement stmt = con.createStatement();
+			ResultSet rs=stmt.executeQuery("select count(distinct probeset_id) from de_subject_mirna_data where trial_name='"+study.toUpperCase()+"'");
+			if(rs.next()){
+				n=rs.getInt(1);
+			}
+			con.close();
+		}
+		catch(SQLException e){
+			e.printStackTrace();
+		}catch (ClassNotFoundException e2) {
+			e2.printStackTrace();
+		}
+		return n;
+	}
+	/**
 	 *Returns the number of lines in DEAPP.DE_GPL_INFO for a given platform id
 	 */	
 	public static int getGplInfo(String gpl){
@@ -793,6 +837,28 @@ public class RetrieveData {
 			e2.printStackTrace();
 		}
 		return n;
+	}
+	/**
+	 *Returns the platform name from  DEAPP.DE_GPL_INFO for a given platform id
+	 */	
+	public static String getGplName(String gpl){
+		String name="";
+		try{
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			Connection con = DriverManager.getConnection(RetrieveData.getConnectionString(), PreferencesHandler.getDeappUser(), PreferencesHandler.getDeappPwd());
+			Statement stmt = con.createStatement();
+			ResultSet rs=stmt.executeQuery("select title from de_gpl_info where platform='"+gpl+"'");
+			if(rs.next()){
+				name=rs.getString(1);
+			}
+			con.close();
+		}
+		catch(SQLException e){
+			e.printStackTrace();
+		}catch (ClassNotFoundException e2) {
+			e2.printStackTrace();
+		}
+		return name;
 	}
 	/**
 	 *Returns the number of lines in I2B2METADATA.I2B2 for a given study
@@ -1244,5 +1310,167 @@ public class RetrieveData {
 			e2.printStackTrace();
 		}
 		return n;
+	}
+	public static int getRbmProbeNumber(String study) {
+		int n=0;
+		try{
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			Connection con = DriverManager.getConnection(RetrieveData.getConnectionString(), PreferencesHandler.getDeappUser(), PreferencesHandler.getDeappPwd());
+			Statement stmt = con.createStatement();
+			ResultSet rs=stmt.executeQuery("select count(distinct antigen_name) from de_subject_rbm_data where trial_name='"+study.toUpperCase()+"'");
+			if(rs.next()){
+				n=rs.getInt(1);
+			}
+			con.close();
+		}
+		catch(SQLException e){
+			e.printStackTrace();
+		}catch (ClassNotFoundException e2) {
+			e2.printStackTrace();
+		}
+		return n;
+	}
+	public static int getProteomicsProbeNumber(String study) {
+		int n=0;
+		try{
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			Connection con = DriverManager.getConnection(RetrieveData.getConnectionString(), PreferencesHandler.getDeappUser(), PreferencesHandler.getDeappPwd());
+			Statement stmt = con.createStatement();
+			ResultSet rs=stmt.executeQuery("select count(distinct protein_annotation_id) from de_subject_protein_data where trial_name='"+study.toUpperCase()+"'");
+			if(rs.next()){
+				n=rs.getInt(1);
+			}
+			con.close();
+		}
+		catch(SQLException e){
+			e.printStackTrace();
+		}catch (ClassNotFoundException e2) {
+			e2.printStackTrace();
+		}
+		return n;
+	}
+	
+	public static int getMetabolomicsProbeNumber(String study) {
+		int n=0;
+		try{
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			Connection con = DriverManager.getConnection(RetrieveData.getConnectionString(), PreferencesHandler.getDeappUser(), PreferencesHandler.getDeappPwd());
+			Statement stmt = con.createStatement();
+			ResultSet rs=stmt.executeQuery("select count(distinct metabolite_annotation_id) from de_subject_metabolomics_data where trial_name='"+study.toUpperCase()+"'");
+			if(rs.next()){
+				n=rs.getInt(1);
+			}
+			con.close();
+		}
+		catch(SQLException e){
+			e.printStackTrace();
+		}catch (ClassNotFoundException e2) {
+			e2.printStackTrace();
+		}
+		return n;
+	}
+	/**
+	*Returns a list of patients for a particular concept path 
+	*/
+	public static Vector<String> getPatientsForConceptPath(String conceptPath){
+		Vector<String> patients=new Vector<String>();
+		try{
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			Connection con = DriverManager.getConnection(RetrieveData.getConnectionString(), PreferencesHandler.getDemodataUser(), PreferencesHandler.getDemodataPwd());
+			Statement stmt = con.createStatement();
+			ResultSet rs=stmt.executeQuery("select o.sourcesystem_cd from concept_dimension c, observation_fact o "+
+					"where o.concept_cd= c.concept_cd "+
+					"and ((c.concept_path='"+conceptPath+"' and o.valtype_cd='N') "+
+					"or('"+conceptPath+"'|| c.name_char||'\\'= c.concept_path and o.valtype_cd='T'))");
+			while(rs.next()){
+				String sourceSystemCd=rs.getString(1);
+				patients.add(sourceSystemCd.split(":")[sourceSystemCd.split(":").length-1]);
+			}
+			con.close();
+		}
+		catch(SQLException e){
+			e.printStackTrace();
+		}catch (ClassNotFoundException e2) {
+			e2.printStackTrace();
+		}
+		return patients;
+	}
+	public static Vector<String> getpatientsForStudy(String study){
+		Vector<String> patients=new Vector<String>();
+		try{
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			Connection con = DriverManager.getConnection(RetrieveData.getConnectionString(), PreferencesHandler.getDemodataUser(), PreferencesHandler.getDemodataPwd());
+			Statement stmt = con.createStatement();
+			ResultSet rs=stmt.executeQuery("select sourcesystem_cd from patient_dimension where sourcesystem_cd like '"+study+":%'");
+ 
+			while(rs.next()){
+				String sourceSystemCd=rs.getString(1);
+				patients.add(sourceSystemCd.split(":")[sourceSystemCd.split(":").length-1]);
+			}
+			con.close();
+		}
+		catch(SQLException e){
+			e.printStackTrace();
+		}catch (ClassNotFoundException e2) {
+			e2.printStackTrace();
+		}
+		return patients;
+	}
+	public static Vector<String> getSamplesForCategory(String category){
+		Vector<String> samples=new Vector<String>();
+		try{
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			Connection con = DriverManager.getConnection(RetrieveData.getConnectionString(), PreferencesHandler.getDeappUser(), PreferencesHandler.getDeappPwd());
+			Statement stmt = con.createStatement();
+			ResultSet rs=stmt.executeQuery("select sample_cd from de_subject_sample_mapping where concept_code in( select concept_cd from i2b2demodata.concept_dimension where concept_path = '"+category+"')");
+			while(rs.next()){
+				samples.add(rs.getString(1));
+			}
+			con.close();
+		}
+		catch(SQLException e){
+			e.printStackTrace();
+		}catch (ClassNotFoundException e2) {
+			e2.printStackTrace();
+		}
+		return samples;
+	}
+	public static Vector<String> getSamplesForStudy(String study){
+		Vector<String> samples=new Vector<String>();
+		try{
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			Connection con = DriverManager.getConnection(RetrieveData.getConnectionString(), PreferencesHandler.getDeappUser(), PreferencesHandler.getDeappPwd());
+			Statement stmt = con.createStatement();
+			ResultSet rs=stmt.executeQuery("select sample_cd from de_subject_sample_mapping WHERE trial_name='"+study+"'");
+			while(rs.next()){
+				samples.add(rs.getString(1));
+			}
+			con.close();
+		}
+		catch(SQLException e){
+			e.printStackTrace();
+		}catch (ClassNotFoundException e2) {
+			e2.printStackTrace();
+		}
+		return samples;
+	}
+	public static Vector<String> getConceptsForStudy(String study){
+		Vector<String> concepts=new Vector<String>();
+		try{
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			Connection con = DriverManager.getConnection(RetrieveData.getConnectionString(), PreferencesHandler.getDemodataUser(), PreferencesHandler.getDemodataPwd());
+			Statement stmt = con.createStatement();
+			ResultSet rs=stmt.executeQuery("select concept_path from concept_dimension where sourcesystem_cd='"+study+"'");
+			while(rs.next()){
+				concepts.add(rs.getString(1));
+			}
+			con.close();
+		}
+		catch(SQLException e){
+			e.printStackTrace();
+		}catch (ClassNotFoundException e2) {
+			e2.printStackTrace();
+		}
+		return concepts;
 	}
 }

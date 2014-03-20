@@ -624,41 +624,33 @@ public class PreferencesHandler {
 			@Override
 			public void handleEvent(Event event) {
 				if(!RetrieveData.testDemodataConnection(dbServerField.getText(), dbNameField.getText(), dbPortField.getText(), demodataUserField.getText(), demodataPwdField.getText())){
-					displayMessage("Connection is not possible");
+					displayMessage("i2b2demodata connection is not possible");
 					return;
 				}
-				System.out.println("Demodata connection possible");
 				if(!RetrieveData.testMetadataConnection(dbServerField.getText(), dbNameField.getText(), dbPortField.getText(), metadataUserField.getText(), metadataPwdField.getText())){
-					displayMessage("Connection is not possible");
+					displayMessage("i2b2metadata connection is not possible");
 					return;
 				}
-				System.out.println("Metadata connection possible");
-				System.out.println(deappUserField.getText()+" "+deappPwdField.getText());
 				if(!RetrieveData.testDeappConnection(dbServerField.getText(), dbNameField.getText(), dbPortField.getText(), deappUserField.getText(), deappPwdField.getText())){
-					displayMessage("Connection is not possible");
+					displayMessage("deapp connection is not possible");
 					return;
 				}
-				System.out.println("Deapp connection possible");
 				if(!RetrieveData.testTm_czConnection(dbServerField.getText(), dbNameField.getText(), dbPortField.getText(), tm_czUserField.getText(), tm_czPwdField.getText())){
-					displayMessage("Connection is not possible");
+					displayMessage("tm_cz connection is not possible");
 					return;
 				}
-				System.out.println("tm_cz connection possible");
 				if(!RetrieveData.testTm_lzConnection(dbServerField.getText(), dbNameField.getText(), dbPortField.getText(), tm_lzUserField.getText(), tm_lzPwdField.getText())){
-					displayMessage("Connection is not possible");
+					displayMessage("tm_lz connection is not possible");
 					return;
 				}
-				System.out.println("tm_lz connection possible");
 				if(!RetrieveData.testBiomartConnection(dbServerField.getText(), dbNameField.getText(), dbPortField.getText(), biomartUserField.getText(), biomartPwdField.getText())){
-					displayMessage("Connection is not possible");
+					displayMessage("biomart connection is not possible");
 					return;
 				}
-				System.out.println("Biomart connection possible");
 				if(!RetrieveData.testFmappConnection(dbServerField.getText(), dbNameField.getText(), dbPortField.getText(), fmappUserField.getText(), fmappPwdField.getText())){
-					displayMessage("Connection is not possible");
+					displayMessage("fmapp connection is not possible");
 					return;
 				}
-				System.out.println("Fmapp connection possible");
 				displayMessage("Connection OK");
 			}
 		});

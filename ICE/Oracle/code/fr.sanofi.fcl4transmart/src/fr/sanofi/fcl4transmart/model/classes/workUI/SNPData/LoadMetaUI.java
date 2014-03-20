@@ -182,7 +182,7 @@ public class LoadMetaUI implements WorkItf {
 					displayMessage("Choose a node name first");
 					return;
 				}if(node.isLabel()){
-					displayMessage("You can not add noes below SNP node");
+					displayMessage("You can not add nodes below SNP node");
 					return;
 				}
 				node.addChild(new TreeNode(newTextField.getText(), node, false));

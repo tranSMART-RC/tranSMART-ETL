@@ -22,8 +22,8 @@ public class LoadMeta implements StepItf {
 	public String getDescription() {
 		return "This step allows loading the meta tables for a study.\n"+
 				"The data tree has to be defined. It represents the path to the node containing SNP in tranSMART. The SNP node will be replaced during loading by the platform name and the tissue type.\n"+
-				"Nodes can be added as free text, by indicating a value in the field and clciking on the button  \"Add node\". Then the SNP node is added with the button \"Add SNP node\".\n"+
-				"The steps of the loading can be selected. This can be usefull if a part of the loading has succeed and another failed, to run only the loading part which failed."+
+				"Nodes can be added as free text, by indicating a value in the field and clicking on the button  \"Add node\". Then the SNP node is added with the button \"Add SNP node\".\n"+
+				"The steps of the loading can be selected. This can be useful if a part of the loading has succeeded and another failed, to run only the loading part which failed.\n"+
 				"Finally, you can choose to use an ETL server to perform the loading.\n"+
 				"A database connection is needed for this step";
 	}

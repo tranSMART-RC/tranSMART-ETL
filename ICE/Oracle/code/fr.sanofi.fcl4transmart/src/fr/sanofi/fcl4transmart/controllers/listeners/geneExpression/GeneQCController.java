@@ -10,8 +10,10 @@
  ******************************************************************************/
 package fr.sanofi.fcl4transmart.controllers.listeners.geneExpression;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Connection;
@@ -21,6 +23,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import fr.sanofi.fcl4transmart.controllers.FileHandler;
 import fr.sanofi.fcl4transmart.handlers.PreferencesHandler;
@@ -55,7 +59,7 @@ public class GeneQCController {
 			String connectionString="jdbc:oracle:thin:@"+PreferencesHandler.getDbServer()+":"+PreferencesHandler.getDbPort()+":"+PreferencesHandler.getDbName();
 			Connection con = DriverManager.getConnection(connectionString, PreferencesHandler.getDeappUser(), PreferencesHandler.getDeappPwd());
 			Statement stmt = con.createStatement();
-			ResultSet rs=stmt.executeQuery("select ssm.sample_cd, smd.log_intensity from de_subject_microarray_data smd, de_subject_sample_mapping ssm where probeset_id in (select probeset_id from de_mrna_annotation where probe_id='"+probeId+"') and ssm.trial_name='"+this.dataType.getStudy().toString().toUpperCase()+"' and ssm.patient_id=smd.patient_id");
+			ResultSet rs=stmt.executeQuery("select ssm.sample_cd, smd.log_intensity from de_subject_microarray_data smd, de_subject_sample_mapping ssm where probeset_id in (select probeset_id from de_mrna_annotation where probe_id='"+probeId+"') and ssm.trial_name='"+this.dataType.getStudy().toString().toUpperCase()+"' and ssm.assay_id=smd.assay_id");
 			while(rs.next()){
 				dbValues.put(rs.getString(1), rs.getDouble(2));
 			}
@@ -77,7 +81,7 @@ public class GeneQCController {
 			String connectionString="jdbc:oracle:thin:@"+PreferencesHandler.getDbServer()+":"+PreferencesHandler.getDbPort()+":"+PreferencesHandler.getDbName();
 			Connection con = DriverManager.getConnection(connectionString, PreferencesHandler.getDeappUser(), PreferencesHandler.getDeappPwd());
 			Statement stmt = con.createStatement();
-			ResultSet rs=stmt.executeQuery("select ssm.sample_cd, smd.log_intensity, probe_id from de_subject_microarray_data smd, de_subject_sample_mapping ssm, de_mrna_annotation ma where smd.probeset_id=ma.probeset_id and ssm.trial_name='"+this.dataType.getStudy().toString().toUpperCase()+"' and ssm.patient_id=smd.patient_id");
+			ResultSet rs=stmt.executeQuery("select ssm.sample_cd, smd.log_intensity, probe_id from de_subject_microarray_data smd, de_subject_sample_mapping ssm, de_mrna_annotation ma where smd.probeset_id=ma.probeset_id and ssm.trial_name='"+this.dataType.getStudy().toString().toUpperCase()+"' and ssm.assay_id=smd.assay_id");
 			while(rs.next()){
 				String probe=rs.getString(3);
 				if(dbValues.get(probe)==null) dbValues.put(probe, new HashMap<String, Double>()); 	
@@ -135,5 +139,27 @@ public class GeneQCController {
 			return false;
 		}
 		return true;
+	}
+	public boolean getIfRawData(){
+		File logFile=((GeneExpressionData)this.dataType).getLogFile();
+		if(logFile!=null){
+			try{
+				BufferedReader br = new BufferedReader(new FileReader(logFile));
+				String line;
+				Pattern pattern=Pattern.compile(".*data_type = R");
+				while ((line=br.readLine())!=null){
+					Matcher matcher=pattern.matcher(line);
+					if(matcher.matches()){
+						br.close();
+						return true;
+					}
+				}
+				br.close();
+			}catch (Exception e){
+				e.printStackTrace();
+				return false;
+			}
+		}
+		return false;
 	}
 }

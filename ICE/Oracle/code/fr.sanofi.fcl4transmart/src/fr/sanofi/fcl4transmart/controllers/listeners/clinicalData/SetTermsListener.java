@@ -17,10 +17,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Vector;
-import org.apache.commons.io.FileUtils;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import fr.sanofi.fcl4transmart.controllers.FileHandler;
+import fr.sanofi.fcl4transmart.controllers.Utils;
 import fr.sanofi.fcl4transmart.model.classes.dataType.ClinicalData;
 import fr.sanofi.fcl4transmart.model.classes.workUI.clinicalData.SetTermsUI;
 import fr.sanofi.fcl4transmart.model.interfaces.DataTypeItf;
@@ -62,14 +62,13 @@ public class SetTermsListener implements Listener{
 			try{
 				File fileDest;
 				if(((ClinicalData)this.dataType).getWMF()!=null){
-					String fileName=((ClinicalData)this.dataType).getWMF().getName();
-					((ClinicalData)this.dataType).getWMF().delete();
-					fileDest=new File(this.dataType.getPath()+File.separator+fileName);
+					fileDest=new File(this.dataType.getPath()+File.separator+((ClinicalData)this.dataType).getWMF().getName());
 				}
 				else{
 					fileDest=new File(this.dataType.getPath()+File.separator+this.dataType.getStudy().toString()+".words");
 				}			
-				FileUtils.moveFile(file, fileDest);
+				Utils.copyFile(file, fileDest);
+				file.delete();
 				((ClinicalData)this.dataType).setWMF(fileDest);
 			}
 			catch(IOException ioe){

@@ -7,10 +7,10 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.io.FileUtils;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
+import fr.sanofi.fcl4transmart.controllers.Utils;
 import fr.sanofi.fcl4transmart.model.classes.dataType.SnpData;
 import fr.sanofi.fcl4transmart.model.classes.workUI.SNPData.SelectRawFileUI;
 import fr.sanofi.fcl4transmart.model.interfaces.DataTypeItf;
@@ -47,13 +47,14 @@ public class SelectRawFileListener implements Listener {
 			File copiedRawFile=new File(newPath);
 			if(!copiedRawFile.exists()){
 				try {
-					FileUtils.copyFile(rawFile, copiedRawFile);
+					Utils.copyFile(rawFile, copiedRawFile);
 					((SnpData)this.dataType).setRawFile(copiedRawFile);
 					
 					this.ui.displayMessage("File has been added");
 					WorkPart.updateSteps();
 					UsedFilesPart.sendFilesChanged(dataType);
 				} catch (IOException e) {
+					if(copiedRawFile.exists()) copiedRawFile.delete();
 					ui.displayMessage("File error: "+e.getLocalizedMessage());
 					e.printStackTrace();
 				}
@@ -96,7 +97,7 @@ public class SelectRawFileListener implements Listener {
 							br.close();
 							return false;
 						}
-						for(int i=1; i<fields.length; i++){
+						/*for(int i=1; i<fields.length; i++){
 							String[] authorized={"AA", "BB", "AB", "BA",  "00", "NC"};
 							boolean ok=false;
 							for(int j=0; j<authorized.length; j++){
@@ -110,7 +111,7 @@ public class SelectRawFileListener implements Listener {
 								br.close();
 								return false;
 							}
-						}
+						}*/
 					}
 				}
 			}

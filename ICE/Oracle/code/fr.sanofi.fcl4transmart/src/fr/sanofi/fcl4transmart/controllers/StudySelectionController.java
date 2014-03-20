@@ -122,6 +122,11 @@ public class StudySelectionController {
 		(new File(path.getAbsoluteFile()+File.separator+"gene")).mkdir();
 		(new File(path.getAbsoluteFile()+File.separator+"analysis")).mkdir();
 		(new File(path.getAbsoluteFile()+File.separator+"snp")).mkdir();
+		(new File(path.getAbsoluteFile()+File.separator+"rnaSeq")).mkdir();
+		(new File(path.getAbsoluteFile()+File.separator+"qPCR_MiRNA")).mkdir();
+		(new File(path.getAbsoluteFile()+File.separator+"miRNA_seq")).mkdir();
+		(new File(path.getAbsoluteFile()+File.separator+"proteomics")).mkdir();
+		(new File(path.getAbsoluteFile()+File.separator+"rbm")).mkdir();
 		this.studies.add(new Study(accession, path));
 		this.studySelectionPart.setList(studies);
 		this.studySelectionPart.selectLast();
@@ -266,6 +271,7 @@ public class StudySelectionController {
 					stmt = con.createStatement();
 					rs=stmt.executeQuery("delete from i2b2_tags where tag='"+studyIdentifier.toUpperCase()+"'");
 					rs=stmt.executeQuery("delete from i2b2 where sourcesystem_cd='"+studyIdentifier.toUpperCase()+"'");
+					rs=stmt.executeQuery("delete from i2b2_secure where sourcesystem_cd='"+studyIdentifier.toUpperCase()+"'");
 					con.close();
 					
 			  		isStudyDeleted=true;

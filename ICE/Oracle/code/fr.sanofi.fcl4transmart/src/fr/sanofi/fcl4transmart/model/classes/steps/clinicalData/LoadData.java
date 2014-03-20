@@ -12,7 +12,7 @@ package fr.sanofi.fcl4transmart.model.classes.steps.clinicalData;
 
 import fr.sanofi.fcl4transmart.controllers.FileHandler;
 import fr.sanofi.fcl4transmart.model.classes.dataType.ClinicalData;
-import fr.sanofi.fcl4transmart.model.classes.workUI.clinicalData.LoadDataUI;
+import fr.sanofi.fcl4transmart.model.classes.workUI.clinicalData.ClinicalLoadDataUI;
 import fr.sanofi.fcl4transmart.model.interfaces.DataTypeItf;
 import fr.sanofi.fcl4transmart.model.interfaces.StepItf;
 import fr.sanofi.fcl4transmart.model.interfaces.WorkItf;
@@ -23,7 +23,7 @@ public class LoadData implements StepItf{
 	private WorkItf workUI;
 	private DataTypeItf dataType;
 	public LoadData(DataTypeItf dataType){
-		this.workUI=new LoadDataUI(dataType);
+		this.workUI=new ClinicalLoadDataUI(dataType);
 		this.dataType=dataType;
 	}
 	@Override
@@ -42,15 +42,9 @@ public class LoadData implements StepItf{
 
 	public boolean isAvailable(){
 		try{
-			if(((ClinicalData)this.dataType).getRawFiles().size()<1){
-				return false;
-			}
-			if(((ClinicalData)this.dataType).getCMF()==null){
-				return false;
-			}
-			if(!FileHandler.checkTreeSet(((ClinicalData)this.dataType).getCMF())){
-				return false;
-			}
+			if(((ClinicalData)this.dataType).getRawFiles().size()<1) return false;
+			if(((ClinicalData)this.dataType).getCMF()==null) return false;
+			if(!FileHandler.checkTreeSet(((ClinicalData)this.dataType).getCMF())) return false;
 			return true;
 		}
 		catch(NullPointerException e){

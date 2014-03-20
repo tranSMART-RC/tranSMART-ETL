@@ -52,16 +52,10 @@ public class ClinicalMonitoringController {
 		if(this.logFile!=null){
 			try{
 				BufferedReader br = new BufferedReader(new FileReader(this.logFile));
-				Pattern pattern=Pattern.compile(".*Finished job entry \\[run i2b2_load_clinical_data\\] \\(result=\\[true\\]\\)");
-				Pattern pattern2=Pattern.compile(".*Bulk Loader - ERROR.*");
+				Pattern pattern=Pattern.compile(".*Run procedures: I2B2_LOAD_CLINICAL(_INC)?_DATA");
 				String line="";
 				while ((line=br.readLine())!=null){
 					Matcher matcher=pattern.matcher(line);
-					Matcher matcher2=pattern2.matcher(line);
-					if(matcher2.matches()){
-						br.close();
-						return false;
-					}
 					if(matcher.matches()){
 						br.close();
 						return true;
@@ -94,12 +88,15 @@ public class ClinicalMonitoringController {
 				try{
 					BufferedReader br = new BufferedReader(new FileReader(this.logFile));
 					String line;
+					//Job ID: 16175
 					while ((line=br.readLine())!=null){
-						if(line.compareTo("Oracle job id:")==0){
+						Pattern pattern = Pattern.compile(".*Job ID: (.*?)");
+						Matcher matcher = pattern.matcher(line);
+						if (matcher.find())
+						{
 							try{
-								jobId=Integer.parseInt(br.readLine());
-							}
-							catch(Exception e){
+								jobId=Integer.parseInt(matcher.group(1));
+							}catch(Exception e){
 								br.close();
 								return "";
 							}

@@ -20,6 +20,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.inject.Inject;
@@ -35,6 +36,7 @@ import org.pentaho.di.core.logging.CentralLogStore;
 import org.pentaho.di.core.logging.Log4jBufferAppender;
 import org.pentaho.di.core.util.EnvUtil;
 import org.pentaho.di.i18n.GlobalMessages;
+import org.pentaho.di.i18n.LanguageChoice;
 import org.pentaho.di.job.Job;
 import org.pentaho.di.job.JobMeta;
 import fr.sanofi.fcl4transmart.handlers.PreferencesHandler;
@@ -101,6 +103,9 @@ public class LoadAnalysisDataListener implements Listener{
 						kettleUrl = FileLocator.toFileURL(kettleUrl);  
 						System.setProperty("KETTLE_PLUGIN_BASE_FOLDERS", kettleUrl.getPath());
 						KettleEnvironment.init(false);
+						
+						LanguageChoice language=LanguageChoice.getInstance();
+						language.setDefaultLocale(Locale.US);	
 	
 						//find the kettle job to initiate the loading
 						URL jobUrl = new URL("platform:/plugin/fr.sanofi.fcl4transmart/jobs_kettle/process_GEX_analysis_data.kjb");
@@ -205,6 +210,7 @@ public class LoadAnalysisDataListener implements Listener{
 					 
 						java.util.Properties config = new java.util.Properties(); 
 						config.put("StrictHostKeyChecking", "no");
+						config.put("PreferredAuthentications", "publickey,keyboard-interactive,password");
 						session.setConfig(config);
 						
 						session.connect();
@@ -275,7 +281,7 @@ public class LoadAnalysisDataListener implements Listener{
 							loadDataUI.setIsLoading(false);
 							return;
 						}
-						String command="nohup "+etlPreferences.getKettleDirectory()+"/kitchen.sh -norep=Y ";
+						String command=etlPreferences.getKettleDirectory()+"/kitchen.sh -norep=Y ";
 						command+="-file="+etlPreferences.getJobsDirectory()+"/process_GEX_analysis_data.kjb ";
 						command+="-param:ANALYSIS_ID="+((GeneExpressionAnalysis)dataType).getAnalysisId()+" ";
 						if(((GeneExpressionAnalysis)dataType).getAnnotFile()==null){

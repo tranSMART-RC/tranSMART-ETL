@@ -20,15 +20,15 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 import fr.sanofi.fcl4transmart.handlers.PreferencesHandler;
-import fr.sanofi.fcl4transmart.model.classes.workUI.geneExpression.LoadAnnotationUI;
+import fr.sanofi.fcl4transmart.model.classes.workUI.geneExpression.GeneExpressionLoadAnnotationUI;
 /**
  *This class controls the platform annotation checking step
  */	
 public class CheckAnnotationListener implements Listener{
-	private LoadAnnotationUI loadAnnotationUI;
+	private GeneExpressionLoadAnnotationUI loadAnnotationUI;
 	private boolean isLoaded;
 	private String platformId;
-	public CheckAnnotationListener(LoadAnnotationUI loadAnnotationUI){
+	public CheckAnnotationListener(GeneExpressionLoadAnnotationUI loadAnnotationUI){
 		this.loadAnnotationUI=loadAnnotationUI;
 	}
 	@Override

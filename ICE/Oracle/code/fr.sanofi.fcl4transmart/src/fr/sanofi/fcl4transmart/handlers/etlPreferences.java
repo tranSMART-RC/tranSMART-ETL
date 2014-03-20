@@ -72,7 +72,7 @@ public class etlPreferences {
 			subPref=this.preferences.childrenNames();
 			this.servers.add("");
 			for(int i=0; i<subPref.length; i++){
-				if(subPref[i].compareTo("nameSelected")!=0){
+				if(subPref[i]!=null && staticSelectedName!=null && subPref[i].compareTo("nameSelected")!=0){
 					this.servers.add(subPref[i]);
 					if(subPref[i].compareTo(staticSelectedName)==0) found=true;
 				}
@@ -136,7 +136,7 @@ public class etlPreferences {
 		});	
 	   this.viewer.setInput(this.servers);
 		for(int i=0; i<this.servers.size(); i++){
-			if(this.servers.get(i).compareTo(staticSelectedName)==0){
+			if(this.servers.get(i)!=null && this.servers.get(i).compareTo(staticSelectedName)==0){
 				this.viewer.getList().setSelection(i);
 			}
 		}

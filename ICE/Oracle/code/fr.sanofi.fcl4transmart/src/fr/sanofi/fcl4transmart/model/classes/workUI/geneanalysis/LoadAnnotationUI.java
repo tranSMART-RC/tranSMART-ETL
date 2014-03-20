@@ -57,11 +57,9 @@ public class LoadAnnotationUI implements WorkItf{
 	private Button loadAgain;
 	private boolean etlServer;
 	private Button etlButton;
-	private boolean sqlldr;
 	public LoadAnnotationUI(DataTypeItf dataType){
 		this.dataType=dataType;
 		this.etlServer=false;
-		this.sqlldr=false;
 	}
 	@Override
 	public Composite createUI(Composite parent){
@@ -233,7 +231,7 @@ public class LoadAnnotationUI implements WorkItf{
 			public void handleEvent(Event event) {
 				etlServer=etlButton.getSelection();
 				if(!etlButton.getSelection()){
-					sqlldr=false;
+					etlServer=false;
 				}
 			}
 		});
@@ -370,8 +368,5 @@ public class LoadAnnotationUI implements WorkItf{
 	}
 	public boolean getEtlServer(){
 		return this.etlServer;
-	}
-	public boolean getSqlldr(){
-		return this.sqlldr;
 	}
 }

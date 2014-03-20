@@ -17,7 +17,7 @@ public class ChooseFolder implements StepItf {
 
 	@Override
 	public String getDescription() {
-		return "This step allows choosing a folder in tranSMART browse tree to load files in it.\n"+
+		return "This step allows choosing a folder in tranSMART Program Explorer tree to load files into it.\n"+
 				"Click on a folder in the tree, then click on the \"Choose selected folder\" button.\n"+
 				"When a folder is selected, it is displayed in orange in the tree.";
 	}

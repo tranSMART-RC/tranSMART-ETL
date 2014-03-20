@@ -61,6 +61,7 @@ public class TransferProcess extends Thread {
 			 
 				java.util.Properties config = new java.util.Properties(); 
 				config.put("StrictHostKeyChecking", "no");
+				config.put("PreferredAuthentications", "publickey,keyboard-interactive,password");
 				session.setConfig(config);
 				
 				session.connect();
@@ -333,6 +334,7 @@ public class TransferProcess extends Thread {
 			
 			java.util.Properties config = new java.util.Properties(); 
 			config.put("StrictHostKeyChecking", "no");
+			config.put("PreferredAuthentications", "publickey,keyboard-interactive,password");
 			session.setConfig(config);
 			
 			session.connect();

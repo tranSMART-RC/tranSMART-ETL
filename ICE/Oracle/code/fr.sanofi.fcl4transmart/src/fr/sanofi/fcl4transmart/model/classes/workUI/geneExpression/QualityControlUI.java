@@ -312,6 +312,7 @@ public class QualityControlUI implements WorkItf{
 		gridData.grabExcessHorizontalSpace = true;
 		column4.setLayoutData(gridData);
 		
+		boolean rawData=new GeneQCController(this.dataType).getIfRawData();
 		for(String key: fileValues.keySet()){
 			Label label=new Label(body, SWT.NONE);
 			label.setText(key);
@@ -345,11 +346,14 @@ public class QualityControlUI implements WorkItf{
 			
 			Label eqLabel=new Label(body, SWT.NONE);
 			if(dbValues.containsKey(key) && fileValues.containsKey(key)){
-				if((dbValues.get(key)-fileValues.get(key))<=0.001 && (dbValues.get(key)-fileValues.get(key))>=-0.001){
+				
+				if(!rawData && (dbValues.get(key)-fileValues.get(key))<=0.001 && (dbValues.get(key)-fileValues.get(key))>=-0.001){
 					eqLabel.setText("OK");
 					this.c4.add("OK");
-				}
-				else{
+				}else if(rawData && (dbValues.get(key)-logb(fileValues.get(key), 2))<=0.001 && (dbValues.get(key)-logb(fileValues.get(key), 2))>=-0.001){
+					eqLabel.setText("OK");
+					this.c4.add("OK");
+				}else{
 					eqLabel.setText("FAIL");
 					this.c4.add("FAIL");
 				}
@@ -399,5 +403,9 @@ public class QualityControlUI implements WorkItf{
 	    MessageBox messageBox = new MessageBox(new Shell(), style);
 	    messageBox.setMessage(message);
 	    messageBox.open();
+	}
+	private double logb( double a, double b )
+	{
+	return Math.log(a) / Math.log(b);
 	}
 }

@@ -21,8 +21,8 @@ public class LoadData implements StepItf {
 	@Override
 	public String getDescription() {
 		return "This step allows loading the SNP data for a study.\n"+
-				"The first and last chromosome to treat have to be specified in corresponding fields. Warning: Chromosomes X, Y and XY are numerotated as 24, 25 and 26 by Plink, this notation has to be kept for data loading.\n"+
-				"The steps of the loading can be selected. This can be usefull if a part of the loading has succeed and another failed, to run only the loading part which failed."+
+				"The first and last chromosomes to treat have to be specified in corresponding fields. Warning: Chromosomes X, Y and XY are numerated as 24, 25 and 26 by Plink, this notation has to be kept for data loading.\n"+
+				"The steps of the loading can be selected. This can be useful if a part of the loading has succeeded and another failed, to run only the loading part which failed.\n"+
 				"Finally, you can choose to use an ETL server to perform the loading.\n"+
 				"A database connection is needed for this step";
 	}

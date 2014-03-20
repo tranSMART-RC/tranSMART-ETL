@@ -22,7 +22,7 @@ public class Convert implements StepItf {
 	public String getDescription() {
 		return "This step allows converting the files before the data loading\n"+
 				"The conversion requires the program plink, which path has to be provided in the field \"Plink executable path\".\n"+
-				"The steps of the loading can be selected. This can be usefull if a part of the loading has succeed and another failed, to run only the loading part which failed.\n"+
+				"The steps of the loading can be selected. This can be useful if a part of the loading has succeeded and another failed, to run only the loading part which failed.\n"+
 				"Finally, you can choose to use an ETL server to perform the conversion.\n"+
 				"A database connection is needed for this step";
 	}

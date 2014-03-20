@@ -22,6 +22,7 @@ import org.apache.commons.io.FileUtils;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
+import fr.sanofi.fcl4transmart.controllers.Utils;
 import fr.sanofi.fcl4transmart.model.classes.dataType.ClinicalData;
 import fr.sanofi.fcl4transmart.model.classes.workUI.clinicalData.SelectRawFilesUI;
 import fr.sanofi.fcl4transmart.model.interfaces.DataTypeItf;
@@ -112,7 +113,8 @@ public class RemoveRawFileListener implements Listener{
 									FileUtils.deleteQuietly(cmf);
 									try{
 										File fileDest=new File(this.dataType.getPath()+File.separator+fileName);
-										FileUtils.moveFile(newCmf, fileDest);
+										Utils.copyFile(newCmf, fileDest);
+										newCmf.delete();
 										((ClinicalData)this.dataType).setCMF(fileDest);
 									}
 									catch(Exception ioe){
@@ -144,11 +146,10 @@ public class RemoveRawFileListener implements Listener{
 										out.close();
 									}
 									out.close();
-									String fileName=wmf.getName();
-									FileUtils.deleteQuietly(wmf);
 									try{
-										File fileDest=new File(this.dataType.getPath()+File.separator+fileName);
-										FileUtils.moveFile(newWmf, fileDest);
+										File fileDest=new File(this.dataType.getPath()+File.separator+wmf.getName());
+										Utils.copyFile(newWmf, fileDest);
+										newWmf.delete();
 										((ClinicalData)this.dataType).setWMF(fileDest);
 									}
 									catch(Exception ioe){
