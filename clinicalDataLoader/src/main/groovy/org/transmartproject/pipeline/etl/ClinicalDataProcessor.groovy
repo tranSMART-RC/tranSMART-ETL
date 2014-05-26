@@ -74,21 +74,27 @@ class ClinicalDataProcessor extends DataProcessor {
 				if(wordMappingFileNames.contains(fName)){
 					isWordMappingExist=true
 				}				
-				def sampleMappingFileName=fName
-				sampleMappingFileName=sampleMappingFileName.replace(".txt","_Sample_Mapping.txt")
+				def sampleMappingFileName=fName+"_Sample_Mapping.txt"
+                String extension = "";
+
+                int i = fName.lastIndexOf('.');
+                if (i > 0) {
+                 extension = fName.substring(i);
+                }
+				sampleMappingFileName=sampleMappingFileName.replace(extension,"_Sample_Mapping.txt")
 				def sampleMappingFile = new File(dir, sampleMappingFileName)
 				config.logger.log("Checking Sample mapping file   ${sampleMappingFileName}  for ${fName}")
 				if (! sampleMappingFile.exists() ) {
 					config.logger.log("File ${sampleMappingFileName} doesn't exist! - ignoring Sample Mapping for the clinical data file ${fName}")
 					sampleMappingCheck=false
 				}
-				if(sampleMappingCheck){
 				sampleMappingRowList=[]
-				sampleMappingFile.splitEachLine("\t") {
-					def colsSamples = [''] // to support 0-index properly (we use it for empty data values)
-					colsSamples.addAll(it)
-					sampleMappingRowList.add(colsSamples)
-				}
+				if(sampleMappingCheck){
+					sampleMappingFile.splitEachLine("\t") {
+						def colsSamples = [''] // to support 0-index properly (we use it for empty data values)
+						colsSamples.addAll(it)
+						sampleMappingRowList.add(colsSamples)
+					}
 				}//ends sample mapping file checking				
 				// modification ends here 
 				
@@ -142,6 +148,8 @@ class ClinicalDataProcessor extends DataProcessor {
 										if(sampleMappingCheck){
 											def sampleID= fixColumn( colsSamplesRow[v['COLUMN']])
 											out['sample_cd']=sampleID
+										}else{
+											out['sample_cd']=""
 										}
 																				
 										//ends
