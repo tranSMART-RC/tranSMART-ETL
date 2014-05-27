@@ -114,6 +114,43 @@ public class SetTissueUi implements WorkItf {
 			}
 		});
 		
+		Button select=new Button(body, SWT.PUSH);
+		select.setText("Select all");
+		gridData = new GridData();
+		gridData.horizontalAlignment = SWT.FILL;
+		gridData.grabExcessHorizontalSpace = true;
+		select.setLayoutData(gridData);
+		select.addListener(SWT.Selection, new Listener(){
+			@Override
+			public void handleEvent(Event event) {
+				for(Button b: checkBoxs){
+					b.setSelection(true);
+				}
+			}
+		});
+		
+		Button deselect=new Button(body, SWT.PUSH);
+		deselect.setText("Deselect all");
+		gridData = new GridData();
+		gridData.horizontalAlignment = SWT.FILL;
+		gridData.grabExcessHorizontalSpace = true;
+		deselect.setLayoutData(gridData);
+		deselect.addListener(SWT.Selection, new Listener(){
+			@Override
+			public void handleEvent(Event event) {
+				for(Button b: checkBoxs){
+					b.setSelection(false);
+					
+				}
+			}
+		});
+		
+		Label l=new Label(body, SWT.NONE);
+		gridData = new GridData();
+		gridData.horizontalAlignment = SWT.FILL;
+		gridData.grabExcessHorizontalSpace = true;
+		l.setLayoutData(gridData);
+		
 		//let a blank line
 		for(int i=0; i<3; i++){
 			Label label=new Label(body, SWT.NONE);
@@ -178,43 +215,6 @@ public class SetTissueUi implements WorkItf {
 			gridData.grabExcessHorizontalSpace = true;
 			checkBox.setLayoutData(gridData);
 		}
-		
-		Button select=new Button(body, SWT.PUSH);
-		select.setText("Select all");
-		gridData = new GridData();
-		gridData.horizontalAlignment = SWT.FILL;
-		gridData.grabExcessHorizontalSpace = true;
-		select.setLayoutData(gridData);
-		select.addListener(SWT.Selection, new Listener(){
-			@Override
-			public void handleEvent(Event event) {
-				for(Button b: checkBoxs){
-					b.setSelection(true);
-				}
-			}
-		});
-		
-		Button deselect=new Button(body, SWT.PUSH);
-		deselect.setText("Deselect all");
-		gridData = new GridData();
-		gridData.horizontalAlignment = SWT.FILL;
-		gridData.grabExcessHorizontalSpace = true;
-		deselect.setLayoutData(gridData);
-		deselect.addListener(SWT.Selection, new Listener(){
-			@Override
-			public void handleEvent(Event event) {
-				for(Button b: checkBoxs){
-					b.setSelection(false);
-					
-				}
-			}
-		});
-		
-		Label l=new Label(body, SWT.NONE);
-		gridData = new GridData();
-		gridData.horizontalAlignment = SWT.FILL;
-		gridData.grabExcessHorizontalSpace = true;
-		l.setLayoutData(gridData);
 		
 		Button ok=new Button(body, SWT.PUSH);
 		ok.setText("Ok");

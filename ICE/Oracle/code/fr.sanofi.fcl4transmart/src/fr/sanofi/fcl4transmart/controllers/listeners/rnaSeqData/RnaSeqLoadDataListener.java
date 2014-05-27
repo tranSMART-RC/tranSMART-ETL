@@ -59,6 +59,14 @@ public class RnaSeqLoadDataListener extends LoadDataListener implements Listener
 		jobUrl = FileLocator.toFileURL(jobUrl); 
 		jobUrl = new URL("platform:/plugin/fr.sanofi.fcl4transmart/jobs_kettle/cz_write_audit.ktr");
 		jobUrl = FileLocator.toFileURL(jobUrl);
+		jobUrl = new URL("platform:/plugin/fr.sanofi.fcl4transmart/jobs_kettle/check_RNA_sequencing_filenames.ktr");
+		jobUrl = FileLocator.toFileURL(jobUrl);
+		jobUrl = new URL("platform:/plugin/fr.sanofi.fcl4transmart/jobs_kettle/write_study_id_to_audit.ktr");
+		jobUrl = FileLocator.toFileURL(jobUrl);
+		jobUrl = new URL("platform:/plugin/fr.sanofi.fcl4transmart/jobs_kettle/pivot_RNA_sequencing_file.ktr");
+		jobUrl = FileLocator.toFileURL(jobUrl);
+		jobUrl = new URL("platform:/plugin/fr.sanofi.fcl4transmart/jobs_kettle/run_i2b2_process_RNA_sequencing_data.ktr");
+		jobUrl = FileLocator.toFileURL(jobUrl);
 		
 		return jobPath;
 	}

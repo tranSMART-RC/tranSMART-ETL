@@ -32,6 +32,11 @@
             <description>L=Load lt_src_omicsoft_data using sqlldr (RECOMMENDED) and run i2b2_process_mrna_data, I=Insert data to lt_src_omicsoft_data and run i2b2_load_omicsoft_data</description>
         </parameter>
         <parameter>
+            <name>PLATFORM_ID</name>
+            <default_value/>
+            <description/>
+        </parameter>
+        <parameter>
             <name>SOURCE_CD</name>
             <default_value>OMICSOFT</default_value>
             <description>unique code to identify multiple sets of gene expression data for a study, default is STD</description>

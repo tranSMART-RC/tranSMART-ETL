@@ -28,10 +28,6 @@ public class MetabolomicsSelectRawFileListener implements Listener {
 		for(int i=0; i<paths.length; i++){
 			String path=paths[i];
 			if(path==null) return;
-			if(((MetabolomicsData)this.dataType).getRawFiles().size()>0){
-				this.ui.displayMessage("For RBM data, you can only select one raw data file");
-				return;
-			}
 			if(path.contains("%")){
 				this.ui.displayMessage("File name can not contain percent ('%') symbol.");
 				return;

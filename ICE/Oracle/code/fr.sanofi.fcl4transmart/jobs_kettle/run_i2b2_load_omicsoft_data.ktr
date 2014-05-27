@@ -85,8 +85,8 @@
 ******************************************************************&#47;</note>
       <xloc>38</xloc>
       <yloc>481</yloc>
-      <width>444</width>
-      <heigth>197</heigth>
+      <width>446</width>
+      <heigth>205</heigth>
       <fontname>Microsoft Sans Serif</fontname>
       <fontsize>8</fontsize>
       <fontbold>N</fontbold>
@@ -395,6 +395,11 @@
         <type>Integer</type>
       </arg>
       <arg>
+        <name>platform_id</name>
+        <direction>IN</direction>
+        <type>String</type>
+      </arg>
+      <arg>
         <name>job_id</name>
         <direction>IN</direction>
         <type>Integer</type>
@@ -477,6 +482,18 @@
         <name>job_id</name>
         <variable>${ETL_JOB_ID}</variable>
         <type>Integer</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+      </field>
+      <field>
+        <name>platform_id</name>
+        <variable>${PLATFORM_ID}</variable>
+        <type>String</type>
         <format/>
         <currency/>
         <decimal/>

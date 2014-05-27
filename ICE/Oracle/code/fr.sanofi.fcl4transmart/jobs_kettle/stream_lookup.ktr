@@ -114,8 +114,15 @@
    </condition>
   <condition>
    <negated>N</negated>
-   <operator>AND</operator>
+   <operator>OR</operator>
    <leftvalue>intensity_end_value</leftvalue>
+   <function>IS NULL</function>
+   <rightvalue/>
+   </condition>
+  <condition>
+   <negated>N</negated>
+   <operator>OR</operator>
+   <leftvalue>id</leftvalue>
    <function>IS NULL</function>
    <rightvalue/>
    </condition>
@@ -185,6 +192,12 @@
         <variable_type>JVM</variable_type>
         <default_value/>
         </field>
+      <field>
+        <field_name>id</field_name>
+        <variable_name>ID</variable_name>
+        <variable_type>JVM</variable_type>
+        <default_value/>
+        </field>
       </fields>
     <use_formatting>Y</use_formatting>
      <cluster_schema/>
@@ -219,13 +232,19 @@
         <name>intensity_start_value</name>
         <rename>intensity_start_value</rename>
         <default>0</default>
-        <type>Number</type>
+        <type>String</type>
       </value>
       <value>
         <name>intensity_end_value</name>
         <rename>intensity_end_value</rename>
         <default>0</default>
-        <type>Number</type>
+        <type>String</type>
+      </value>
+      <value>
+        <name>id</name>
+        <rename>id</rename>
+        <default>0</default>
+        <type>String</type>
       </value>
     </lookup>
      <cluster_schema/>
@@ -316,7 +335,7 @@
       </field>
       <field>
         <name>intensity_start_value</name>
-        <type>Integer</type>
+        <type>String</type>
         <format/>
         <currency/>
         <decimal/>
@@ -331,7 +350,7 @@
       </field>
       <field>
         <name>intensity_end_value</name>
-        <type>Integer</type>
+        <type>String</type>
         <format/>
         <currency/>
         <decimal/>

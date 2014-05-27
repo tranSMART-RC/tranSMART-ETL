@@ -68,6 +68,8 @@ public class ProteomicsLoadDataListener extends LoadDataListener implements List
 		jobUrl = FileLocator.toFileURL(jobUrl); 
 		jobUrl = new URL("platform:/plugin/fr.sanofi.fcl4transmart/jobs_kettle/cz_write_audit.ktr");
 		jobUrl = FileLocator.toFileURL(jobUrl);
+		jobUrl = new URL("platform:/plugin/fr.sanofi.fcl4transmart/jobs_kettle/write_study_id_to_audit.ktr");
+		jobUrl = FileLocator.toFileURL(jobUrl);
 		
 		return jobPath;
 	}

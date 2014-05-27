@@ -71,8 +71,8 @@ public class ClinicalQCController {
     		while(rs.next()){
     			String path=rs.getString("CONCEPT_PATH");
     			String value=String.valueOf(rs.getDouble("NVAL_NUM"));
-    			if(path.split(topNode.replace("\\", "\\\\"),2).length>1){
-    			path=path.split(topNode.replace("\\", "\\\\"),2)[1];//remove the part of the path containing the top node
+    			if(path.split(Pattern.quote(topNode),2).length>1){
+    				path=path.split(Pattern.quote(topNode),2)[1];
 	    			if(path.lastIndexOf("\\")==path.length()-1) path=path.substring(0, path.length()-1); //remove the last back slash character
 	    			Vector<String> v=new Vector<String>();
 					if(dbValues.get(path)!=null) v=dbValues.get(path);
@@ -86,7 +86,7 @@ public class ClinicalQCController {
     			String path=rs.getString("CONCEPT_PATH");
     			String value=rs.getString("TVAL_CHAR");
     			if(value.compareTo("EXP:PUBLIC")!=0 && value.compareTo("E")!=0){ //remove security lines and gene expression lines
-	    			if(path.split(topNode.replace("\\", "\\\\"),2).length>1) path=path.split(topNode.replace("\\", "\\\\"),2)[1];//remove the part of the path containing the top node
+	    			if(path.split(Pattern.quote(topNode),2).length>1) path=path.split(Pattern.quote(topNode),2)[1];//remove the part of the path containing the top node
 	    			if(path.lastIndexOf("\\")==path.length()-1) path=path.substring(0, path.length()-1); //remove the last back slash character
 	    			if(path.substring(path.lastIndexOf("\\")+1, path.length()).compareTo(value)==0){//remove the last part (containing the value)
 	    				path=path.substring(0, path.lastIndexOf("\\"));
@@ -102,7 +102,9 @@ public class ClinicalQCController {
 					v.add(value);
     			}
     		}
-			
+			for(String k: dbValues.keySet()){
+				System.out.println(k+" --> "+dbValues.get(k));
+			}
     		con.close();
 		}catch(SQLException sqle){
 			sqle.printStackTrace();
@@ -210,8 +212,8 @@ public class ClinicalQCController {
     			String path=rs.getString(1);
     			String value=String.valueOf(rs.getDouble(2));
     			
-    			if(path.split(topNode.replace("\\", "\\\\"),2).length>1){
-	    			path=path.split(topNode.replace("\\", "\\\\"),2)[1];//remove the part of the path containing the top node
+    			if(path.split(Pattern.quote(topNode),2).length>1){
+	    			path=path.split(Pattern.quote(topNode),2)[1];//remove the part of the path containing the top node
 	    			if(path.lastIndexOf("\\")==path.length()-1) path=path.substring(0, path.length()-1); //remove the last back slash character
 	    			String source=rs.getString(3);
 	    			String subject=source.split(":", -1)[source.split(":", -1).length-1];
@@ -270,7 +272,7 @@ public class ClinicalQCController {
 		}
 		value=value.replaceAll("\\|$", "").replaceAll("^\\|", "");
 		value=value.replaceAll("\\|", "-");
-		value=value.replaceAll("%", "Pct");
+		value=value.replaceAll("%", "PCT");
 		value=value.replaceAll("&", " and ");
 		value=value.trim();
 		value=value.replaceAll("  ", " ");
@@ -281,8 +283,8 @@ public class ClinicalQCController {
 	}
 	public String replaceLabel(String label){
 		if(label!=null){
-			label=label.replaceAll("\\(%", "\\( Pct");
-			label=label.replaceAll("%", "Pct");
+			label=label.replaceAll("\\(%", "\\( PCT");
+			label=label.replaceAll("%", "PCT");
 
 			label=label.replaceAll("&", " and ");
 			label=label.replaceAll("\\|", ",");

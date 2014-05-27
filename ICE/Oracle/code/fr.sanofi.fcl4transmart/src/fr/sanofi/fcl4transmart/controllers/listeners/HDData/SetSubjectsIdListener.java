@@ -29,6 +29,7 @@ public class SetSubjectsIdListener implements Listener {
 	public void handleEvent(Event event) {
 		Vector<String> values=this.ui.getValues();
 		Vector<String> samples=this.ui.getSamples();
+		
 		for(String v: values){
 			if(v.compareTo("")==0){
 				this.ui.displayMessage("All identifiers have to be set");
@@ -64,6 +65,11 @@ public class SetSubjectsIdListener implements Listener {
 							return;
 						}
 						out.write(fields[0]+"\t"+fields[1]+"\t"+subject+"\t"+sample+"\t"+fields[4]+"\t"+fields[5]+"\t"+fields[6]+"\t"+fields[7]+"\t"+fields[8]+"\n");
+						values.remove(samples.indexOf(sample));
+						samples.remove(sample);						
+					}
+					for(int i=0; i<samples.size(); i++){
+						out.write(this.dataType.getStudy().toString()+"\t"+"\t"+values.elementAt(i)+"\t"+samples.elementAt(i)+"\t"+"\t"+"\t"+"\t"+"\t"+"\n");
 					}
 					br.close();
 				}catch (Exception e){

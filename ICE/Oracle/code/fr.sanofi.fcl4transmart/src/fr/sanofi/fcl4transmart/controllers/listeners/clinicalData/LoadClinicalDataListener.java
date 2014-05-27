@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2012 Sanofi-Aventis Recherche et D�veloppement.
+ * Copyright (c) 2012 Sanofi-Aventis Recherche et Dï¿½veloppement.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Public License v3.0
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/gpl.html
  * 
  * Contributors:
- *    Sanofi-Aventis Recherche et D�veloppement - initial API and implementation
+ *    Sanofi-Aventis Recherche et Dï¿½veloppement - initial API and implementation
  ******************************************************************************/
 package fr.sanofi.fcl4transmart.controllers.listeners.clinicalData;
 
@@ -76,15 +76,6 @@ public class LoadClinicalDataListener implements Listener{
 		this.loadDataUI=loadDataUI;
 		this.success=true;
 	}
-	/**
-	 *Loads the study:
-	 *-Create the top folder if not existing
-	 *-initiate Kettle environment
-	 *-Find KEttle files
-	 *-Set Ksttle parameters
-	 *-Calls the Kettle job
-	 *-Save the log file
-	 */	
 	@Override
 	public void handleEvent(Event event) {
 		loadDataUI.openLoadingShell();
@@ -143,28 +134,23 @@ public class LoadClinicalDataListener implements Listener{
 		try{ 
 			String[] splited=loadDataUI.getTopNode().split("\\\\");
 			//check there are no ":" in program or study name (not supported in Windows folder names)
-//			boolean renameProgam=false;
-//			boolean renameStudy=false;
-//			String oldProgamName="", oldStudyName="";
-//			if(splited[1].contains(":")){
-//				renameProgam=true;
-//				oldProgamName=splited[1];
-//				splited[1]=oldProgamName.replace(":", "-");
-//			}
-//			if(splited[2].contains(":")){
-//				renameStudy=true;
-//				oldStudyName=splited[2];
-//				splited[2]=oldStudyName.replace(":", "-");
-//			}
+			String programFolder=splited[1];
+			String studyFolder=splited[2];
+			if(splited[1].contains(":")){
+				programFolder=splited[1].replace(":", "-");
+			}
+			if(splited[2].contains(":")){
+				studyFolder=splited[2].replace(":", "-");
+			}
 			
 			//create directories for ETL
 			String dataLocation=dataType.getPath().getAbsolutePath();
 			File etlDir=new File(dataLocation+File.separator+"etl_dir");
 			FileUtils.forceMkdir(etlDir);
 			
-			FileUtils.forceMkdir(new File(etlDir.getAbsolutePath()+File.separator+splited[1]));
-			FileUtils.forceMkdir(new File(etlDir.getAbsolutePath()+File.separator+splited[1]+File.separator+splited[2]));
-			File clinicalDataDir=new File(etlDir.getAbsolutePath()+File.separator+splited[1]+File.separator+splited[2]+File.separator+"ClinicalData");
+			FileUtils.forceMkdir(new File(etlDir.getAbsolutePath()+File.separator+programFolder));
+			FileUtils.forceMkdir(new File(etlDir.getAbsolutePath()+File.separator+programFolder+File.separator+studyFolder));
+			File clinicalDataDir=new File(etlDir.getAbsolutePath()+File.separator+programFolder+File.separator+studyFolder+File.separator+"ClinicalData");
 			FileUtils.forceMkdir(clinicalDataDir);
 			FileUtils.forceMkdir(new File(etlDir.getAbsolutePath()+File.separator+"DisplayMapping"));
 						
@@ -226,28 +212,6 @@ public class LoadClinicalDataListener implements Listener{
 			//delete etl directory
 			deleteDir(etlDir);
 			
-//			if(renameProgam){
-//				String connectionString="jdbc:oracle:thin:@"+PreferencesHandler.getDbServer()+":"+PreferencesHandler.getDbPort()+":"+PreferencesHandler.getDbName();
-//				Connection con = DriverManager.getConnection(connectionString, PreferencesHandler.getTm_czUser(), PreferencesHandler.getTm_czPwd());
-//				String sql = "{call RENAME_PROGRAM(?, ?)}";
-//				CallableStatement call = con.prepareCall(sql);
-//				call.setString(1,splited[1]);
-//				call.setString(2,oldProgamName);
-//				call.executeUpdate();
-//				con.close();
-//				splited[1]=oldProgamName;
-//			}if(renameStudy){
-//				String connectionString="jdbc:oracle:thin:@"+PreferencesHandler.getDbServer()+":"+PreferencesHandler.getDbPort()+":"+PreferencesHandler.getDbName();
-//				Connection con = DriverManager.getConnection(connectionString, PreferencesHandler.getTm_czUser(), PreferencesHandler.getTm_czPwd());
-//				String sql = "{call RENAME_STUDY(?, ?, ?)}";
-//				CallableStatement call = con.prepareCall(sql);
-//				call.setString(1,splited[1]);
-//				call.setString(2,splited[2]);
-//				call.setString(3,oldStudyName);
-//				call.executeUpdate();
-//				con.close();
-//			}
-			
 			((ClinicalData)dataType).setLogFile(new File(dataLocation+File.separator+"kettle.log"));
 		}catch (Exception e1) {
 			e1.printStackTrace();
@@ -274,8 +238,8 @@ public class LoadClinicalDataListener implements Listener{
 			
 			session.connect();
 			Channel channel=session.openChannel("sftp");
-			channel.connect();
 			c=(ChannelSftp)channel;
+			c.connect();
 							
 			//try to go to the right directory for file transfer
 			String dir=etlPreferences.getFilesDirectory();
@@ -417,7 +381,6 @@ public class LoadClinicalDataListener implements Listener{
 		          int i=in.read(tmp, 0, 1024);
 		          if(i<0)break;
 		          out+=new String(tmp, 0, i);
-		          System.out.println(out);
 		          began=true;
 		        }
 		        if(began){
@@ -434,10 +397,11 @@ public class LoadClinicalDataListener implements Listener{
 	        	}
 		        try{Thread.sleep(1000);}catch(Exception ee){}
 		      }
+			System.out.println(out);
 			
-			channel.disconnect();
 			c.get(etlDir+"/"+splited[1]+"/"+splited[2]+"/"+"kettle.log", dataType.getPath().getAbsolutePath());
 			((ClinicalData)dataType).setLogFile(new File(dataType.getPath().getAbsolutePath()+File.separator+"kettle.log"));
+			channel.disconnect();
 			session.disconnect();
 			
 	    }catch(Exception e){
