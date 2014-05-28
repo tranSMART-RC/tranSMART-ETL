@@ -228,7 +228,7 @@ public class ClinicalQCController {
     			String path=rs.getString(1);
     			String value=rs.getString(2);
     			if(value.compareTo("EXP:PUBLIC")!=0 && value.compareTo("E")!=0){
-	    			if(path.split(topNode.replace("\\", "\\\\"),2).length>1) path=path.split(topNode.replace("\\", "\\\\"),2)[1];//remove the part of the path containing the top node
+	    			if(path.split(Pattern.quote(topNode),2).length>1) path=path.split(Pattern.quote(topNode),2)[1];//remove the part of the path containing the top node
 	    			if(path.lastIndexOf("\\")==path.length()-1) path=path.substring(0, path.length()-1); //remove the last back slash character
 	    			if(path.substring(path.lastIndexOf("\\")+1, path.length()).compareTo(value)==0){//remove the last part (containing the value)
 	    				path=path.substring(0, path.lastIndexOf("\\"));
