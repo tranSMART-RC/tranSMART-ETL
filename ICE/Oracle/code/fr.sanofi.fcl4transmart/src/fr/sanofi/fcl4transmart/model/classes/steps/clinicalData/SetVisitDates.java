@@ -30,11 +30,12 @@ public class SetVisitDates implements StepItf{
 		return this.workUI;
 	}
 	public String toString(){
-		return "Set visit dates";
+		return "Set visit dates (optional)";
 	}
 	public String getDescription(){
 		return "This step allows defining enroll dates and visit dates\n"+
-				"Select a file and a columnn corresponding to enroll date, then for each file a column can be chosen to represent visit date.";
+				"Select a file and a columnn corresponding to enroll date, then for each file a column can be chosen to represent visit date.\n"+
+				"This step is not used anymore in RC2 ETL";
 	}
 	public boolean isAvailable(){
 		try{

@@ -16,7 +16,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
+
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import fr.sanofi.fcl4transmart.controllers.FileHandler;
@@ -105,8 +108,9 @@ public class SetStudyTreeListener implements Listener{
 		for(TreeNode child: node.getChildren()){
 			if(child.isOperation()){
 				String op=child.toString().split(": ", 2)[0];
-				String rawFileName=(child.toString().split(": ",2)[1]).split(" - ", 2)[0];
-				String property=(child.toString().split(": ",2)[1]).split(" - ", 2)[1];
+				String[] str = (child.toString().split(": ",2)[1]).split(" - ", 2);
+				String rawFileName = StringUtils.join(Arrays.asList(str).subList(0, str.length-1), " - ");
+				String property = str[str.length-1];
 				File rawFile=new File(((ClinicalData)this.dataType).getPath()+File.separator+rawFileName);
 
 				try {
@@ -127,8 +131,11 @@ public class SetStudyTreeListener implements Listener{
 				if(child.isLabel()){
 					if(child.getParent().isLabel()){//has a data label source
 						String fullname=child.toString();
-						String rawFileName=fullname.split(" - ", -1)[0];
-						String header=fullname.split(" - ", -1)[1];
+						String[] str = fullname.split(" - ", -1);
+						String rawFileName=StringUtils.join(Arrays.asList(str).subList(0, str.length-1), " - ");
+						String header=str[str.length-1];
+						System.out.println(rawFileName);
+
 						File rawFile=new File(((ClinicalData)this.dataType).getPath()+File.separator+rawFileName);
 						try {
 							String dataLabel=this.labels.get(rawFile.getName()+"-"+header);
@@ -143,8 +150,11 @@ public class SetStudyTreeListener implements Listener{
 						}
 					}else{
 						String fullname=child.toString();
-						String rawFileName=fullname.split(" - ", 2)[0];
-						String header=fullname.split(" - ", 2)[1];
+						String[] str = fullname.split(" - ", -1);
+						String rawFileName=StringUtils.join(Arrays.asList(str).subList(0, str.length-1), " - ");
+						String header=str[str.length-1];
+						System.out.println(rawFileName);
+						
 						File rawFile=new File(((ClinicalData)this.dataType).getPath()+File.separator+rawFileName);
 						try {
 							String dataLabel=this.labels.get(rawFile.getName()+"-"+header);

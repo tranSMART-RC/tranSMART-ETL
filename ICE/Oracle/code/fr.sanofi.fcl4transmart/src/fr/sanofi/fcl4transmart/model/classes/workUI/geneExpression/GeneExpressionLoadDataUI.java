@@ -220,7 +220,7 @@ public class GeneExpressionLoadDataUI implements WorkItf, LoadDataUIItf{
 			this.geneDataTypeCombo.setLayoutData(gridData);
 			
 			Label logBaseLabel=new Label(optionPart, SWT.NONE);
-			logBaseLabel.setText("Log base to transfom data: ");
+			logBaseLabel.setText("Log base to transform data: ");
 			
 			this.logBaseText=new Text(optionPart, SWT.BORDER);
 			this.logBaseText.addModifyListener(new ModifyListener(){
